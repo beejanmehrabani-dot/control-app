@@ -191,10 +191,23 @@
     </div>
     <div style="flex:1"></div>
     <div>
-      <button class="pbtn" onclick="go('s1')">Get started — it's free</button>
+      <button class="pbtn" onclick="go('s0')">Get started — it's free</button>
       <div class="sfty" style="text-align:center;margin-top:12px">In crisis? Call <strong style="color:#111">988</strong> or <strong style="color:#111">1-800-GAMBLER</strong></div>
     </div>
   </div>
+</div>
+
+<!-- STEP 0: NAME -->
+<div id="s0" class="screen">
+  <div class="hdr-plain">
+    <div class="sdots"><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+    <div class="h2">What should we call you?</div>
+    <div class="sub">Just a first name is fine. We'll use it to greet you each day.</div>
+  </div>
+  <div class="bod" style="justify-content:flex-start;padding-top:24px">
+    <input class="ti" id="uname" placeholder="Your first name..." style="font-size:18px;padding:16px" autocomplete="given-name"/>
+  </div>
+  <div class="ftr"><button class="pbtn" onclick="saveName()">Continue</button></div>
 </div>
 
 <!-- STEP 1: GOALS -->
@@ -256,9 +269,12 @@
     <div class="cc" onclick="sg(this,'Save for something big')" id="g1"><div class="cdot"></div><div><div class="cl">Save for something meaningful</div><div class="cs2">A trip, a car, a down payment</div></div></div>
     <div class="cc" onclick="sg(this,'More for my family')" id="g2"><div class="cdot"></div><div><div class="cl">More for my family</div><div class="cs2">Kids, partner, people who depend on you</div></div></div>
     <div class="cc" onclick="sg(this,'Just stop losing it')" id="g3"><div class="cdot"></div><div><div class="cl">Just stop losing it</div><div class="cs2">No specific goal. Keep what I earn.</div></div></div>
-    <div><div class="qh">Name your specific goal</div><input class="ti" id="cg" placeholder="e.g. Pay off my Visa or Bali trip with Sarah"/></div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div><div class="qh">Name your specific goal</div><input class="ti" id="cg" placeholder="e.g. Pay off my Visa or Bali trip with Sarah" style="margin-top:4px"/></div>
+      <div><div class="qh">Goal amount ($)</div><input class="ti" id="goalamt" type="number" placeholder="e.g. 1500" style="margin-top:4px"/></div>
+    </div>
   </div>
-  <div class="ftr"><button class="pbtn" onclick="go('s4')">Continue</button></div>
+  <div class="ftr"><button class="pbtn" onclick="saveGoalSettings()">Continue</button></div>
 </div>
 
 <!-- STEP 4: MOTIVATION CHECK -->
@@ -327,7 +343,10 @@
       </div>
     </div>
   </div>
-  <div class="ftr"><button class="pbtn" onclick="go('s6')">Save my plans</button></div>
+  <div class="ftr">
+    <button class="pbtn" onclick="go('s6')">Save my plans</button>
+    <button class="sbtn" onclick="go('s6')">Skip for now — I'll set these up later</button>
+  </div>
 </div>
 
 <!-- STEP 6: CHECK-IN SETUP -->
@@ -335,13 +354,11 @@
   <div class="hdr-plain">
     <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div></div>
     <div class="h2">Set up your check-ins</div>
-    <div class="sub">Three times a day, under two minutes each. This is how the app learns what works for you.</div>
+    <div class="sub">Add as many as you need. Tap × to remove one. You can adjust these any time.</div>
   </div>
   <div class="bod" style="gap:10px">
-    <div class="card"><div style="display:flex;align-items:center;justify-content:space-between"><div><div class="ct">Morning</div><div class="cs">Set your intention for the day</div></div><div style="font-size:14px;color:#888">8:00 AM</div></div></div>
-    <div class="card"><div style="display:flex;align-items:center;justify-content:space-between"><div><div class="ct">Midday</div><div class="cs">Pulse check. Urges, mood, how it's going.</div></div><div style="font-size:14px;color:#888">1:00 PM</div></div></div>
-    <div class="card"><div style="display:flex;align-items:center;justify-content:space-between"><div><div class="ct">Evening</div><div class="cs">Reflect on the day. Log what happened.</div></div><div style="font-size:14px;color:#888">9:00 PM</div></div></div>
-    <div class="sub" style="text-align:center">All times adjustable in settings</div>
+    <div id="ci-slots"></div>
+    <button class="sbtn" onclick="addCISlot()" style="margin-top:0">+ Add a check-in time</button>
   </div>
   <div class="ftr"><button class="pbtn" onclick="go('shome')">Let's go</button></div>
 </div>
@@ -350,19 +367,21 @@
 <div id="shome" class="screen">
   <div class="hdr">
     <div style="display:flex;align-items:center;justify-content:space-between">
-      <div><div class="app-name">Control</div><div style="font-size:17px;font-weight:700;color:#111">Good morning</div></div>
+      <div><div class="app-name">Control</div><div style="font-size:17px;font-weight:700;color:#111" id="greeting">Good morning</div></div>
       <div style="text-align:right"><div style="font-size:11px;color:#999;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Streak</div><div style="font-size:24px;font-weight:700;color:#111">7 days</div></div>
     </div>
   </div>
   <div class="bod">
     <div class="gpc">
-      <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Toward your goal</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.08em">Toward your goal</div>
+        <button onclick="openGoalEdit()" style="background:none;border:none;font-size:12px;color:#888;cursor:pointer;padding:0;font-family:inherit">Edit</button>
+      </div>
       <div style="font-size:13px;color:#666;margin-bottom:4px" id="hlabel">Pay off my Visa</div>
-      <div class="ga">$340</div>
-      <div class="gctx">saved in 7 days. $1,160 to go on a $1,500 goal.</div>
-      <div class="pt"><div class="pf" style="width:23%"></div></div>
-      <div style="display:flex;justify-content:space-between;margin-top:5px"><div style="font-size:11px;color:#bbb">$0</div><div style="font-size:11px;color:#bbb">$1,500</div></div>
-      <div style="font-size:12px;color:#bbb;margin-top:6px">At this rate goal reached in about 37 days</div>
+      <div class="ga" id="home-saved">$0</div>
+      <div class="gctx" id="home-gctx">saved so far.</div>
+      <div class="pt"><div class="pf" id="home-pf" style="width:0%"></div></div>
+      <div style="display:flex;justify-content:space-between;margin-top:5px"><div style="font-size:11px;color:#bbb">$0</div><div style="font-size:11px;color:#bbb" id="home-goal-max">$1,500</div></div>
     </div>
     <div class="sg">
       <div class="sc"><div class="sn">7</div><div class="sl">days in control</div></div>
@@ -370,15 +389,16 @@
     </div>
     <div class="slab">Today</div>
     <div class="card tap row" onclick="go('sci')"><div><div class="ct">Morning check-in</div><div class="cs">Set your intention. Takes 2 minutes.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="card tap row" onclick="go('seci')"><div><div class="ct">Evening check-in</div><div class="cs">Reflect on the day. Log what happened.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
     <div class="slab">Tools</div>
-    <div class="card tap row" onclick="go('srn')"><div><div class="ct">Right Now</div><div class="cs">Open this before you open a betting app</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="card tap row" onclick="go('srn')"><div><div class="ct">I am about to bet, help</div><div class="cs">Open this before you open a betting app</div></div><div style="font-size:20px;color:#ccc">›</div></div>
     <div class="card tap row" onclick="go('senv')"><div><div class="ct">Block the path</div><div class="cs">Remove access. Make betting harder to reach.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
     <div class="card tap row" onclick="go('ssk')"><div><div class="ct">Build skills</div><div class="cs">CBT, mindfulness, and motivation tools</div></div><div style="font-size:20px;color:#ccc">›</div></div>
   </div>
   <div class="tabs">
     <button class="tab on" onclick="sw('shome',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/></svg><span class="tl">Home</span></button>
     <button class="tab" onclick="sw('sci',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span class="tl">Check in</span></button>
-    <button class="tab" onclick="sw('srn',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg><span class="tl">Right Now</span></button>
+    <button class="tab" onclick="sw('srn',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg><span class="tl">Bet Help</span></button>
     <button class="tab" onclick="sw('sprog',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="tl">Progress</span></button>
   </div>
 </div>
@@ -444,8 +464,15 @@
       <div class="qh" style="margin:0">Doesn't have to be about gambling.</div>
       <textarea style="min-height:56px" placeholder="Get through the game without opening DraftKings."></textarea>
     </div>
+    <div class="csec">
+      <div class="ql">Did you place a bet since your last check-in?</div>
+      <div class="mrow">
+        <button class="mbtn" id="sci-bet-yes" onclick="setBet(true)">Yes</button>
+        <button class="mbtn" id="sci-bet-no" onclick="setBet(false)">No</button>
+      </div>
+    </div>
   </div>
-  <div class="ftr"><button class="pbtn" onclick="go('sabc')">Save and continue</button></div>
+  <div class="ftr"><button class="pbtn" onclick="saveMorningCI()">Save and continue</button></div>
 </div>
 
 <!-- ABC FORM (triggers after logging a slip) -->
@@ -482,8 +509,8 @@
 <div id="srn" class="screen">
   <div class="hdr-plain">
     <button class="bk" onclick="go('shome')">← Back</button>
-    <div class="h2">Right Now</div>
-    <div class="sub">Pick what works for you. No right answer here.</div>
+    <div class="h2">I am about to bet, help</div>
+    <div class="sub">Pick what works for you right now. No right answer.</div>
   </div>
   <div class="bod">
     <div class="slab">Redirect your brain</div>
@@ -802,8 +829,96 @@
   <div class="tabs">
     <button class="tab" onclick="sw('shome',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/></svg><span class="tl">Home</span></button>
     <button class="tab" onclick="sw('sci',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span class="tl">Check in</span></button>
-    <button class="tab" onclick="sw('srn',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg><span class="tl">Right Now</span></button>
+    <button class="tab" onclick="sw('srn',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg><span class="tl">Bet Help</span></button>
     <button class="tab on" onclick="sw('sprog',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="tl">Progress</span></button>
+  </div>
+</div>
+
+
+<!-- EVENING CHECK-IN -->
+<div id="seci" class="screen">
+  <div class="hdr-plain">
+    <button class="bk" onclick="go('shome')">← Back</button>
+    <div class="h2">Evening check-in</div>
+    <div class="sub">End the day honestly. Two minutes.</div>
+  </div>
+  <div class="bod" style="gap:14px">
+    <div class="csec">
+      <div class="ql">Did you gamble today?</div>
+      <div class="mrow">
+        <button class="mbtn" id="eci-yes-btn" onclick="eciAnswer(true)">Yes</button>
+        <button class="mbtn" id="eci-no-btn" onclick="eciAnswer(false)">No</button>
+      </div>
+    </div>
+    <div id="eci-slip" style="display:none;flex-direction:column;gap:14px">
+      <div class="csec">
+        <div class="ql">How did it make you feel?</div>
+        <textarea id="eci-feel" placeholder="Guilty? Relieved? Empty? Be honest with yourself."></textarea>
+      </div>
+      <div class="csec">
+        <div class="ql">What will you do differently tomorrow?</div>
+        <textarea id="eci-tomorrow" placeholder="I will..."></textarea>
+      </div>
+    </div>
+    <div id="eci-win" style="display:none;flex-direction:column;gap:14px">
+      <div class="csec">
+        <div class="ql">How are you feeling right now?</div>
+        <div class="mrow">
+          <button class="mbtn" onclick="sm(this)">Really rough</button>
+          <button class="mbtn" onclick="sm(this)">A bit low</button>
+          <button class="mbtn" onclick="sm(this)">Pretty good</button>
+          <button class="mbtn" onclick="sm(this)">Great</button>
+        </div>
+      </div>
+      <div class="csec">
+        <div class="ql">What did you do differently today?</div>
+        <textarea id="eci-diff" placeholder="What helped? What did you choose instead of betting?"></textarea>
+      </div>
+      <div class="csec">
+        <div class="ql">How much do you estimate you saved by not gambling?</div>
+        <div class="qh" style="margin:0">This gets added to your goal progress.</div>
+        <input class="ti" id="eci-saved" type="number" placeholder="$0" style="margin-top:8px"/>
+      </div>
+    </div>
+  </div>
+  <div class="ftr" id="eci-ftr" style="display:none">
+    <button class="pbtn" onclick="saveECI()">Save and finish</button>
+  </div>
+</div>
+
+<!-- GOAL EDIT MODAL -->
+<div id="sgoaledit" class="screen">
+  <div class="hdr-plain">
+    <button class="bk" onclick="go('shome')">← Back</button>
+    <div class="h2">Edit your goal</div>
+    <div class="sub">Update your goal name or target amount any time.</div>
+  </div>
+  <div class="bod" style="gap:12px">
+    <div><div class="qh">Goal name</div><input class="ti" id="edit-goal-name" placeholder="e.g. Pay off my Visa" style="margin-top:4px"/></div>
+    <div><div class="qh">Goal amount ($)</div><input class="ti" id="edit-goal-amt" type="number" placeholder="e.g. 1500" style="margin-top:4px"/></div>
+    <div><div class="qh">Amount saved so far ($)</div><input class="ti" id="edit-saved-amt" type="number" placeholder="e.g. 340" style="margin-top:4px"/></div>
+  </div>
+  <div class="ftr"><button class="pbtn" onclick="saveGoalEdit()">Save changes</button></div>
+</div>
+
+<!-- CELEBRATION -->
+<div id="scelebrate" class="screen" style="background:#111">
+  <div class="bod" style="justify-content:center;align-items:center;text-align:center;gap:20px">
+    <div style="font-size:80px;line-height:1">&#127881;</div>
+    <div>
+      <div style="font-size:42px;font-weight:700;color:#fff">+$<span id="cel-amount">0</span></div>
+      <div style="font-size:16px;color:rgba(255,255,255,0.7);margin-top:4px">added to your goal</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.1);border-radius:16px;padding:20px;width:100%">
+      <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.09em;margin-bottom:6px">Total saved</div>
+      <div style="font-size:40px;font-weight:700;color:#fff">$<span id="cel-total">0</span></div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.55);margin-top:4px" id="cel-goal-label">toward your goal</div>
+      <div class="pt" style="margin-top:14px;background:rgba(255,255,255,0.15)"><div class="pf" id="cel-pf" style="width:0%;background:#fff"></div></div>
+    </div>
+    <div style="font-size:14px;color:rgba(255,255,255,0.6);line-height:1.7;max-width:280px">Every dollar you didn't lose is a dollar you earned. That streak is real.</div>
+  </div>
+  <div class="ftr" style="background:transparent;border-top:0.5px solid rgba(255,255,255,0.12)">
+    <button class="pbtn" style="background:#fff;color:#111" onclick="go('shome')">Keep going. You've got this.</button>
   </div>
 </div>
 
@@ -811,6 +926,20 @@
 <script>
 var qs={nfl:[{q:"Which QB holds the NFL all-time passing TD record?",cat:"NFL Records",a:["Tom Brady","Peyton Manning","Brett Favre","Drew Brees"],c:3},{q:"How many Super Bowls did the Patriots win with Brady?",cat:"NFL History",a:["4","5","6","7"],c:2},{q:"Who rushed for 2,105 yards in a single season in 1984?",cat:"NFL Records",a:["Barry Sanders","Adrian Peterson","Eric Dickerson","Earl Campbell"],c:2},{q:"Which team has won the most Super Bowls?",cat:"NFL History",a:["Dallas Cowboys","San Francisco 49ers","New England Patriots","Pittsburgh Steelers"],c:3},{q:"Who holds the record for most career rushing yards?",cat:"NFL Records",a:["Walter Payton","Barry Sanders","Emmitt Smith","LaDainian Tomlinson"],c:2}],nba:[{q:"Who holds the NBA record for most career points?",cat:"NBA Records",a:["Michael Jordan","Kareem Abdul-Jabbar","LeBron James","Kobe Bryant"],c:2},{q:"What is the most points scored by one player in one NBA game?",cat:"NBA Records",a:["81 — Kobe Bryant","100 — Wilt Chamberlain","73 — David Thompson","69 — MJ"],c:1},{q:"Which player was nicknamed The Mailman?",cat:"NBA Legends",a:["Charles Barkley","Karl Malone","Patrick Ewing","Scottie Pippen"],c:1}],mlb:[{q:"Who holds the all-time MLB home run record?",cat:"MLB Records",a:["Babe Ruth","Hank Aaron","Barry Bonds","Willie Mays"],c:2},{q:"What is the longest hitting streak in MLB history?",cat:"MLB Records",a:["56 games — Joe DiMaggio","44 games — Willie Keeler","61 games — Pete Rose","49 games — Ted Williams"],c:0}],nhl:[{q:"Who is known as The Great One?",cat:"NHL Legends",a:["Mario Lemieux","Bobby Orr","Wayne Gretzky","Gordie Howe"],c:2},{q:"Which team has won the most Stanley Cups?",cat:"NHL History",a:["Toronto Maple Leafs","Detroit Red Wings","Montreal Canadiens","Boston Bruins"],c:2}],soccer:[{q:"Who has won the most Ballon d'Or awards?",cat:"Soccer Records",a:["Cristiano Ronaldo","Zinedine Zidane","Ronaldinho","Lionel Messi"],c:3},{q:"Which country has won the most FIFA World Cups?",cat:"World Cup",a:["Germany","Argentina","Italy","Brazil"],c:3}],cfb:[{q:"Which school has the most college football national championships?",cat:"College Football",a:["Ohio State","Notre Dame","Alabama","Michigan"],c:2}],cbb:[{q:"Which school has won the most NCAA basketball championships?",cat:"College Basketball",a:["Duke","North Carolina","Kentucky","UCLA"],c:3}],golf:[{q:"Who holds the record for most major golf championships?",cat:"Golf Records",a:["Arnold Palmer","Tiger Woods","Jack Nicklaus","Sam Snead"],c:2}],mma:[{q:"Who became the first two-division UFC champion simultaneously?",cat:"MMA History",a:["Jon Jones","Khabib Nurmagomedov","Conor McGregor","Daniel Cormier"],c:2}],tennis:[{q:"Who holds the record for most Grand Slam singles titles among men?",cat:"Tennis Records",a:["Rafael Nadal","Roger Federer","Novak Djokovic","Pete Sampras"],c:2}]};
 var fb=[{q:"Which athlete has won the most Olympic gold medals?",cat:"Olympics",a:["Usain Bolt","Carl Lewis","Michael Phelps","Mark Spitz"],c:2},{q:"In what year were the first modern Olympic Games held?",cat:"Olympics",a:["1892","1896","1900","1904"],c:1}];
+// User state
+var userName = '';
+var goalName = 'My goal';
+var goalAmount = 1500;
+var totalSaved = 0;
+var ciTimes = [
+  {label:'Morning', timeVal:'08:00'},
+  {label:'Midday',  timeVal:'13:00'},
+  {label:'Evening', timeVal:'21:00'}
+];
+var eciGambled = null;
+var mornBet = null;
+
+// Trivia / grid state
 var csp='nfl',cqi=0,cql=[],sc=0,tot=5,ans=[];
 var ga=[[["Tom Brady","Rob Gronkowski","Julian Edelman"],["Emmitt Smith","Troy Aikman","Michael Irvin"],["Jerry Rice","Joe Montana","Steve Young"]],[["Tom Brady","Rob Gronkowski","Tedy Bruschi"],["Roger Staubach","Emmitt Smith","Tony Dorsett"],["Jerry Rice","Joe Montana","Ronnie Lott"]],[["Corey Dillon","LeGarrette Blount","Stevan Ridley"],["Emmitt Smith","Tony Dorsett","Calvin Hill"],["Frank Gore","Garrison Hearst","Ricky Watters"]]];
 var gf=[[false,false,false],[false,false,false],[false,false,false]],gco=0,ac2=null;
@@ -820,25 +949,150 @@ var soberSteps=[{l:'S',w:'Stop',d:'Whatever you are doing right now. Just pause.
 var soberIdx=0;
 var headsC=0,tailsC=0,streak=0,lastFlip='';
 
-function go(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});var e=document.getElementById(id);if(e)e.classList.add('active');window.scrollTo(0,0)}
+// ── Navigation ──
+function go(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});var e=document.getElementById(id);if(e)e.classList.add('active');window.scrollTo(0,0);if(id==='shome')updateGreeting()}
 function sw(id,btn){go(id);document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on')});if(btn)btn.classList.add('on')}
+
+// ── Onboarding: name ──
+function saveName(){var n=document.getElementById('uname').value.trim();if(n)userName=n;go('s1')}
+
+// ── Onboarding: goal settings ──
+function saveGoalSettings(){
+  var n=document.getElementById('cg').value.trim();
+  var a=parseInt(document.getElementById('goalamt').value)||1500;
+  if(n){goalName=n;var h=document.getElementById('hlabel');if(h)h.textContent=n}
+  goalAmount=a;
+  updateGoalDisplay();
+  go('s4');
+}
+
+// ── Goal edit (from home) ──
+function openGoalEdit(){
+  document.getElementById('edit-goal-name').value=goalName;
+  document.getElementById('edit-goal-amt').value=goalAmount;
+  document.getElementById('edit-saved-amt').value=totalSaved;
+  go('sgoaledit');
+}
+function saveGoalEdit(){
+  var n=document.getElementById('edit-goal-name').value.trim();
+  var a=parseInt(document.getElementById('edit-goal-amt').value)||goalAmount;
+  var s=parseInt(document.getElementById('edit-saved-amt').value)||0;
+  if(n){goalName=n;document.querySelectorAll('#hlabel').forEach(function(el){el.textContent=n})}
+  goalAmount=a;totalSaved=s;
+  updateGoalDisplay();
+  go('shome');
+}
+
+// ── Goal display ──
+function updateGoalDisplay(){
+  var pct=Math.min(100,goalAmount>0?Math.round((totalSaved/goalAmount)*100):0);
+  var remaining=Math.max(0,goalAmount-totalSaved);
+  var el=document.getElementById('home-saved');if(el)el.textContent='$'+totalSaved;
+  var ctx=document.getElementById('home-gctx');if(ctx)ctx.textContent='saved. $'+remaining+' to go on a $'+goalAmount+' goal.';
+  var pf=document.getElementById('home-pf');if(pf)pf.style.width=pct+'%';
+  var mx=document.getElementById('home-goal-max');if(mx)mx.textContent='$'+goalAmount;
+}
+
+// ── Greeting ──
+function updateGreeting(){
+  var h=new Date().getHours();
+  var gr=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  var el=document.getElementById('greeting');
+  if(el)el.textContent=userName?gr+', '+userName:gr;
+}
+
+// ── Morning check-in: bet question ──
+function setBet(v){
+  mornBet=v;
+  var y=document.getElementById('sci-bet-yes');var n=document.getElementById('sci-bet-no');
+  if(y)y.classList.toggle('sel',v);
+  if(n)n.classList.toggle('sel',!v);
+}
+function saveMorningCI(){go(mornBet===true?'sabc':'shome');mornBet=null}
+
+// ── Evening check-in ──
+function eciAnswer(gambled){
+  eciGambled=gambled;
+  var y=document.getElementById('eci-yes-btn');var n=document.getElementById('eci-no-btn');
+  if(y)y.classList.toggle('sel',gambled);
+  if(n)n.classList.toggle('sel',!gambled);
+  var slip=document.getElementById('eci-slip');
+  var win=document.getElementById('eci-win');
+  var ftr=document.getElementById('eci-ftr');
+  if(slip)slip.style.display=gambled?'flex':'none';
+  if(win)win.style.display=gambled?'none':'flex';
+  if(ftr)ftr.style.display='block';
+}
+function saveECI(){
+  if(eciGambled===false){
+    var saved=parseInt(document.getElementById('eci-saved').value)||0;
+    if(saved>0){
+      totalSaved+=saved;
+      updateGoalDisplay();
+      var pct=Math.min(100,goalAmount>0?Math.round((totalSaved/goalAmount)*100):0);
+      document.getElementById('cel-amount').textContent=saved;
+      document.getElementById('cel-total').textContent=totalSaved;
+      document.getElementById('cel-goal-label').textContent='toward '+goalName;
+      var cpf=document.getElementById('cel-pf');if(cpf)cpf.style.width=pct+'%';
+      eciGambled=null;
+      go('scelebrate');
+      return;
+    }
+  }
+  eciGambled=null;
+  go('shome');
+}
+
+// ── Check-in time slots ──
+function renderCISlots(){
+  var c=document.getElementById('ci-slots');if(!c)return;
+  c.innerHTML='';
+  ciTimes.forEach(function(slot,i){
+    var d=document.createElement('div');
+    d.className='card';
+    d.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:12px';
+    var label='<div class="ct" contenteditable="true" onblur="ciTimes['+i+'].label=this.textContent" style="outline:none;min-width:60px">'+slot.label+'</div>';
+    var timeInput='<input type="time" value="'+slot.timeVal+'" style="border:0.5px solid rgba(0,0,0,0.14);border-radius:8px;padding:6px 10px;font-size:14px;color:#555;background:#F2F0EB;font-family:inherit" onchange="ciTimes['+i+'].timeVal=this.value"/>';
+    var removeBtn=ciTimes.length>1?'<button onclick="removeCISlot('+i+')" style="border:none;background:none;color:#C0392B;font-size:22px;cursor:pointer;padding:0;line-height:1;flex-shrink:0">&times;</button>':'';
+    d.innerHTML='<div style="flex:1">'+label+'</div>'+timeInput+removeBtn;
+    c.appendChild(d);
+  });
+}
+function addCISlot(){ciTimes.push({label:'Check-in '+(ciTimes.length+1),timeVal:'12:00'});renderCISlots()}
+function removeCISlot(i){ciTimes.splice(i,1);renderCISlots()}
+
+// ── UI helpers ──
 function tm(el){el.classList.toggle('sel')}
 function tt(el){el.classList.toggle('sel')}
 function ts(el){el.parentElement.querySelectorAll('.cc').forEach(function(c){c.classList.remove('sel')});el.classList.add('sel')}
-function sg(el,lbl){document.querySelectorAll('#s3 .cc').forEach(function(c){c.classList.remove('sel')});el.classList.add('sel');var h=document.getElementById('hlabel');if(h)h.textContent=lbl}
+function sg(el,lbl){document.querySelectorAll('#s3 .cc').forEach(function(c){c.classList.remove('sel')});el.classList.add('sel');var h=document.getElementById('hlabel');if(h)h.textContent=lbl;goalName=lbl}
 function sm(btn){btn.closest('.mrow').querySelectorAll('.mbtn').forEach(function(b){b.classList.remove('sel')});btn.classList.add('sel')}
 function sp(btn,s){document.querySelectorAll('.pill').forEach(function(p){p.classList.remove('sel')});btn.classList.add('sel');csp=s}
 function shuf(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t}return b}
+
+// ── Trivia ──
 function startT(){var pool=(qs[csp]&&qs[csp].length)?qs[csp]:fb;cql=shuf(pool.concat(fb)).slice(0,tot);cqi=0;sc=0;ans=[];go('striv');rq()}
 function rq(){var q=cql[cqi];document.getElementById('tq').textContent=q.q;document.getElementById('tcat').textContent=q.cat;document.getElementById('sbadge').textContent=sc+' / '+tot;var pd=document.getElementById('pdots');pd.innerHTML='';for(var i=0;i<tot;i++){var d=document.createElement('div');d.className='pd'+(i<ans.length?(ans[i]?' ok':' no'):(i===cqi?' cur':''));pd.appendChild(d)}var ac=document.getElementById('ac');ac.innerHTML='';['A','B','C','D'].forEach(function(l,idx){var b=document.createElement('button');b.className='abtn';b.innerHTML='<div class="al">'+l+'</div><span>'+q.a[idx]+'</span>';(function(i,btn){b.onclick=function(){ca(i,q.c,btn,q.a)}})(idx,b);ac.appendChild(b)});document.getElementById('tfb').style.display='none';document.getElementById('tftr').style.display='none'}
 function ca(sel,cor,btn,as){document.getElementById('ac').querySelectorAll('.abtn').forEach(function(b){b.disabled=true});var fb2=document.getElementById('tfb');fb2.style.display='block';if(sel===cor){btn.classList.add('ok');sc++;ans.push(true);fb2.textContent='Correct!';fb2.style.color='#3B6D11'}else{btn.classList.add('no');document.getElementById('ac').querySelectorAll('.abtn')[cor].classList.add('ok');ans.push(false);fb2.textContent='Not quite. '+as[cor]+' is the answer.';fb2.style.color='#C0392B'}document.getElementById('sbadge').textContent=sc+' / '+tot;document.getElementById('tftr').style.display='block';document.getElementById('tnxt').textContent=(cqi>=tot-1)?'See results':'Next question'}
 function nextQ(){cqi++;if(cqi>=tot){var ls=['Keep practicing','Not bad. Room to grow.','Solid sports knowledge','You know your stuff','Absolute legend'];document.getElementById('rsc').textContent=sc+'/'+tot;document.getElementById('rlbl').textContent=ls[Math.min(Math.floor((sc/tot)*4),4)];go('sres')}else rq()}
+
+// ── Player grid ──
 function oc(cell,r,c){if(gf[r][c])return;ac2={cell:cell,r:r,c:c};document.getElementById('gprompt').textContent=gh[r][c];document.getElementById('gai').value='';var sg2=document.getElementById('gsugg');sg2.innerHTML='';ga[r][c].slice(0,3).forEach(function(n){var t=document.createElement('div');t.className='tag';t.textContent=n;t.onclick=function(){document.getElementById('gai').value=n};sg2.appendChild(t)});document.getElementById('ginput').style.display='block';setTimeout(function(){document.getElementById('gai').focus()},100)}
 function cgrid(){document.getElementById('ginput').style.display='none';ac2=null}
 function subG(){if(!ac2)return;var v=document.getElementById('gai').value.trim();if(!v)return;var r=ac2.r,c=ac2.c,valid=ga[r][c].map(function(a){return a.toLowerCase()});var ok=valid.some(function(a){var pts=a.split(' ');return v.toLowerCase().includes(pts[pts.length-1])});ac2.cell.textContent=v;ac2.cell.classList.add('gf');ac2.cell.classList.remove('gcell');ac2.cell.classList.add(ok?'gok':'gno');if(ok)gco++;document.getElementById('gscore').textContent=gco+' / 9';cgrid()}
+
+// ── Environment checklist ──
 function toggleCheck(el){var idx=parseInt(el.id.replace('cl',''));clDone[idx]=!clDone[idx];el.classList.toggle('done');var done=clDone.filter(Boolean).length;document.getElementById('cl-progress').textContent=done+' of 6 steps done'}
+
+// ── SOBER ──
 function soberNext(){soberIdx++;if(soberIdx>=soberSteps.length){go('srn');soberIdx=0;return}var s=soberSteps[soberIdx];document.getElementById('sober-letter').textContent=s.l;document.getElementById('sober-word').textContent=s.w;document.getElementById('sober-desc').textContent=s.d;var dots=document.getElementById('sober-dots').children;for(var i=0;i<dots.length;i++){dots[i].style.background=i===soberIdx?'#111':'#E0DDD8'}document.getElementById('sober-btn').textContent=soberIdx>=soberSteps.length-1?'I feel calmer. Done.':'Next step'}
+
+// ── Coin flip ──
 function flipCoin(){var r=Math.random()<0.5;var result=r?'H':'T';var coin=document.getElementById('coin');coin.textContent=r?'H':'T';coin.style.background=r?'#111':'#555';if(result===lastFlip){streak++}else{streak=1}lastFlip=result;if(r){headsC++}else{tailsC++}document.getElementById('heads-count').textContent=headsC;document.getElementById('tails-count').textContent=tailsC;document.getElementById('streak-count').textContent=streak;var msg='';if(streak>=4){msg='A streak of '+streak+'! Your gut says the next one is predictable. It is not. Each flip is 50/50.'}else if(headsC+tailsC>=10){msg='After '+(headsC+tailsC)+' flips: '+headsC+' heads, '+tailsC+' tails. The coin has no memory of previous flips.'}else{msg='Tap again. Watch what your gut starts to predict.'}document.getElementById('flip-result').textContent=msg}
+
+// ── Init ──
+renderCISlots();
+updateGreeting();
 </script>
 </body>
 </html>
