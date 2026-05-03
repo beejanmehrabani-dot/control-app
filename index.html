@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Control</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; background: #F2F0EB; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; }
+  #app { max-width: 430px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; background: #F2F0EB; overflow: hidden; }
+  .screen { display: none; flex-direction: column; height: 100%; overflow: hidden; animation: fi 0.2s ease; }
+  .screen.active { display: flex; }
+  @keyframes fi { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+
+  .hdr { padding: 54px 20px 14px; background: #fff; border-bottom: 0.5px solid rgba(0,0,0,0.09); flex-shrink: 0; }
+  .hdr-plain { padding: 18px 20px 14px; background: #fff; border-bottom: 0.5px solid rgba(0,0,0,0.09); flex-shrink: 0; }
+  .bod { flex: 1; padding: 16px 20px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .ftr { padding: 14px 20px 30px; background: #fff; border-top: 0.5px solid rgba(0,0,0,0.09); flex-shrink: 0; }
+  .tabs { display: flex; background: #fff; border-top: 0.5px solid rgba(0,0,0,0.09); padding: 8px 0 22px; flex-shrink: 0; }
+
+  .app-name { font-size: 11px; font-weight: 600; color: #999; letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 3px; }
+  .h1 { font-size: 26px; font-weight: 700; color: #111; line-height: 1.2; }
+  .h2 { font-size: 20px; font-weight: 700; color: #111; line-height: 1.3; }
+  .sub { font-size: 14px; color: #666; line-height: 1.6; margin-top: 5px; }
+  .slab { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #999; margin-bottom: -3px; }
+  .ql { font-size: 15px; font-weight: 600; color: #111; line-height: 1.4; margin-bottom: 8px; }
+  .qh { font-size: 13px; color: #888; margin-bottom: 8px; line-height: 1.5; }
+
+  .pbtn { width:100%; padding:15px; background:#111; color:#fff; border:none; border-radius:14px; font-size:16px; font-weight:600; cursor:pointer; font-family:inherit; }
+  .pbtn:active { opacity:0.8; }
+  .sbtn { width:100%; padding:14px; background:transparent; color:#111; border:1px solid rgba(0,0,0,0.18); border-radius:14px; font-size:15px; cursor:pointer; font-family:inherit; margin-top:10px; }
+  .sbtn:active { background:#F2F0EB; }
+  .bk { background:none; border:none; cursor:pointer; font-size:14px; color:#666; font-family:inherit; padding:0; display:flex; align-items:center; gap:4px; margin-bottom:12px; }
+
+  .card { background:#fff; border:0.5px solid rgba(0,0,0,0.09); border-radius:14px; padding:15px 16px; }
+  .card.tap { cursor:pointer; }
+  .card.tap:active { background:#F2F0EB; }
+  .card.row { display:flex; align-items:center; justify-content:space-between; }
+  .ct { font-size:15px; font-weight:600; color:#111; }
+  .cs { font-size:13px; color:#666; margin-top:2px; line-height:1.4; }
+
+  .sc { background:#F2F0EB; border-radius:12px; padding:14px; }
+  .sn { font-size:28px; font-weight:700; color:#111; }
+  .sl { font-size:12px; color:#666; margin-top:2px; }
+  .sg { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+  .cc { padding:14px 15px; background:#fff; border:0.5px solid rgba(0,0,0,0.1); border-radius:14px; cursor:pointer; display:flex; align-items:flex-start; gap:12px; }
+  .cc.sel { border:2px solid #111; background:#FAFAF8; }
+  .cbox { width:20px; height:20px; border-radius:5px; border:1.5px solid rgba(0,0,0,0.22); flex-shrink:0; margin-top:1px; display:flex; align-items:center; justify-content:center; }
+  .cc.sel .cbox { background:#111; border-color:#111; }
+  .cc.sel .cbox::after { content:''; width:10px; height:6px; border-left:2px solid #fff; border-bottom:2px solid #fff; transform:rotate(-45deg) translate(0,-1px); display:block; }
+  .cdot { width:20px; height:20px; border-radius:50%; border:1.5px solid rgba(0,0,0,0.22); flex-shrink:0; margin-top:1px; display:flex; align-items:center; justify-content:center; }
+  .cc.sel .cdot { background:#111; border-color:#111; }
+  .cc.sel .cdot::after { content:''; width:7px; height:7px; background:#fff; border-radius:50%; }
+  .cl { font-size:14px; color:#111; line-height:1.45; }
+  .cs2 { font-size:12px; color:#888; margin-top:2px; }
+
+  .tags { display:flex; flex-wrap:wrap; gap:8px; }
+  .tag { padding:8px 14px; background:#fff; border:0.5px solid rgba(0,0,0,0.14); border-radius:20px; font-size:13px; color:#555; cursor:pointer; font-family:inherit; }
+  .tag.sel { border:1.5px solid #111; background:#F2F0EB; color:#111; font-weight:600; }
+  .pill { padding:9px 16px; background:#fff; border:0.5px solid rgba(0,0,0,0.14); border-radius:20px; font-size:14px; color:#555; cursor:pointer; font-family:inherit; }
+  .pill.sel { border:1.5px solid #111; background:#111; color:#fff; font-weight:600; }
+
+  .sdots { display:flex; gap:5px; margin-bottom:10px; }
+  .sdot { width:24px; height:3px; border-radius:2px; background:#E0DDD8; }
+  .sdot.on { background:#111; }
+
+  .csec { background:#fff; border:0.5px solid rgba(0,0,0,0.09); border-radius:14px; padding:15px; display:flex; flex-direction:column; gap:11px; }
+  .mrow { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .mbtn { padding:12px 6px; background:#F2F0EB; border:0.5px solid rgba(0,0,0,0.09); border-radius:10px; font-size:13px; color:#555; cursor:pointer; font-family:inherit; text-align:center; }
+  .mbtn.sel { border:1.5px solid #111; background:#fff; color:#111; font-weight:600; }
+
+  textarea { width:100%; min-height:72px; padding:11px 13px; border:0.5px solid rgba(0,0,0,0.14); border-radius:10px; font-size:14px; font-family:inherit; color:#111; background:#fff; resize:none; line-height:1.6; }
+  textarea:focus { outline:none; border-color:#111; }
+  input.ti { width:100%; padding:13px; border:0.5px solid rgba(0,0,0,0.14); border-radius:10px; font-size:14px; font-family:inherit; color:#111; background:#fff; }
+  input.ti:focus { outline:none; border-color:#111; }
+
+  .sfty { background:#F2F0EB; border-radius:10px; padding:12px 14px; font-size:13px; color:#666; line-height:1.6; }
+
+  .gpc { background:#fff; border:0.5px solid rgba(0,0,0,0.09); border-radius:14px; padding:16px; }
+  .ga { font-size:34px; font-weight:700; color:#111; }
+  .gctx { font-size:13px; color:#666; margin-top:3px; line-height:1.5; }
+  .pt { margin-top:14px; background:#E0DDD8; border-radius:4px; height:6px; }
+  .pf { height:6px; border-radius:4px; background:#111; }
+
+  .ddays { display:flex; gap:6px; margin-top:10px; }
+  .dd { flex:1; height:6px; border-radius:3px; background:#E0DDD8; }
+  .dd.on { background:#111; }
+
+  .tab { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; padding:6px 0; cursor:pointer; border:none; background:transparent; font-family:inherit; }
+  .tab svg { stroke:#C0BAB0; }
+  .tab.on svg { stroke:#111; }
+  .tl { font-size:10px; color:#C0BAB0; }
+  .tab.on .tl { color:#111; font-weight:600; }
+
+  .lane { background:#fff; border:0.5px solid rgba(0,0,0,0.09); border-radius:14px; padding:15px; cursor:pointer; display:flex; align-items:center; gap:14px; }
+  .lane:active { background:#F2F0EB; }
+  .lic { width:44px; height:44px; border-radius:10px; background:#F2F0EB; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .lt { font-size:15px; font-weight:600; color:#111; }
+  .ls { font-size:12px; color:#666; margin-top:2px; line-height:1.4; }
+
+  .sbadge { font-size:14px; font-weight:600; color:#111; background:#F2F0EB; padding:5px 14px; border-radius:12px; }
+  .pdots { display:flex; gap:6px; }
+  .pd { width:9px; height:9px; border-radius:50%; background:#E0DDD8; }
+  .pd.ok { background:#3B6D11; }
+  .pd.no { background:#C0392B; }
+  .pd.cur { background:#111; }
+
+  .abtn { width:100%; padding:13px 14px; background:#F2F0EB; border:0.5px solid rgba(0,0,0,0.09); border-radius:12px; font-size:14px; color:#111; cursor:pointer; font-family:inherit; text-align:left; margin-bottom:8px; display:flex; align-items:center; gap:10px; }
+  .abtn:active:not(:disabled) { background:#E8E5DF; }
+  .abtn.ok { border-color:#3B6D11; background:#EAF3DE; color:#3B6D11; font-weight:600; }
+  .abtn.no { border-color:#C0392B; background:#FCEBEB; color:#C0392B; }
+  .abtn:disabled { cursor:default; }
+  .al { width:24px; height:24px; border-radius:50%; background:rgba(0,0,0,0.08); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; color:#555; }
+  .abtn.ok .al { background:#3B6D11; color:#fff; }
+  .abtn.no .al { background:#C0392B; color:#fff; }
+
+  .rn { font-size:52px; font-weight:700; color:#111; text-align:center; padding:10px 0 4px; }
+  .rl { font-size:15px; color:#666; text-align:center; }
+
+  .gcont { display:grid; grid-template-columns:56px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr); gap:5px; }
+  .ghdr { background:#F2F0EB; border-radius:10px; padding:8px 4px; font-size:11px; font-weight:600; color:#555; text-align:center; line-height:1.3; }
+  .grl { background:#F2F0EB; border-radius:10px; padding:7px 6px; font-size:10px; font-weight:600; color:#555; display:flex; align-items:center; line-height:1.3; }
+  .gcell { background:#fff; border:0.5px solid rgba(0,0,0,0.11); border-radius:10px; min-height:56px; padding:6px; display:flex; align-items:center; justify-content:center; cursor:pointer; text-align:center; font-size:10px; color:#BBB; line-height:1.3; }
+  .gcell:active:not(.gf) { background:#F2F0EB; }
+  .gcell.gok { background:#EAF3DE; border-color:#3B6D11; color:#3B6D11; font-weight:600; }
+  .gcell.gno { background:#FCEBEB; border-color:#C0392B; color:#C0392B; }
+
+  .slider-wrap { padding: 4px 0; }
+  .slider-label { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+  .slider-val { font-size:22px; font-weight:700; color:#111; }
+  .slider-name { font-size:13px; color:#666; }
+  input[type=range] { width:100%; height:4px; border-radius:2px; background:#E0DDD8; outline:none; -webkit-appearance:none; cursor:pointer; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:#111; cursor:pointer; }
+
+  .checklist-item { display:flex; align-items:flex-start; gap:12px; padding:13px 15px; background:#fff; border:0.5px solid rgba(0,0,0,0.09); border-radius:12px; cursor:pointer; }
+  .checklist-item.done { background:#F7FFF2; border-color:#3B6D11; }
+  .check-circle { width:22px; height:22px; border-radius:50%; border:1.5px solid rgba(0,0,0,0.2); flex-shrink:0; margin-top:1px; display:flex; align-items:center; justify-content:center; }
+  .checklist-item.done .check-circle { background:#3B6D11; border-color:#3B6D11; }
+  .checklist-item.done .check-circle::after { content:''; width:10px; height:6px; border-left:2px solid #fff; border-bottom:2px solid #fff; transform:rotate(-45deg) translate(0,-1px); display:block; }
+  .check-text { flex:1; }
+  .check-title { font-size:14px; font-weight:600; color:#111; }
+  .checklist-item.done .check-title { color:#3B6D11; }
+  .check-sub { font-size:12px; color:#888; margin-top:2px; line-height:1.4; }
+
+  .ifthen-card { background:#fff; border:0.5px solid rgba(0,0,0,0.09); border-radius:14px; padding:14px 16px; }
+  .if-label { font-size:11px; font-weight:700; letter-spacing:0.07em; color:#999; text-transform:uppercase; margin-bottom:5px; }
+  .ifthen-row { display:flex; gap:10px; align-items:flex-start; margin-bottom:10px; }
+  .if-badge { background:#F2F0EB; border-radius:8px; padding:6px 10px; font-size:12px; font-weight:700; color:#555; flex-shrink:0; margin-top:2px; }
+
+  .sober-step { background:#fff; border:0.5px solid rgba(0,0,0,0.09); border-radius:14px; padding:18px; text-align:center; }
+  .sober-letter { font-size:52px; font-weight:700; color:#111; line-height:1; margin-bottom:6px; }
+  .sober-word { font-size:16px; font-weight:600; color:#111; margin-bottom:8px; }
+  .sober-desc { font-size:14px; color:#666; line-height:1.6; }
+  .sober-timer { font-size:36px; font-weight:700; color:#111; margin:16px 0 4px; }
+  .sober-hint { font-size:13px; color:#999; }
+
+  .abc-section { background:#fff; border:0.5px solid rgba(0,0,0,0.09); border-radius:14px; overflow:hidden; }
+  .abc-header { padding:12px 16px; background:#F2F0EB; border-bottom:0.5px solid rgba(0,0,0,0.09); display:flex; align-items:center; gap:10px; }
+  .abc-letter { width:28px; height:28px; border-radius:50%; background:#111; color:#fff; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .abc-body { padding:14px 16px; }
+
+  .coin-wrap { text-align:center; padding:10px 0; }
+  .coin { width:60px; height:60px; border-radius:50%; background:#111; color:#fff; font-size:22px; font-weight:700; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; transition:transform 0.3s; }
+  .coin.flip { transform:rotateY(180deg); }
+  .streak-display { font-size:13px; color:#666; margin-top:8px; line-height:1.6; }
+
+  .cidots { display:flex; gap:4px; margin-bottom:6px; }
+  .cid { flex:1; height:3px; border-radius:2px; background:#E0DDD8; }
+  .cid.on { background:#111; }
+
+  .motiv-score { text-align:center; padding:16px 0 8px; }
+  .motiv-num { font-size:48px; font-weight:700; color:#111; }
+  .motiv-lbl { font-size:13px; color:#666; margin-top:2px; }
+
+  .tcat { font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#999; }
+  .tq { font-size:17px; font-weight:600; color:#111; line-height:1.5; }
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- WELCOME -->
+<div id="sw" class="screen active">
+  <div class="bod" style="justify-content:center;padding:48px 24px 32px">
+    <div>
+      <div class="app-name">Control</div>
+      <div class="h1" style="margin-top:6px">You don't have<br>a problem.<br>You just want to<br>feel in control again.</div>
+      <div class="sub" style="margin-top:12px">Private tools to interrupt impulsive betting. Built on real psychology. Zero judgment.</div>
+    </div>
+    <div style="flex:1"></div>
+    <div>
+      <button class="pbtn" onclick="go('s1')">Get started — it's free</button>
+      <div class="sfty" style="text-align:center;margin-top:12px">In crisis? Call <strong style="color:#111">988</strong> or <strong style="color:#111">1-800-GAMBLER</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP 1: GOALS -->
+<div id="s1" class="screen">
+  <div class="hdr-plain">
+    <div class="sdots"><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+    <div class="h2">What do you want?</div>
+    <div class="sub">Pick everything that fits. No wrong answers here.</div>
+  </div>
+  <div class="bod">
+    <div class="cc" onclick="tm(this)"><div class="cbox"></div><div><div class="cl">Stop betting in the moment before I do something I'll regret</div></div></div>
+    <div class="cc" onclick="tm(this)"><div class="cbox"></div><div><div class="cl">Set limits and actually stick to them</div></div></div>
+    <div class="cc" onclick="tm(this)"><div class="cbox"></div><div><div class="cl">Understand why I keep doing this</div></div></div>
+    <div class="cc" onclick="tm(this)"><div class="cbox"></div><div><div class="cl">Stop completely. I'm done with it.</div></div></div>
+    <div class="cc" onclick="tm(this)"><div class="cbox"></div><div><div class="cl">Not sure yet. I just know something needs to change.</div></div></div>
+  </div>
+  <div class="ftr"><button class="pbtn" onclick="go('s2')">Continue</button></div>
+</div>
+
+<!-- STEP 2: COSTS -->
+<div id="s2" class="screen">
+  <div class="hdr-plain">
+    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+    <div class="h2">What has it cost you?</div>
+    <div class="sub">Select anything that's happened. This stays private.</div>
+  </div>
+  <div class="bod">
+    <div class="tags">
+      <div class="tag" onclick="tt(this)">Lost money I couldn't afford</div>
+      <div class="tag" onclick="tt(this)">Hid it from someone close</div>
+      <div class="tag" onclick="tt(this)">Missed something important</div>
+      <div class="tag" onclick="tt(this)">Felt ashamed after</div>
+      <div class="tag" onclick="tt(this)">Chased losses and made it worse</div>
+      <div class="tag" onclick="tt(this)">Borrowed money to keep going</div>
+      <div class="tag" onclick="tt(this)">Argued with someone I care about</div>
+      <div class="tag" onclick="tt(this)">Lost sleep worrying about it</div>
+      <div class="tag" onclick="tt(this)">Felt completely out of control</div>
+      <div class="tag" onclick="tt(this)">Missed work or responsibilities</div>
+      <div class="tag" onclick="tt(this)">Lied about how much I lost</div>
+      <div class="tag" onclick="tt(this)">Felt depressed or anxious after</div>
+    </div>
+    <div><div class="qh">Anything else you want to add?</div><textarea placeholder="In your own words..."></textarea></div>
+  </div>
+  <div class="ftr">
+    <button class="pbtn" onclick="go('s3')">Continue</button>
+    <button class="sbtn" onclick="go('s3')">Skip this step</button>
+  </div>
+</div>
+
+<!-- STEP 3: GOAL LINK -->
+<div id="s3" class="screen">
+  <div class="hdr-plain">
+    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+    <div class="h2">What would you do with the money?</div>
+    <div class="sub">Your savings tracker will measure against this. Make it real.</div>
+  </div>
+  <div class="bod">
+    <div class="cc" onclick="sg(this,'Pay off debt')" id="g0"><div class="cdot"></div><div><div class="cl">Pay off debt</div><div class="cs2">Credit card, loan, money owed to someone</div></div></div>
+    <div class="cc" onclick="sg(this,'Save for something big')" id="g1"><div class="cdot"></div><div><div class="cl">Save for something meaningful</div><div class="cs2">A trip, a car, a down payment</div></div></div>
+    <div class="cc" onclick="sg(this,'More for my family')" id="g2"><div class="cdot"></div><div><div class="cl">More for my family</div><div class="cs2">Kids, partner, people who depend on you</div></div></div>
+    <div class="cc" onclick="sg(this,'Just stop losing it')" id="g3"><div class="cdot"></div><div><div class="cl">Just stop losing it</div><div class="cs2">No specific goal. Keep what I earn.</div></div></div>
+    <div><div class="qh">Name your specific goal</div><input class="ti" id="cg" placeholder="e.g. Pay off my Visa or Bali trip with Sarah"/></div>
+  </div>
+  <div class="ftr"><button class="pbtn" onclick="go('s4')">Continue</button></div>
+</div>
+
+<!-- STEP 4: MOTIVATION CHECK -->
+<div id="s4" class="screen">
+  <div class="hdr-plain">
+    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div></div>
+    <div class="h2">Two honest questions</div>
+    <div class="sub">No right answers. These set your starting point and we track how they change.</div>
+  </div>
+  <div class="bod">
+    <div class="csec">
+      <div class="ql">How important is it to you to change this right now?</div>
+      <div class="slider-wrap">
+        <div class="slider-label">
+          <span class="slider-name">Not important at all</span>
+          <span class="slider-val" id="imp-val">5</span>
+        </div>
+        <input type="range" min="0" max="10" value="5" step="1" oninput="document.getElementById('imp-val').textContent=this.value">
+        <div style="display:flex;justify-content:space-between;margin-top:4px"><span style="font-size:11px;color:#bbb">0</span><span style="font-size:11px;color:#bbb">10</span></div>
+      </div>
+      <div class="qh" style="margin:0">Why that number and not lower? What does it mean to you?</div>
+      <textarea style="min-height:56px" placeholder="Write your honest reason..."></textarea>
+    </div>
+    <div class="csec">
+      <div class="ql">How confident are you that you could actually change this?</div>
+      <div class="slider-wrap">
+        <div class="slider-label">
+          <span class="slider-name">Not confident at all</span>
+          <span class="slider-val" id="conf-val">5</span>
+        </div>
+        <input type="range" min="0" max="10" value="5" step="1" oninput="document.getElementById('conf-val').textContent=this.value">
+        <div style="display:flex;justify-content:space-between;margin-top:4px"><span style="font-size:11px;color:#bbb">0</span><span style="font-size:11px;color:#bbb">10</span></div>
+      </div>
+      <div class="qh" style="margin:0">What would move that number one point higher?</div>
+      <textarea style="min-height:56px" placeholder="What would need to be different?"></textarea>
+    </div>
+  </div>
+  <div class="ftr"><button class="pbtn" onclick="go('s5')">Continue</button></div>
+</div>
+
+<!-- STEP 5: IF-THEN PLANS -->
+<div id="s5" class="screen">
+  <div class="hdr-plain">
+    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div></div>
+    <div class="h2">Build your game plan</div>
+    <div class="sub">Specific plans that fire automatically before the urge takes over. Tap any to use it.</div>
+  </div>
+  <div class="bod">
+    <div class="ifthen-card">
+      <div class="if-label">Your plans</div>
+      <div class="ifthen-row"><div class="if-badge">IF</div><div style="font-size:14px;color:#111;padding-top:6px">I get paid or have cash available</div></div>
+      <div class="ifthen-row" style="margin-bottom:0"><div class="if-badge" style="background:#111;color:#fff">THEN</div><div style="font-size:14px;color:#111;padding-top:6px">I immediately transfer 80% to a savings account I don't check daily</div></div>
+    </div>
+    <div class="ifthen-card">
+      <div class="ifthen-row"><div class="if-badge">IF</div><div style="font-size:14px;color:#111;padding-top:6px">I feel the urge to open a betting app</div></div>
+      <div class="ifthen-row" style="margin-bottom:0"><div class="if-badge" style="background:#111;color:#fff">THEN</div><div style="font-size:14px;color:#111;padding-top:6px">I open Control instead and use Right Now for 5 minutes first</div></div>
+    </div>
+    <div class="ifthen-card">
+      <div class="ifthen-row"><div class="if-badge">IF</div><div style="font-size:14px;color:#111;padding-top:6px">A big game is on and I feel the pull</div></div>
+      <div class="ifthen-row" style="margin-bottom:0"><div class="if-badge" style="background:#111;color:#fff">THEN</div><div style="font-size:14px;color:#111;padding-top:6px">I text my support person before I do anything else</div></div>
+    </div>
+    <div><div class="qh">Add your own plan</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <input class="ti" placeholder="If... (what's the trigger situation?)"/>
+        <input class="ti" placeholder="Then I will... (what's your specific action?)"/>
+      </div>
+    </div>
+  </div>
+  <div class="ftr"><button class="pbtn" onclick="go('s6')">Save my plans</button></div>
+</div>
+
+<!-- STEP 6: CHECK-IN SETUP -->
+<div id="s6" class="screen">
+  <div class="hdr-plain">
+    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div></div>
+    <div class="h2">Set up your check-ins</div>
+    <div class="sub">Three times a day, under two minutes each. This is how the app learns what works for you.</div>
+  </div>
+  <div class="bod" style="gap:10px">
+    <div class="card"><div style="display:flex;align-items:center;justify-content:space-between"><div><div class="ct">Morning</div><div class="cs">Set your intention for the day</div></div><div style="font-size:14px;color:#888">8:00 AM</div></div></div>
+    <div class="card"><div style="display:flex;align-items:center;justify-content:space-between"><div><div class="ct">Midday</div><div class="cs">Pulse check. Urges, mood, how it's going.</div></div><div style="font-size:14px;color:#888">1:00 PM</div></div></div>
+    <div class="card"><div style="display:flex;align-items:center;justify-content:space-between"><div><div class="ct">Evening</div><div class="cs">Reflect on the day. Log what happened.</div></div><div style="font-size:14px;color:#888">9:00 PM</div></div></div>
+    <div class="sub" style="text-align:center">All times adjustable in settings</div>
+  </div>
+  <div class="ftr"><button class="pbtn" onclick="go('shome')">Let's go</button></div>
+</div>
+
+<!-- HOME -->
+<div id="shome" class="screen">
+  <div class="hdr">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div><div class="app-name">Control</div><div style="font-size:17px;font-weight:700;color:#111">Good morning</div></div>
+      <div style="text-align:right"><div style="font-size:11px;color:#999;text-transform:uppercase;letter-spacing:0.06em;font-weight:600">Streak</div><div style="font-size:24px;font-weight:700;color:#111">7 days</div></div>
+    </div>
+  </div>
+  <div class="bod">
+    <div class="gpc">
+      <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Toward your goal</div>
+      <div style="font-size:13px;color:#666;margin-bottom:4px" id="hlabel">Pay off my Visa</div>
+      <div class="ga">$340</div>
+      <div class="gctx">saved in 7 days. $1,160 to go on a $1,500 goal.</div>
+      <div class="pt"><div class="pf" style="width:23%"></div></div>
+      <div style="display:flex;justify-content:space-between;margin-top:5px"><div style="font-size:11px;color:#bbb">$0</div><div style="font-size:11px;color:#bbb">$1,500</div></div>
+      <div style="font-size:12px;color:#bbb;margin-top:6px">At this rate goal reached in about 37 days</div>
+    </div>
+    <div class="sg">
+      <div class="sc"><div class="sn">7</div><div class="sl">days in control</div></div>
+      <div class="sc"><div class="sn">4</div><div class="sl">urges managed</div></div>
+    </div>
+    <div class="slab">Today</div>
+    <div class="card tap row" onclick="go('sci')"><div><div class="ct">Morning check-in</div><div class="cs">Set your intention. Takes 2 minutes.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="slab">Tools</div>
+    <div class="card tap row" onclick="go('srn')"><div><div class="ct">Right Now</div><div class="cs">Open this before you open a betting app</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="card tap row" onclick="go('senv')"><div><div class="ct">Block the path</div><div class="cs">Remove access. Make betting harder to reach.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="card tap row" onclick="go('ssk')"><div><div class="ct">Build skills</div><div class="cs">CBT, mindfulness, and motivation tools</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+  </div>
+  <div class="tabs">
+    <button class="tab on" onclick="sw('shome',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/></svg><span class="tl">Home</span></button>
+    <button class="tab" onclick="sw('sci',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span class="tl">Check in</span></button>
+    <button class="tab" onclick="sw('srn',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg><span class="tl">Right Now</span></button>
+    <button class="tab" onclick="sw('sprog',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="tl">Progress</span></button>
+  </div>
+</div>
+
+<!-- CHECK-IN -->
+<div id="sci" class="screen">
+  <div class="hdr-plain">
+    <button class="bk" onclick="go('shome')">← Back</button>
+    <div class="h2">Morning check-in</div>
+    <div class="sub">Honest answers only.</div>
+  </div>
+  <div class="bod">
+    <div class="cidots"><div class="cid on"></div><div class="cid"></div><div class="cid"></div><div class="cid"></div><div class="cid"></div></div>
+    <div class="csec">
+      <div class="ql">How are you feeling right now?</div>
+      <div class="mrow">
+        <button class="mbtn" onclick="sm(this)">Really rough</button>
+        <button class="mbtn" onclick="sm(this)">A bit low</button>
+        <button class="mbtn" onclick="sm(this)">OK, getting by</button>
+        <button class="mbtn" onclick="sm(this)">Pretty good</button>
+      </div>
+      <div class="qh" style="margin:0">What's behind that feeling?</div>
+      <textarea style="min-height:56px" placeholder="Bad sleep, work stress, feeling flat..."></textarea>
+    </div>
+    <div class="csec">
+      <div class="ql">Urge intensity right now</div>
+      <div class="slider-wrap">
+        <div class="slider-label"><span class="slider-name">How strong is it?</span><span class="slider-val" id="urge-val">0</span></div>
+        <input type="range" min="0" max="10" value="0" step="1" oninput="document.getElementById('urge-val').textContent=this.value">
+        <div style="display:flex;justify-content:space-between;margin-top:4px"><span style="font-size:11px;color:#bbb">None</span><span style="font-size:11px;color:#bbb">Overwhelming</span></div>
+      </div>
+      <div class="qh" style="margin:0">What triggered it since last check-in?</div>
+      <div class="tags">
+        <div class="tag" onclick="tt(this)">Saw an ad</div>
+        <div class="tag" onclick="tt(this)">Game on tonight</div>
+        <div class="tag" onclick="tt(this)">Bored</div>
+        <div class="tag" onclick="tt(this)">Stressed</div>
+        <div class="tag" onclick="tt(this)">Lonely</div>
+        <div class="tag" onclick="tt(this)">Had a drink</div>
+        <div class="tag" onclick="tt(this)">Got paid</div>
+        <div class="tag" onclick="tt(this)">Argument</div>
+        <div class="tag" onclick="tt(this)">Feeling hopeless</div>
+      </div>
+    </div>
+    <div class="csec">
+      <div class="ql">Your intention today</div>
+      <div class="qh" style="margin:0">Write it like you mean it. This becomes your commitment for the day.</div>
+      <textarea placeholder="I am not opening any betting apps today. If the urge hits I open Control instead."></textarea>
+    </div>
+    <div class="csec">
+      <div class="ql">High risk moments coming up?</div>
+      <div class="tags">
+        <div class="tag" onclick="tt(this)">Big game tonight</div>
+        <div class="tag" onclick="tt(this)">Payday</div>
+        <div class="tag" onclick="tt(this)">Going out</div>
+        <div class="tag" onclick="tt(this)">Stressful day ahead</div>
+        <div class="tag" onclick="tt(this)">Alone tonight</div>
+        <div class="tag" onclick="tt(this)">Regular day</div>
+      </div>
+    </div>
+    <div class="csec">
+      <div class="ql">What would make today a win?</div>
+      <div class="qh" style="margin:0">Doesn't have to be about gambling.</div>
+      <textarea style="min-height:56px" placeholder="Get through the game without opening DraftKings."></textarea>
+    </div>
+  </div>
+  <div class="ftr"><button class="pbtn" onclick="go('sabc')">Save and continue</button></div>
+</div>
+
+<!-- ABC FORM (triggers after logging a slip) -->
+<div id="sabc" class="screen">
+  <div class="hdr-plain">
+    <button class="bk" onclick="go('sci')">← Back</button>
+    <div class="h2">What happened?</div>
+    <div class="sub">This helps you see the pattern. Three quick parts.</div>
+  </div>
+  <div class="bod">
+    <div class="abc-section">
+      <div class="abc-header"><div class="abc-letter">A</div><div><div style="font-size:14px;font-weight:600;color:#111">Antecedent</div><div style="font-size:12px;color:#666">What happened right before?</div></div></div>
+      <div class="abc-body"><textarea style="min-height:64px" placeholder="Got paid, had an argument, felt bored, saw a betting ad, drove past the casino..."></textarea></div>
+    </div>
+    <div class="abc-section">
+      <div class="abc-header"><div class="abc-letter">B</div><div><div style="font-size:14px;font-weight:600;color:#111">Behavior</div><div style="font-size:12px;color:#666">What exactly did you do?</div></div></div>
+      <div class="abc-body"><textarea style="min-height:64px" placeholder="Where did you go, what did you bet on, how long, roughly how much?"></textarea></div>
+    </div>
+    <div class="abc-section">
+      <div class="abc-header"><div class="abc-letter">C</div><div><div style="font-size:14px;font-weight:600;color:#111">Consequences</div><div style="font-size:12px;color:#666">What happened after?</div></div></div>
+      <div class="abc-body">
+        <div class="qh">Right after (short-term)</div>
+        <textarea style="min-height:56px" placeholder="Excitement, relief, escape... what did it give you in the moment?"></textarea>
+        <div class="qh" style="margin-top:10px">Later (long-term)</div>
+        <textarea style="min-height:56px" placeholder="Guilt, shame, financial stress, hiding it from someone..."></textarea>
+      </div>
+    </div>
+    <div class="sfty">Seeing this pattern clearly is where change starts. You're not being judged. You're building awareness.</div>
+  </div>
+  <div class="ftr"><button class="pbtn" onclick="go('shome')">Save and finish</button></div>
+</div>
+
+<!-- RIGHT NOW -->
+<div id="srn" class="screen">
+  <div class="hdr-plain">
+    <button class="bk" onclick="go('shome')">← Back</button>
+    <div class="h2">Right Now</div>
+    <div class="sub">Pick what works for you. No right answer here.</div>
+  </div>
+  <div class="bod">
+    <div class="slab">Redirect your brain</div>
+    <div class="lane" onclick="go('ssp')">
+      <div class="lic"><svg width="22" height="22" fill="none" stroke="#111" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3c3 3 3 6 0 9s-3 6 0 9M3 12h18"/></svg></div>
+      <div style="flex:1"><div class="lt">Sports trivia</div><div class="ls">Quick fire questions on your sport. Grabs your brain for 5 minutes.</div></div>
+      <div style="font-size:20px;color:#ccc">›</div>
+    </div>
+    <div class="lane" onclick="go('sgrid')">
+      <div class="lic"><svg width="22" height="22" fill="none" stroke="#111" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+      <div style="flex:1"><div class="lt">Player grid challenge</div><div class="ls">Name players who fit both categories. Genuinely hard.</div></div>
+      <div style="font-size:20px;color:#ccc">›</div>
+    </div>
+    <div class="slab">Work through it</div>
+    <div class="card tap row" onclick="go('scbt')"><div><div class="ct">Challenge the thought</div><div class="cs">CBT. Find the flaw in what you're telling yourself.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="card tap row" onclick="go('sus')"><div><div class="ct">Urge surfing</div><div class="cs">Ride the craving without acting on it. 3 minutes.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="card tap row" onclick="go('ssober')"><div><div class="ct">SOBER breathing space</div><div class="cs">A 90 second pause that breaks the automatic reaction.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="card tap row" onclick="go('smi')"><div><div class="ct">What's underneath this?</div><div class="cs">Motivational. Understand what's really going on.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="slab">Your game plan</div>
+    <div class="ifthen-card tap" onclick="go('splan')" style="cursor:pointer">
+      <div class="if-label">Your if-then plans</div>
+      <div style="font-size:14px;color:#666;margin-top:4px">Tap to see the specific plans you set up. Use one now.</div>
+    </div>
+    <div class="sfty">24/7 support. Call or text <strong style="color:#111">1-800-GAMBLER</strong>. Crisis line <strong style="color:#111">988</strong>.</div>
+  </div>
+</div>
+
+<!-- SOBER BREATHING -->
+<div id="ssober" class="screen">
+  <div class="hdr-plain">
+    <button class="bk" onclick="go('srn')">← Back</button>
+    <div class="h2">SOBER space</div>
+    <div class="sub">90 seconds. Breaks the automatic reaction before it takes over.</div>
+  </div>
+  <div class="bod" style="justify-content:center;gap:14px">
+    <div class="sober-step" id="sober-display">
+      <div class="sober-letter" id="sober-letter">S</div>
+      <div class="sober-word" id="sober-word">Stop</div>
+      <div class="sober-desc" id="sober-desc">Whatever you're doing right now. Just pause. Put the phone down if you need to. You are making a deliberate choice to stop for a moment.</div>
+      <div class="sober-timer" id="sober-timer">0:18</div>
+      <div class="sober-hint">Tap next when ready</div>
+    </div>
+    <div style="display:flex;gap:6px;justify-content:center" id="sober-dots">
+      <div style="width:8px;height:8px;border-radius:50%;background:#111"></div>
+      <div style="width:8px;height:8px;border-radius:50%;background:#E0DDD8"></div>
+      <div style="width:8px;height:8px;border-radius:50%;background:#E0DDD8"></div>
+      <div style="width:8px;height:8px;border-radius:50%;background:#E0DDD8"></div>
+      <div style="width:8px;height:8px;border-radius:50%;background:#E0DDD8"></div>
+    </div>
+  </div>
+  <div class="ftr">
+    <button class="pbtn" id="sober-btn" onclick="soberNext()">Next step</button>
+  </div>
+</div>
+
+<!-- IF-THEN PLANS VIEW -->
+<div id="splan" class="screen">
+  <div class="hdr-plain">
+    <button class="bk" onclick="go('srn')">← Back</button>
+    <div class="h2">Your game plan</div>
+    <div class="sub">These are the plans you wrote. Pick one and use it right now.</div>
+  </div>
+  <div class="bod">
+    <div class="ifthen-card"><div class="ifthen-row"><div class="if-badge">IF</div><div style="font-size:14px;color:#111;padding-top:6px">I get paid or have cash available</div></div><div class="ifthen-row" style="margin-bottom:0"><div class="if-badge" style="background:#111;color:#fff">THEN</div><div style="font-size:14px;color:#111;padding-top:6px">I immediately transfer 80% to savings I don't check daily</div></div></div>
+    <div class="ifthen-card"><div class="ifthen-row"><div class="if-badge">IF</div><div style="font-size:14px;color:#111;padding-top:6px">I feel the urge to open a betting app</div></div><div class="ifthen-row" style="margin-bottom:0"><div class="if-badge" style="background:#111;color:#fff">THEN</div><div style="font-size:14px;color:#111;padding-top:6px">I open Control instead and use Right Now for 5 minutes first</div></div></div>
+    <div class="ifthen-card"><div class="ifthen-row"><div class="if-badge">IF</div><div style="font-size:14px;color:#111;padding-top:6px">A big game is on and I feel the pull</div></div><div class="ifthen-row" style="margin-bottom:0"><div class="if-badge" style="background:#111;color:#fff">THEN</div><div style="font-size:14px;color:#111;padding-top:6px">I text my support person before I do anything else</div></div></div>
+    <div class="sfty">These plans work because you wrote them before the moment arrived. Your future self made this decision already.</div>
+  </div>
+  <div class="ftr"><button class="pbtn" onclick="go('srn')">Got it. I'm using one.</button></div>
+</div>
+
+<!-- CBT THOUGHT CHALLENGE -->
+<div id="scbt" class="screen">
+  <div class="hdr-plain"><button class="bk" onclick="go('srn')">← Back</button><div class="h2">Challenge the thought</div><div class="sub">CBT technique. Takes about 3 minutes.</div></div>
+  <div class="bod" style="gap:14px">
+    <div class="csec">
+      <div class="ql">What are you telling yourself right now?</div>
+      <div class="qh" style="margin:0">Write the actual thought. Be specific.</div>
+      <textarea placeholder="I just need one win to get back what I lost..."></textarea>
+      <div class="qh" style="margin:0">Urge intensity right now (0 to 10)</div>
+      <div class="slider-wrap"><div class="slider-label"><span class="slider-name">Before challenging it</span><span class="slider-val" id="cbt-before">5</span></div><input type="range" min="0" max="10" value="5" step="1" oninput="document.getElementById('cbt-before').textContent=this.value"></div>
+    </div>
+    <div class="csec">
+      <div class="ql">What's wrong with that thinking?</div>
+      <div class="qh" style="margin:0">Each bet is independent. Past losses don't change the odds. The house edge doesn't care about your feelings.</div>
+      <textarea placeholder="What would the rational version of you say back?"></textarea>
+    </div>
+    <div class="csec">
+      <div class="ql">What would you tell a friend saying this?</div>
+      <textarea placeholder="I'd tell them chasing never works. The math doesn't change..."></textarea>
+    </div>
+    <div class="csec">
+      <div class="ql">What are you actually feeling underneath this?</div>
+      <div class="qh" style="margin:0">Boredom? Stress? Loneliness? The urge is usually covering something else.</div>
+      <textarea placeholder="Be honest with yourself here..."></textarea>
+      <div class="qh" style="margin:0">Urge intensity now (0 to 10)</div>
+      <div class="slider-wrap"><div class="slider-label"><span class="slider-name">After challenging it</span><span class="slider-val" id="cbt-after">5</span></div><input type="range" min="0" max="10" value="5" step="1" oninput="document.getElementById('cbt-after').textContent=this.value"></div>
+    </div>
+  </div>
+  <div class="ftr"><button class="pbtn" onclick="go('srn')">Done. That helped.</button></div>
+</div>
+
+<!-- URGE SURFING -->
+<div id="sus" class="screen">
+  <div class="hdr-plain"><button class="bk" onclick="go('srn')">← Back</button><div class="h2">Urge surfing</div><div class="sub">Observe it without acting on it.</div></div>
+  <div class="bod" style="gap:11px">
+    <div class="card"><div class="ct" style="margin-bottom:6px">Step 1. Locate it.</div><div class="cs" style="font-size:14px;line-height:1.6">Where do you feel the urge in your body? Chest, stomach, hands? Just notice where it lives. Don't push it away.</div></div>
+    <div class="card"><div class="ct" style="margin-bottom:6px">Step 2. Describe it.</div><div class="cs" style="font-size:14px;line-height:1.6">Tight? Buzzing? Heavy? Give it a shape and texture. The moment you describe it you are observing it, not controlled by it.</div></div>
+    <div class="card"><div class="ct" style="margin-bottom:6px">Step 3. Ride the wave.</div><div class="cs" style="font-size:14px;line-height:1.6">Urges always peak and fade like a wave. You are not fighting it. You are surfing it. Keep breathing. It will pass.</div></div>
+    <div class="card"><div class="ct" style="margin-bottom:6px">Step 4. Notice you survived it.</div><div class="cs" style="font-size:14px;line-height:1.6">When it fades and it will, notice that you didn't act on it. That is the skill. You just did it.</div></div>
+  </div>
+  <div class="ftr"><button class="pbtn" onclick="go('srn')">I got through it</button><button class="sbtn" onclick="go('srn')">Try something else</button></div>
+</div>
+
+<!-- MI -->
+<div id="smi" class="screen">
+  <div class="hdr-plain"><button class="bk" onclick="go('srn')">← Back</button><div class="h2">What's underneath this?</div><div class="sub">Understanding the real reason helps more than willpower.</div></div>
+  <div class="bod" style="gap:14px">
+    <div><div class="ql">What's actually going on right now?</div><textarea placeholder="Stressed? Argument? Bored? Just had a bad day?"></textarea></div>
+    <div><div class="ql">What does betting give you in this moment?</div><div class="qh">Excitement? Escape? Control? Something to focus on?</div><textarea placeholder="Be honest. This is just for you."></textarea></div>
+    <div><div class="ql">Is there anything else that could give you that right now?</div><textarea placeholder="Call someone, go somewhere, do something physical..."></textarea></div>
+  </div>
+  <div class="ftr"><button class="pbtn" onclick="go('srn')">Saved. I feel clearer.</button></div>
+</div>
+
+<!-- ENVIRONMENT / BLOCK THE PATH -->
+<div id="senv" class="screen">
+  <div class="hdr-plain"><button class="bk" onclick="go('shome')">← Back</button><div class="h2">Block the path</div><div class="sub">Make betting harder to reach. Willpower works best when you don't need it.</div></div>
+  <div class="bod">
+    <div class="slab">Your setup checklist</div>
+    <div class="checklist-item" onclick="toggleCheck(this)" id="cl0">
+      <div class="check-circle"></div>
+      <div class="check-text"><div class="check-title">Delete all betting apps from your phone</div><div class="check-sub">The friction of reinstalling is enough to stop most impulses</div></div>
+    </div>
+    <div class="checklist-item" onclick="toggleCheck(this)" id="cl1">
+      <div class="check-circle"></div>
+      <div class="check-text"><div class="check-title">Install a blocking tool</div><div class="check-sub">Gamban or BetBlocker block betting sites across all your devices. Both are free.</div></div>
+    </div>
+    <div class="checklist-item" onclick="toggleCheck(this)" id="cl2">
+      <div class="check-circle"></div>
+      <div class="check-text"><div class="check-title">Activate your bank's gambling block</div><div class="check-sub">Most major banks offer this in settings. Takes 2 minutes. Blocks gambling transactions at the source.</div></div>
+    </div>
+    <div class="checklist-item" onclick="toggleCheck(this)" id="cl3">
+      <div class="check-circle"></div>
+      <div class="check-text"><div class="check-title">Self-exclude from online platforms</div><div class="check-sub">GAMSTOP covers all UK licensed sites. US programs vary by state. This is a formal commitment.</div></div>
+    </div>
+    <div class="checklist-item" onclick="toggleCheck(this)" id="cl4">
+      <div class="check-circle"></div>
+      <div class="check-text"><div class="check-title">Switch to cash only or give someone account access</div><div class="check-sub">Removing easy digital access to funds is one of the most effective early steps</div></div>
+    </div>
+    <div class="checklist-item" onclick="toggleCheck(this)" id="cl5">
+      <div class="check-circle"></div>
+      <div class="check-text"><div class="check-title">Unsubscribe from all gambling marketing</div><div class="check-sub">Promotional emails and texts are engineered triggers. Remove them from your environment entirely.</div></div>
+    </div>
+    <div id="cl-progress" class="sfty" style="text-align:center">0 of 6 steps done</div>
+    <div class="slab">Schedule something for your high risk windows</div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:6px">Your highest risk times</div>
+      <div class="cs" style="font-size:13px;line-height:1.6">Based on your check-ins your riskiest windows are Friday nights, Sunday mornings during games, and right after payday. Pre-schedule something for each of these before they arrive.</div>
+    </div>
+    <div><div class="qh">What will you do this Friday night instead?</div><textarea style="min-height:52px" placeholder="Call a friend, go to the gym, watch something, cook something..."></textarea></div>
+  </div>
+</div>
+
+<!-- SKILLS -->
+<div id="ssk" class="screen">
+  <div class="hdr-plain"><button class="bk" onclick="go('shome')">← Back</button><div class="h2">Build skills</div><div class="sub">Short modules. Based on real psychology. Do one when you have 10 minutes.</div></div>
+  <div class="bod">
+    <div class="slab">Understand yourself</div>
+    <div class="card tap row"><div><div class="ct">Why do I keep doing this?</div><div class="cs">Motivational. 8 minutes.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="card tap row"><div><div class="ct">Know your triggers</div><div class="cs">CBT. 10 minutes.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="slab">Change your thinking</div>
+    <div class="card tap row" onclick="go('scoin')"><div><div class="ct">Why the math is always against you</div><div class="cs">Interactive. See it for yourself. 6 minutes.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="card tap row"><div><div class="ct">Chasing losses. Why it never works.</div><div class="cs">CBT. 7 minutes.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="slab">Mindfulness</div>
+    <div class="card tap row" onclick="go('sus')"><div><div class="ct">Urge surfing. The full practice.</div><div class="cs">Mindfulness. 12 minutes.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="card tap row"><div><div class="ct">What actually matters to you?</div><div class="cs">ACT values. 10 minutes.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="slab">When things get hard</div>
+    <div class="card tap row"><div><div class="ct">A slip is not a failure</div><div class="cs">Relapse prevention. 5 minutes.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="card tap row"><div><div class="ct">Build your risk map</div><div class="cs">Your top 5 situations with planned responses.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+  </div>
+</div>
+
+<!-- COIN FLIP / RANDOMNESS MODULE -->
+<div id="scoin" class="screen">
+  <div class="hdr-plain"><button class="bk" onclick="go('ssk')">← Back</button><div class="h2">Why the math is always against you</div><div class="sub">Interactive. See it for yourself.</div></div>
+  <div class="bod" style="gap:14px">
+    <div class="card">
+      <div class="ct" style="margin-bottom:8px">The gambler's fallacy</div>
+      <div class="cs" style="font-size:14px;line-height:1.7">Your brain is wired to find patterns. When you see heads, heads, heads, heads — your gut says tails is due. It is not. Each flip is completely independent of the last. The coin has no memory. Neither does a slot machine, a roulette wheel, or a betting market.</div>
+    </div>
+    <div class="card">
+      <div class="coin-wrap">
+        <div class="coin" id="coin">?</div>
+        <button onclick="flipCoin()" style="padding:12px 24px;background:#111;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">Flip the coin</button>
+        <div class="streak-display" id="flip-result">Tap to flip. Watch what happens over time.</div>
+        <div style="margin-top:10px;display:flex;justify-content:center;gap:16px">
+          <div style="text-align:center"><div style="font-size:22px;font-weight:700;color:#111" id="heads-count">0</div><div style="font-size:12px;color:#666">Heads</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:700;color:#111" id="tails-count">0</div><div style="font-size:12px;color:#666">Tails</div></div>
+          <div style="text-align:center"><div style="font-size:22px;font-weight:700;color:#111" id="streak-count">0</div><div style="font-size:12px;color:#666">Current streak</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:8px">The house edge</div>
+      <div class="cs" style="font-size:14px;line-height:1.7">Every game is mathematically designed so the house keeps a percentage over time. American roulette has a 5.26% house edge. Slot machines average 5 to 15%. Sports books keep 4 to 8% on every dollar wagered. No system beats this long-term. The longer you play the more certain your loss becomes.</div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:8px">Why occasional wins feel so powerful</div>
+      <div class="cs" style="font-size:14px;line-height:1.7">Unpredictable occasional rewards are the most powerful behavioral trap in psychology. It's the same mechanism that makes social media addictive. Gambling is engineered around this. The wins are real. The system is designed so losses outpace them over time.</div>
+    </div>
+  </div>
+  <div class="ftr"><button class="pbtn" onclick="go('ssk')">Got it. Back to skills.</button></div>
+</div>
+
+<!-- SPORT PICKER -->
+<div id="ssp" class="screen">
+  <div class="hdr-plain"><button class="bk" onclick="go('srn')">← Back</button><div class="h2">Pick your sport</div><div class="sub">We'll load questions just for you.</div></div>
+  <div class="bod"><div class="tags"><div class="pill" onclick="sp(this,'nfl')">NFL</div><div class="pill" onclick="sp(this,'nba')">NBA</div><div class="pill" onclick="sp(this,'mlb')">MLB</div><div class="pill" onclick="sp(this,'nhl')">NHL</div><div class="pill" onclick="sp(this,'soccer')">Soccer</div><div class="pill" onclick="sp(this,'cfb')">College Football</div><div class="pill" onclick="sp(this,'cbb')">College Basketball</div><div class="pill" onclick="sp(this,'golf')">Golf</div><div class="pill" onclick="sp(this,'mma')">MMA</div><div class="pill" onclick="sp(this,'tennis')">Tennis</div></div></div>
+  <div class="ftr"><button class="pbtn" onclick="startT()">Let's go</button></div>
+</div>
+
+<!-- TRIVIA -->
+<div id="striv" class="screen">
+  <div class="hdr-plain">
+    <button class="bk" onclick="go('ssp')">← Back</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div class="sbadge" id="sbadge">0 / 5</div><div class="pdots" id="pdots"></div></div>
+    <div class="tcat" id="tcat"></div>
+  </div>
+  <div class="bod" style="gap:10px">
+    <div class="card"><div class="tq" id="tq">Loading...</div></div>
+    <div id="ac"></div>
+    <div id="tfb" style="display:none;background:#F2F0EB;border-radius:10px;padding:12px 14px;font-size:14px;font-weight:600"></div>
+  </div>
+  <div class="ftr" id="tftr" style="display:none"><button class="pbtn" id="tnxt" onclick="nextQ()">Next question</button></div>
+</div>
+
+<!-- RESULT -->
+<div id="sres" class="screen">
+  <div class="hdr-plain"><div class="h2">Round complete</div></div>
+  <div class="bod" style="align-items:center;justify-content:center;gap:16px">
+    <div><div class="rn" id="rsc">4/5</div><div class="rl" id="rlbl">Solid sports knowledge</div></div>
+    <div style="width:100%;background:#F2F0EB;border-radius:12px;padding:14px"><div style="font-size:15px;font-weight:600;color:#111;margin-bottom:3px">7 day streak. Still going.</div><div style="font-size:13px;color:#666">You haven't bet in 7 days.</div></div>
+    <div class="card" style="width:100%"><div class="ct" style="margin-bottom:5px">Urge check</div><div class="cs" style="font-size:13px;line-height:1.6">How's that feeling now? Most urges pass in under 10 minutes. You just used 5 of them.</div></div>
+  </div>
+  <div class="ftr"><button class="pbtn" onclick="startT()">Play another round</button><button class="sbtn" onclick="go('srn')">I'm good. Back to tools.</button></div>
+</div>
+
+<!-- PLAYER GRID -->
+<div id="sgrid" class="screen">
+  <div class="hdr-plain">
+    <button class="bk" onclick="go('srn')">← Back</button>
+    <div style="display:flex;align-items:center;justify-content:space-between"><div class="h2">Player grid</div><div class="sbadge" id="gscore">0 / 9</div></div>
+    <div class="sub">Name a player who fits both the row and column. No repeats.</div>
+  </div>
+  <div class="bod" style="gap:12px">
+    <div class="gcont">
+      <div class="ghdr"></div><div class="ghdr">Patriots</div><div class="ghdr">Cowboys</div><div class="ghdr">49ers</div>
+      <div class="grl">Pro Bowl</div><div class="gcell" onclick="oc(this,0,0)">Tap</div><div class="gcell" onclick="oc(this,0,1)">Tap</div><div class="gcell" onclick="oc(this,0,2)">Tap</div>
+      <div class="grl">Super Bowl</div><div class="gcell" onclick="oc(this,1,0)">Tap</div><div class="gcell" onclick="oc(this,1,1)">Tap</div><div class="gcell" onclick="oc(this,1,2)">Tap</div>
+      <div class="grl">1000+ rush</div><div class="gcell" onclick="oc(this,2,0)">Tap</div><div class="gcell" onclick="oc(this,2,1)">Tap</div><div class="gcell" onclick="oc(this,2,2)">Tap</div>
+    </div>
+    <div id="ginput" style="display:none" class="card">
+      <div class="ql" style="font-size:13px" id="gprompt">Name a player:</div>
+      <input class="ti" id="gai" placeholder="Player name..." style="margin-top:8px"/>
+      <div class="tags" style="margin-top:10px" id="gsugg"></div>
+      <div style="font-size:12px;color:#999;margin-top:7px" id="ghint"></div>
+      <div style="display:flex;gap:8px;margin-top:12px"><button class="pbtn" style="flex:1" onclick="subG()">Submit</button><button style="flex:0 0 80px;padding:13px;background:transparent;color:#111;border:1px solid rgba(0,0,0,0.18);border-radius:14px;font-size:14px;cursor:pointer;font-family:inherit" onclick="cgrid()">Cancel</button></div>
+    </div>
+    <div class="sfty"><strong style="color:#111">How to play.</strong> Each cell needs a player who played for that team AND fits the row. No player used twice.</div>
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div id="sprog" class="screen">
+  <div class="hdr"><div class="app-name">Control</div><div class="h2">Your progress</div></div>
+  <div class="bod">
+    <div class="gpc">
+      <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Goal progress</div>
+      <div style="font-size:13px;color:#666;margin-bottom:5px">Pay off my Visa</div>
+      <div class="ga">$340</div>
+      <div class="gctx">saved in 7 days. 23% of your $1,500 goal.</div>
+      <div class="pt" style="margin-top:12px"><div class="pf" style="width:23%"></div></div>
+      <div style="font-size:12px;color:#bbb;margin-top:7px">At this rate goal reached in about 37 days</div>
+    </div>
+    <div class="sg">
+      <div class="sc"><div class="sn">7</div><div class="sl">day streak</div></div>
+      <div class="sc"><div class="sn">18</div><div class="sl">check-ins done</div></div>
+    </div>
+    <div class="sg">
+      <div class="sc"><div class="sn">4</div><div class="sl">urges managed</div></div>
+      <div class="sc"><div class="sn">3</div><div class="sl">skills completed</div></div>
+    </div>
+    <div class="slab">Motivation check</div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div><div class="ct">Importance score</div><div class="cs">How much this matters to you</div></div>
+        <div style="font-size:28px;font-weight:700;color:#111">8</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><div class="ct">Confidence score</div><div class="cs">How capable you feel</div></div>
+        <div style="font-size:28px;font-weight:700;color:#111">6</div>
+      </div>
+    </div>
+    <div class="slab">This week</div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:9px"><div class="ct">Bet-free days</div><div style="font-size:14px;color:#888">7 of 7</div></div>
+      <div class="ddays"><div class="dd on"></div><div class="dd on"></div><div class="dd on"></div><div class="dd on"></div><div class="dd on"></div><div class="dd on"></div><div class="dd on"></div></div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:6px">How you've been feeling</div>
+      <div class="cs" style="font-size:14px;line-height:1.6">Mood trending up. Pretty good or better in 5 of 7 morning check-ins. Most common trigger this week: game nights.</div>
+    </div>
+    <div class="sfty" style="text-align:center">If you ever need immediate support: <strong style="color:#111">1-800-GAMBLER</strong> and <strong style="color:#111">988</strong></div>
+  </div>
+  <div class="tabs">
+    <button class="tab" onclick="sw('shome',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/></svg><span class="tl">Home</span></button>
+    <button class="tab" onclick="sw('sci',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span class="tl">Check in</span></button>
+    <button class="tab" onclick="sw('srn',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg><span class="tl">Right Now</span></button>
+    <button class="tab on" onclick="sw('sprog',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="tl">Progress</span></button>
+  </div>
+</div>
+
+</div>
+<script>
+var qs={nfl:[{q:"Which QB holds the NFL all-time passing TD record?",cat:"NFL Records",a:["Tom Brady","Peyton Manning","Brett Favre","Drew Brees"],c:3},{q:"How many Super Bowls did the Patriots win with Brady?",cat:"NFL History",a:["4","5","6","7"],c:2},{q:"Who rushed for 2,105 yards in a single season in 1984?",cat:"NFL Records",a:["Barry Sanders","Adrian Peterson","Eric Dickerson","Earl Campbell"],c:2},{q:"Which team has won the most Super Bowls?",cat:"NFL History",a:["Dallas Cowboys","San Francisco 49ers","New England Patriots","Pittsburgh Steelers"],c:3},{q:"Who holds the record for most career rushing yards?",cat:"NFL Records",a:["Walter Payton","Barry Sanders","Emmitt Smith","LaDainian Tomlinson"],c:2}],nba:[{q:"Who holds the NBA record for most career points?",cat:"NBA Records",a:["Michael Jordan","Kareem Abdul-Jabbar","LeBron James","Kobe Bryant"],c:2},{q:"What is the most points scored by one player in one NBA game?",cat:"NBA Records",a:["81 — Kobe Bryant","100 — Wilt Chamberlain","73 — David Thompson","69 — MJ"],c:1},{q:"Which player was nicknamed The Mailman?",cat:"NBA Legends",a:["Charles Barkley","Karl Malone","Patrick Ewing","Scottie Pippen"],c:1}],mlb:[{q:"Who holds the all-time MLB home run record?",cat:"MLB Records",a:["Babe Ruth","Hank Aaron","Barry Bonds","Willie Mays"],c:2},{q:"What is the longest hitting streak in MLB history?",cat:"MLB Records",a:["56 games — Joe DiMaggio","44 games — Willie Keeler","61 games — Pete Rose","49 games — Ted Williams"],c:0}],nhl:[{q:"Who is known as The Great One?",cat:"NHL Legends",a:["Mario Lemieux","Bobby Orr","Wayne Gretzky","Gordie Howe"],c:2},{q:"Which team has won the most Stanley Cups?",cat:"NHL History",a:["Toronto Maple Leafs","Detroit Red Wings","Montreal Canadiens","Boston Bruins"],c:2}],soccer:[{q:"Who has won the most Ballon d'Or awards?",cat:"Soccer Records",a:["Cristiano Ronaldo","Zinedine Zidane","Ronaldinho","Lionel Messi"],c:3},{q:"Which country has won the most FIFA World Cups?",cat:"World Cup",a:["Germany","Argentina","Italy","Brazil"],c:3}],cfb:[{q:"Which school has the most college football national championships?",cat:"College Football",a:["Ohio State","Notre Dame","Alabama","Michigan"],c:2}],cbb:[{q:"Which school has won the most NCAA basketball championships?",cat:"College Basketball",a:["Duke","North Carolina","Kentucky","UCLA"],c:3}],golf:[{q:"Who holds the record for most major golf championships?",cat:"Golf Records",a:["Arnold Palmer","Tiger Woods","Jack Nicklaus","Sam Snead"],c:2}],mma:[{q:"Who became the first two-division UFC champion simultaneously?",cat:"MMA History",a:["Jon Jones","Khabib Nurmagomedov","Conor McGregor","Daniel Cormier"],c:2}],tennis:[{q:"Who holds the record for most Grand Slam singles titles among men?",cat:"Tennis Records",a:["Rafael Nadal","Roger Federer","Novak Djokovic","Pete Sampras"],c:2}]};
+var fb=[{q:"Which athlete has won the most Olympic gold medals?",cat:"Olympics",a:["Usain Bolt","Carl Lewis","Michael Phelps","Mark Spitz"],c:2},{q:"In what year were the first modern Olympic Games held?",cat:"Olympics",a:["1892","1896","1900","1904"],c:1}];
+var csp='nfl',cqi=0,cql=[],sc=0,tot=5,ans=[];
+var ga=[[["Tom Brady","Rob Gronkowski","Julian Edelman"],["Emmitt Smith","Troy Aikman","Michael Irvin"],["Jerry Rice","Joe Montana","Steve Young"]],[["Tom Brady","Rob Gronkowski","Tedy Bruschi"],["Roger Staubach","Emmitt Smith","Tony Dorsett"],["Jerry Rice","Joe Montana","Ronnie Lott"]],[["Corey Dillon","LeGarrette Blount","Stevan Ridley"],["Emmitt Smith","Tony Dorsett","Calvin Hill"],["Frank Gore","Garrison Hearst","Ricky Watters"]]];
+var gf=[[false,false,false],[false,false,false],[false,false,false]],gco=0,ac2=null;
+var gh=[["Pro Bowl + Patriots","Pro Bowl + Cowboys","Pro Bowl + 49ers"],["Super Bowl winner + Patriots","Super Bowl winner + Cowboys","Super Bowl winner + 49ers"],["1000+ rush yards + Patriots","1000+ rush yards + Cowboys","1000+ rush yards + 49ers"]];
+var clDone=[false,false,false,false,false,false];
+var soberSteps=[{l:'S',w:'Stop',d:'Whatever you are doing right now. Just pause. You are making a deliberate choice to stop for one moment.',t:18},{l:'O',w:'Observe',d:'What is here right now? Thoughts, feelings, body sensations, urges. Just notice them without judging. You do not have to fix anything.',t:18},{l:'B',w:'Breathe',d:'Take one full slow breath. Put all your attention on the feeling of the air moving in and out. Just one breath.',t:18},{l:'E',w:'Expand',d:'Widen your awareness to your whole body and the room around you. Notice what you can see, hear, feel. You are here.',t:18},{l:'R',w:'Respond',d:'What would you do right now if you were making a deliberate choice instead of reacting automatically? That is what you do next.',t:18}];
+var soberIdx=0;
+var headsC=0,tailsC=0,streak=0,lastFlip='';
+
+function go(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});var e=document.getElementById(id);if(e)e.classList.add('active');window.scrollTo(0,0)}
+function sw(id,btn){go(id);document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on')});if(btn)btn.classList.add('on')}
+function tm(el){el.classList.toggle('sel')}
+function tt(el){el.classList.toggle('sel')}
+function ts(el){el.parentElement.querySelectorAll('.cc').forEach(function(c){c.classList.remove('sel')});el.classList.add('sel')}
+function sg(el,lbl){document.querySelectorAll('#s3 .cc').forEach(function(c){c.classList.remove('sel')});el.classList.add('sel');var h=document.getElementById('hlabel');if(h)h.textContent=lbl}
+function sm(btn){btn.closest('.mrow').querySelectorAll('.mbtn').forEach(function(b){b.classList.remove('sel')});btn.classList.add('sel')}
+function sp(btn,s){document.querySelectorAll('.pill').forEach(function(p){p.classList.remove('sel')});btn.classList.add('sel');csp=s}
+function shuf(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t}return b}
+function startT(){var pool=(qs[csp]&&qs[csp].length)?qs[csp]:fb;cql=shuf(pool.concat(fb)).slice(0,tot);cqi=0;sc=0;ans=[];go('striv');rq()}
+function rq(){var q=cql[cqi];document.getElementById('tq').textContent=q.q;document.getElementById('tcat').textContent=q.cat;document.getElementById('sbadge').textContent=sc+' / '+tot;var pd=document.getElementById('pdots');pd.innerHTML='';for(var i=0;i<tot;i++){var d=document.createElement('div');d.className='pd'+(i<ans.length?(ans[i]?' ok':' no'):(i===cqi?' cur':''));pd.appendChild(d)}var ac=document.getElementById('ac');ac.innerHTML='';['A','B','C','D'].forEach(function(l,idx){var b=document.createElement('button');b.className='abtn';b.innerHTML='<div class="al">'+l+'</div><span>'+q.a[idx]+'</span>';(function(i,btn){b.onclick=function(){ca(i,q.c,btn,q.a)}})(idx,b);ac.appendChild(b)});document.getElementById('tfb').style.display='none';document.getElementById('tftr').style.display='none'}
+function ca(sel,cor,btn,as){document.getElementById('ac').querySelectorAll('.abtn').forEach(function(b){b.disabled=true});var fb2=document.getElementById('tfb');fb2.style.display='block';if(sel===cor){btn.classList.add('ok');sc++;ans.push(true);fb2.textContent='Correct!';fb2.style.color='#3B6D11'}else{btn.classList.add('no');document.getElementById('ac').querySelectorAll('.abtn')[cor].classList.add('ok');ans.push(false);fb2.textContent='Not quite. '+as[cor]+' is the answer.';fb2.style.color='#C0392B'}document.getElementById('sbadge').textContent=sc+' / '+tot;document.getElementById('tftr').style.display='block';document.getElementById('tnxt').textContent=(cqi>=tot-1)?'See results':'Next question'}
+function nextQ(){cqi++;if(cqi>=tot){var ls=['Keep practicing','Not bad. Room to grow.','Solid sports knowledge','You know your stuff','Absolute legend'];document.getElementById('rsc').textContent=sc+'/'+tot;document.getElementById('rlbl').textContent=ls[Math.min(Math.floor((sc/tot)*4),4)];go('sres')}else rq()}
+function oc(cell,r,c){if(gf[r][c])return;ac2={cell:cell,r:r,c:c};document.getElementById('gprompt').textContent=gh[r][c];document.getElementById('gai').value='';var sg2=document.getElementById('gsugg');sg2.innerHTML='';ga[r][c].slice(0,3).forEach(function(n){var t=document.createElement('div');t.className='tag';t.textContent=n;t.onclick=function(){document.getElementById('gai').value=n};sg2.appendChild(t)});document.getElementById('ginput').style.display='block';setTimeout(function(){document.getElementById('gai').focus()},100)}
+function cgrid(){document.getElementById('ginput').style.display='none';ac2=null}
+function subG(){if(!ac2)return;var v=document.getElementById('gai').value.trim();if(!v)return;var r=ac2.r,c=ac2.c,valid=ga[r][c].map(function(a){return a.toLowerCase()});var ok=valid.some(function(a){var pts=a.split(' ');return v.toLowerCase().includes(pts[pts.length-1])});ac2.cell.textContent=v;ac2.cell.classList.add('gf');ac2.cell.classList.remove('gcell');ac2.cell.classList.add(ok?'gok':'gno');if(ok)gco++;document.getElementById('gscore').textContent=gco+' / 9';cgrid()}
+function toggleCheck(el){var idx=parseInt(el.id.replace('cl',''));clDone[idx]=!clDone[idx];el.classList.toggle('done');var done=clDone.filter(Boolean).length;document.getElementById('cl-progress').textContent=done+' of 6 steps done'}
+function soberNext(){soberIdx++;if(soberIdx>=soberSteps.length){go('srn');soberIdx=0;return}var s=soberSteps[soberIdx];document.getElementById('sober-letter').textContent=s.l;document.getElementById('sober-word').textContent=s.w;document.getElementById('sober-desc').textContent=s.d;var dots=document.getElementById('sober-dots').children;for(var i=0;i<dots.length;i++){dots[i].style.background=i===soberIdx?'#111':'#E0DDD8'}document.getElementById('sober-btn').textContent=soberIdx>=soberSteps.length-1?'I feel calmer. Done.':'Next step'}
+function flipCoin(){var r=Math.random()<0.5;var result=r?'H':'T';var coin=document.getElementById('coin');coin.textContent=r?'H':'T';coin.style.background=r?'#111':'#555';if(result===lastFlip){streak++}else{streak=1}lastFlip=result;if(r){headsC++}else{tailsC++}document.getElementById('heads-count').textContent=headsC;document.getElementById('tails-count').textContent=tailsC;document.getElementById('streak-count').textContent=streak;var msg='';if(streak>=4){msg='A streak of '+streak+'! Your gut says the next one is predictable. It is not. Each flip is 50/50.'}else if(headsC+tailsC>=10){msg='After '+(headsC+tailsC)+' flips: '+headsC+' heads, '+tailsC+' tails. The coin has no memory of previous flips.'}else{msg='Tap again. Watch what your gut starts to predict.'}document.getElementById('flip-result').textContent=msg}
+</script>
+</body>
+</html>
