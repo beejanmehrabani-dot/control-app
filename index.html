@@ -509,10 +509,9 @@
     <div class="card tap row" onclick="openCI('morning')"><div><div class="ct">Morning check-in</div><div class="cs">Set your intention. Takes 2 minutes.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
     <div class="card tap row" onclick="openCI('afternoon')"><div><div class="ct">Afternoon check-in</div><div class="cs">Midday pulse check. How are you doing?</div></div><div style="font-size:20px;color:#ccc">›</div></div>
     <div class="card tap row" onclick="openCI('evening')"><div><div class="ct">Evening check-in</div><div class="cs">Reflect on the day. Be honest.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:-3px">
-      <div class="slab">Know yourself</div>
-    </div>
-    <div class="card tap row" onclick="openKnow()"><div><div class="ct">Know yourself</div><div class="cs">Tap to explore your urge patterns and what helps.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="slab">Tools</div>
+    <div class="card tap row" onclick="sw('stools',document.querySelector('.tab:last-child'))"><div><div class="ct">Tools</div><div class="cs">Block the path, build skills, if-then plans and more.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="card tap row" onclick="openKnow()"><div><div class="ct">Know yourself</div><div class="cs">Explore your urge patterns and what helps.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
     <div style="height:1px;background:rgba(0,0,0,0.06);margin:4px 0"></div>
     <button onclick="logControlMilestone()" style="width:100%;padding:14px;background:transparent;border:1.5px dashed rgba(0,0,0,0.18);border-radius:14px;font-size:14px;color:#888;cursor:pointer;font-family:inherit;text-align:center">I feel in control — I don't think I need this app anymore</button>
   </div>
@@ -537,6 +536,20 @@
   </div>
   <div class="bod">
     <div class="cidots"><div class="cid on"></div><div class="cid"></div><div class="cid"></div><div class="cid"></div><div class="cid"></div></div>
+    <div class="csec" style="border:2px solid #111;border-radius:14px;padding:15px">
+      <div class="ql">Did you place a bet since our last check-in?</div>
+      <div class="mrow" style="margin-top:10px">
+        <button class="mbtn" id="sci-bet-yes" onclick="setBet(true)">Yes</button>
+        <button class="mbtn" id="sci-bet-no" onclick="setBet(false)">No</button>
+      </div>
+    </div>
+    <div id="sci-savings" style="display:none;flex-direction:column;gap:0">
+      <div class="csec" style="border:2px solid #3B6D11;background:#EAF3DE;border-radius:14px;padding:15px">
+        <div class="ql" style="color:#2a5209">How much do you estimate you saved by not gambling since our last check-in?</div>
+        <div class="qh" style="margin:4px 0 0;color:#3B6D11">This gets added to your goal progress 🎉</div>
+        <input class="ti" id="sci-saved-amt" type="number" placeholder="$0" style="margin-top:10px;font-size:18px;font-weight:700;border-color:#3B6D11"/>
+      </div>
+    </div>
     <div class="csec">
       <div class="ql">How are you feeling right now?</div>
       <div class="mrow">
@@ -603,20 +616,6 @@
     <div class="csec">
       <div class="ql">What would make this a win?</div>
       <textarea style="min-height:52px" placeholder="Get through the game without opening DraftKings."></textarea>
-    </div>
-    <div class="csec">
-      <div class="ql">Did you place a bet since our last check-in?</div>
-      <div class="mrow">
-        <button class="mbtn" id="sci-bet-yes" onclick="setBet(true)">Yes</button>
-        <button class="mbtn" id="sci-bet-no" onclick="setBet(false)">No</button>
-      </div>
-    </div>
-    <div id="sci-savings" style="display:none">
-      <div class="csec">
-        <div class="ql">How much do you estimate you saved by not gambling since our last check-in?</div>
-        <div class="qh" style="margin:0">This gets added to your goal progress.</div>
-        <input class="ti" id="sci-saved-amt" type="number" placeholder="$0" style="margin-top:8px"/>
-      </div>
     </div>
   </div>
   <div class="ftr"><button class="pbtn" onclick="saveMorningCI()">Save and continue</button></div>
@@ -1126,19 +1125,52 @@
 
 <!-- TOOLS -->
 <div id="stools" class="screen">
-  <div class="hdr">
+  <div class="hdr-plain">
     <div class="app-name">Control</div>
     <div class="h2">Tools</div>
+    <div class="sub">Everything in one place.</div>
   </div>
   <div class="bod">
-    <div class="slab">Right now</div>
-    <div class="card tap row" onclick="go('srn')"><div><div class="ct">I am about to bet, help</div><div class="cs">Open this before you open a betting app</div></div><div style="font-size:20px;color:#ccc">›</div></div>
-    <div class="slab">Preparation</div>
-    <div class="card tap row" onclick="go('senv')"><div><div class="ct">Block the path</div><div class="cs">Remove access. Make betting harder to reach.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
-    <div class="card tap row" onclick="go('ssk')"><div><div class="ct">Build skills</div><div class="cs">CBT, mindfulness, and motivation tools</div></div><div style="font-size:20px;color:#ccc">›</div></div>
-    <div class="card tap row" onclick="go('splan')"><div><div class="ct">If-then plans</div><div class="cs">Your plans that fire before the urge takes over</div></div><div style="font-size:20px;color:#ccc">›</div></div>
-    <div class="slab">Self-knowledge</div>
-    <div class="card tap row" onclick="openKnow()"><div><div class="ct">Know yourself</div><div class="cs">Understand your urge patterns. Optional but powerful.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="cat-wrap">
+      <div class="cat-hdr">
+        <div class="cat-hdr-title">🚨  Right now</div>
+        <div class="cat-hdr-sub">Open this before you open a betting app.</div>
+      </div>
+      <div class="cat-body">
+        <div class="card tap row" onclick="go('srn')"><div><div class="ct">I am about to bet, help</div><div class="cs">Timers, games, and therapy tools — right now.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+      </div>
+    </div>
+    <div class="cat-wrap">
+      <div class="cat-hdr">
+        <div class="cat-hdr-title">🛡  Preparation</div>
+        <div class="cat-hdr-sub">Remove access and build your game plan before the urge hits.</div>
+      </div>
+      <div class="cat-body">
+        <div class="card tap row" onclick="go('senv')"><div><div class="ct">Block the path</div><div class="cs">Remove access. Make betting harder to reach.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+        <div class="card tap row" onclick="go('splan')"><div><div class="ct">If-then plans</div><div class="cs">Specific plans that fire before the urge takes over.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+      </div>
+    </div>
+    <div class="cat-wrap">
+      <div class="cat-hdr">
+        <div class="cat-hdr-title">🧠  Build skills</div>
+        <div class="cat-hdr-sub">Evidence-based therapy tools to understand and change the pattern.</div>
+      </div>
+      <div class="cat-body">
+        <div class="card tap row" onclick="go('scbt')"><div><div class="ct">Challenge the thought</div><div class="cs">CBT. Find the flaw in what you're telling yourself.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+        <div class="card tap row" onclick="go('sus')"><div><div class="ct">Urge surfing</div><div class="cs">Ride the craving without acting on it. 3 minutes.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+        <div class="card tap row" onclick="go('ssober')"><div><div class="ct">SOBER breathing space</div><div class="cs">A 90-second pause that breaks the automatic reaction.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+        <div class="card tap row" onclick="go('smi')"><div><div class="ct">What's underneath this?</div><div class="cs">Understand what's really driving the urge.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+      </div>
+    </div>
+    <div class="cat-wrap">
+      <div class="cat-hdr">
+        <div class="cat-hdr-title">🪞  Know yourself</div>
+        <div class="cat-hdr-sub">Understand your patterns. The more you know, the easier it gets.</div>
+      </div>
+      <div class="cat-body">
+        <div class="card tap row" onclick="openKnow()"><div><div class="ct">Know yourself</div><div class="cs">When do you feel the urge most? What helps?</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+      </div>
+    </div>
   </div>
   <div class="tabs">
     <button class="tab" onclick="sw('shome',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/></svg><span class="tl">Home</span></button>
@@ -1409,7 +1441,7 @@ function updateGreeting(){var h=new Date().getHours();var gr=h<12?'Good morning'
 function openCI(type){currentCI=type||'morning';var titles={morning:'Morning check-in',afternoon:'Afternoon check-in',evening:'Evening check-in'};var subs={morning:'Set your intention. Honest answers only.',afternoon:'Midday pulse check. How are you doing?',evening:'End of day reflection. Be honest with yourself.'};var t=document.getElementById('ci-title');if(t)t.textContent=titles[currentCI]||'Check-in';var s=document.getElementById('ci-sub');if(s)s.textContent=subs[currentCI]||'Honest answers.';mornBet=null;var y=document.getElementById('sci-bet-yes');var n=document.getElementById('sci-bet-no');if(y)y.classList.remove('sel');if(n)n.classList.remove('sel');var sv=document.getElementById('sci-savings');if(sv)sv.style.display='none';var sa=document.getElementById('sci-saved-amt');if(sa)sa.value='';go('sci')}
 
 // ── Bet question & savings ──
-function setBet(v){mornBet=v;var y=document.getElementById('sci-bet-yes');var n=document.getElementById('sci-bet-no');if(y)y.classList.toggle('sel',v);if(n)n.classList.toggle('sel',!v);var sv=document.getElementById('sci-savings');if(sv)sv.style.display=v?'none':'block'}
+function setBet(v){mornBet=v;var y=document.getElementById('sci-bet-yes');var n=document.getElementById('sci-bet-no');if(y)y.classList.toggle('sel',v);if(n)n.classList.toggle('sel',!v);var sv=document.getElementById('sci-savings');if(sv){sv.style.display=v?'none':'flex';if(!v)setTimeout(function(){sv.scrollIntoView({behavior:'smooth',block:'nearest'})},50)}}
 function saveMorningCI(){if(mornBet===false){var saved=parseInt(document.getElementById('sci-saved-amt').value)||0;if(saved>0){totalSaved+=saved;updateGoalDisplay();document.getElementById('cel-amount').textContent=saved;document.getElementById('cel-total').textContent=totalSaved;document.getElementById('cel-goal-label').textContent='toward '+goalName;var pct=Math.min(100,goalAmount>0?Math.round((totalSaved/goalAmount)*100):0);var cpf=document.getElementById('cel-pf');if(cpf)cpf.style.width=pct+'%';mornBet=null;go('scelebrate');return}}go(mornBet===true?'sabc':'shome');mornBet=null}
 
 // ── Evening check-in ──
