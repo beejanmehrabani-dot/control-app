@@ -199,6 +199,13 @@
   .timer-big { font-size:72px; font-weight:700; color:#111; text-align:center; font-variant-numeric:tabular-nums; letter-spacing:-3px; line-height:1; }
   .timer-msg { font-size:14px; color:#666; text-align:center; line-height:1.7; margin-top:10px; }
 
+  /* Know Yourself bottom sheet */
+  .ky-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:200; display:none; }
+  .ky-overlay.open { display:block; }
+  .ky-sheet { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:430px; background:#F2F0EB; border-radius:20px 20px 0 0; z-index:201; max-height:90vh; flex-direction:column; display:none; }
+  .ky-sheet.open { display:flex; }
+  .ky-handle { width:36px; height:4px; background:#C0BAB0; border-radius:2px; margin:14px auto 0; flex-shrink:0; }
+
   /* Big progress bar */
   .prog-bar-wrap { margin-top:14px; background:#E0DDD8; border-radius:8px; height:16px; overflow:hidden; }
   .prog-bar-fill { height:16px; border-radius:8px; background:#F0B429; transition:width 0.6s ease; box-shadow:0 2px 8px rgba(240,180,41,0.4); }
@@ -417,7 +424,7 @@
     <div id="ci-slots"></div>
     <button class="sbtn" onclick="addCISlot()" style="margin-top:0">+ Add a check-in time</button>
   </div>
-  <div class="ftr"><button class="pbtn" onclick="go('sknow')">Let's go</button></div>
+  <div class="ftr"><button class="pbtn" onclick="go('shome')">Let's go</button></div>
 </div>
 
 <!-- KNOW YOURSELF (optional) -->
@@ -502,11 +509,10 @@
     <div class="card tap row" onclick="openCI('morning')"><div><div class="ct">Morning check-in</div><div class="cs">Set your intention. Takes 2 minutes.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
     <div class="card tap row" onclick="openCI('afternoon')"><div><div class="ct">Afternoon check-in</div><div class="cs">Midday pulse check. How are you doing?</div></div><div style="font-size:20px;color:#ccc">›</div></div>
     <div class="card tap row" onclick="openCI('evening')"><div><div class="ct">Evening check-in</div><div class="cs">Reflect on the day. Be honest.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
-    <div class="slab">Tools</div>
-    <div class="card tap row" onclick="go('srn')"><div><div class="ct">I am about to bet, help</div><div class="cs">Open this before you open a betting app</div></div><div style="font-size:20px;color:#ccc">›</div></div>
-    <div class="card tap row" onclick="go('senv')"><div><div class="ct">Block the path</div><div class="cs">Remove access. Make betting harder to reach.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
-    <div class="card tap row" onclick="go('ssk')"><div><div class="ct">Build skills</div><div class="cs">CBT, mindfulness, and motivation tools</div></div><div style="font-size:20px;color:#ccc">›</div></div>
-    <div class="card tap row" onclick="go('sknow')"><div><div class="ct">Know yourself</div><div class="cs">Understand your patterns. Optional but powerful.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:-3px">
+      <div class="slab">Know yourself</div>
+    </div>
+    <div class="card tap row" onclick="openKnow()"><div><div class="ct">Know yourself</div><div class="cs">Tap to explore your urge patterns and what helps.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
     <div style="height:1px;background:rgba(0,0,0,0.06);margin:4px 0"></div>
     <button onclick="logControlMilestone()" style="width:100%;padding:14px;background:transparent;border:1.5px dashed rgba(0,0,0,0.18);border-radius:14px;font-size:14px;color:#888;cursor:pointer;font-family:inherit;text-align:center">I feel in control — I don't think I need this app anymore</button>
   </div>
@@ -518,7 +524,7 @@
       <span class="tab-fab-lbl">Need Help</span>
     </button>
     <button class="tab" onclick="sw('sprog',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="tl">Progress</span></button>
-    <button class="tab" onclick="sw('ssk',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span class="tl">Skills</span></button>
+    <button class="tab" onclick="sw('stools',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg><span class="tl">Tools</span></button>
   </div>
 </div>
 
@@ -607,7 +613,7 @@
     </div>
     <div id="sci-savings" style="display:none">
       <div class="csec">
-        <div class="ql">How much do you estimate you've saved since our last check-in?</div>
+        <div class="ql">How much do you estimate you saved by not gambling since our last check-in?</div>
         <div class="qh" style="margin:0">This gets added to your goal progress.</div>
         <input class="ti" id="sci-saved-amt" type="number" placeholder="$0" style="margin-top:8px"/>
       </div>
@@ -1113,10 +1119,38 @@
       <span class="tab-fab-lbl">Need Help</span>
     </button>
     <button class="tab on" onclick="sw('sprog',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="tl">Progress</span></button>
-    <button class="tab" onclick="sw('ssk',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span class="tl">Skills</span></button>
+    <button class="tab" onclick="sw('stools',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg><span class="tl">Tools</span></button>
   </div>
 </div>
 
+
+<!-- TOOLS -->
+<div id="stools" class="screen">
+  <div class="hdr">
+    <div class="app-name">Control</div>
+    <div class="h2">Tools</div>
+  </div>
+  <div class="bod">
+    <div class="slab">Right now</div>
+    <div class="card tap row" onclick="go('srn')"><div><div class="ct">I am about to bet, help</div><div class="cs">Open this before you open a betting app</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="slab">Preparation</div>
+    <div class="card tap row" onclick="go('senv')"><div><div class="ct">Block the path</div><div class="cs">Remove access. Make betting harder to reach.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="card tap row" onclick="go('ssk')"><div><div class="ct">Build skills</div><div class="cs">CBT, mindfulness, and motivation tools</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="card tap row" onclick="go('splan')"><div><div class="ct">If-then plans</div><div class="cs">Your plans that fire before the urge takes over</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="slab">Self-knowledge</div>
+    <div class="card tap row" onclick="openKnow()"><div><div class="ct">Know yourself</div><div class="cs">Understand your urge patterns. Optional but powerful.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+  </div>
+  <div class="tabs">
+    <button class="tab" onclick="sw('shome',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/></svg><span class="tl">Home</span></button>
+    <button class="tab" onclick="openCI('morning')"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span class="tl">Check in</span></button>
+    <button class="tab-fab" onclick="go('srn')">
+      <div class="tab-fab-ring"><svg width="26" height="26" fill="none" stroke="#fff" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
+      <span class="tab-fab-lbl">Need Help</span>
+    </button>
+    <button class="tab" onclick="sw('sprog',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="tl">Progress</span></button>
+    <button class="tab on" onclick="sw('stools',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg><span class="tl">Tools</span></button>
+  </div>
+</div>
 
 <!-- EVENING CHECK-IN -->
 <div id="seci" class="screen">
@@ -1278,6 +1312,53 @@
   </div>
 </div>
 
+
+<!-- KNOW YOURSELF BOTTOM SHEET -->
+<div id="ky-overlay" class="ky-overlay" onclick="closeKnow()"></div>
+<div id="ky-sheet" class="ky-sheet">
+  <div class="ky-handle"></div>
+  <div style="padding:18px 20px 10px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0">
+    <div class="h2">Know yourself</div>
+    <button onclick="closeKnow()" style="background:none;border:none;font-size:26px;color:#999;cursor:pointer;padding:0;line-height:1">&times;</button>
+  </div>
+  <div class="sub" style="padding:0 20px 14px;flex-shrink:0">Optional. The more you share, the more the app learns your patterns.</div>
+  <div style="flex:1;overflow-y:auto;padding:0 20px 16px;display:flex;flex-direction:column;gap:12px">
+    <div class="csec">
+      <div class="ql">When do you feel the urge to gamble the most?</div>
+      <div class="tags" style="margin-top:8px">
+        <div class="tag" onclick="tt(this)">Sunday nights</div>
+        <div class="tag" onclick="tt(this)">Payday</div>
+        <div class="tag" onclick="tt(this)">After work</div>
+        <div class="tag" onclick="tt(this)">Late at night</div>
+        <div class="tag" onclick="tt(this)">Weekends</div>
+        <div class="tag" onclick="tt(this)">During big games</div>
+        <div class="tag" onclick="tt(this)">When I'm bored</div>
+        <div class="tag" onclick="tt(this)">When I'm stressed</div>
+        <div class="tag" onclick="tt(this)">When I'm alone</div>
+        <div class="tag" onclick="tt(this)">After a loss</div>
+      </div>
+      <textarea style="margin-top:10px;min-height:52px" placeholder="Or describe in your own words..."></textarea>
+    </div>
+    <div class="csec">
+      <div class="ql">What usually helps you resist the urge?</div>
+      <div class="tags" style="margin-top:8px">
+        <div class="tag" onclick="tt(this)">Calling someone</div>
+        <div class="tag" onclick="tt(this)">Going for a walk</div>
+        <div class="tag" onclick="tt(this)">Watching something</div>
+        <div class="tag" onclick="tt(this)">Reminding myself of my goal</div>
+        <div class="tag" onclick="tt(this)">Deleting the apps</div>
+        <div class="tag" onclick="tt(this)">Waiting it out</div>
+        <div class="tag" onclick="tt(this)">Nothing has worked yet</div>
+      </div>
+      <textarea style="margin-top:10px;min-height:52px" placeholder="What's worked for you before?"></textarea>
+    </div>
+    <div class="sfty">This is just for you. Knowing your patterns is the first step to changing them.</div>
+  </div>
+  <div style="padding:14px 20px 36px;background:#fff;border-top:0.5px solid rgba(0,0,0,0.09);flex-shrink:0">
+    <button class="pbtn" onclick="closeKnow()">Done</button>
+  </div>
+</div>
+
 </div>
 <script>
 var qs={nfl:[{q:"Which QB holds the NFL all-time passing TD record?",cat:"NFL Records",a:["Tom Brady","Peyton Manning","Brett Favre","Drew Brees"],c:3},{q:"How many Super Bowls did the Patriots win with Brady?",cat:"NFL History",a:["4","5","6","7"],c:2},{q:"Who rushed for 2,105 yards in a single season in 1984?",cat:"NFL Records",a:["Barry Sanders","Adrian Peterson","Eric Dickerson","Earl Campbell"],c:2},{q:"Which team has won the most Super Bowls?",cat:"NFL History",a:["Dallas Cowboys","San Francisco 49ers","New England Patriots","Pittsburgh Steelers"],c:3},{q:"Who holds the record for most career rushing yards?",cat:"NFL Records",a:["Walter Payton","Barry Sanders","Emmitt Smith","LaDainian Tomlinson"],c:2}],nba:[{q:"Who holds the NBA record for most career points?",cat:"NBA Records",a:["Michael Jordan","Kareem Abdul-Jabbar","LeBron James","Kobe Bryant"],c:2},{q:"What is the most points scored by one player in one NBA game?",cat:"NBA Records",a:["81 — Kobe Bryant","100 — Wilt Chamberlain","73 — David Thompson","69 — MJ"],c:1},{q:"Which player was nicknamed The Mailman?",cat:"NBA Legends",a:["Charles Barkley","Karl Malone","Patrick Ewing","Scottie Pippen"],c:1}],mlb:[{q:"Who holds the all-time MLB home run record?",cat:"MLB Records",a:["Babe Ruth","Hank Aaron","Barry Bonds","Willie Mays"],c:2},{q:"What is the longest hitting streak in MLB history?",cat:"MLB Records",a:["56 games — Joe DiMaggio","44 games — Willie Keeler","61 games — Pete Rose","49 games — Ted Williams"],c:0}],nhl:[{q:"Who is known as The Great One?",cat:"NHL Legends",a:["Mario Lemieux","Bobby Orr","Wayne Gretzky","Gordie Howe"],c:2},{q:"Which team has won the most Stanley Cups?",cat:"NHL History",a:["Toronto Maple Leafs","Detroit Red Wings","Montreal Canadiens","Boston Bruins"],c:2}],soccer:[{q:"Who has won the most Ballon d'Or awards?",cat:"Soccer Records",a:["Cristiano Ronaldo","Zinedine Zidane","Ronaldinho","Lionel Messi"],c:3},{q:"Which country has won the most FIFA World Cups?",cat:"World Cup",a:["Germany","Argentina","Italy","Brazil"],c:3}],cfb:[{q:"Which school has the most college football national championships?",cat:"College Football",a:["Ohio State","Notre Dame","Alabama","Michigan"],c:2}],cbb:[{q:"Which school has won the most NCAA basketball championships?",cat:"College Basketball",a:["Duke","North Carolina","Kentucky","UCLA"],c:3}],golf:[{q:"Who holds the record for most major golf championships?",cat:"Golf Records",a:["Arnold Palmer","Tiger Woods","Jack Nicklaus","Sam Snead"],c:2}],mma:[{q:"Who became the first two-division UFC champion simultaneously?",cat:"MMA History",a:["Jon Jones","Khabib Nurmagomedov","Conor McGregor","Daniel Cormier"],c:2}],tennis:[{q:"Who holds the record for most Grand Slam singles titles among men?",cat:"Tennis Records",a:["Rafael Nadal","Roger Federer","Novak Djokovic","Pete Sampras"],c:2}]};
@@ -1380,6 +1461,10 @@ function soberNext(){soberIdx++;if(soberIdx>=soberSteps.length){go('srn');soberI
 
 // ── Coin flip ──
 function flipCoin(){var r=Math.random()<0.5;var result=r?'H':'T';var coin=document.getElementById('coin');coin.textContent=r?'H':'T';coin.style.background=r?'#111':'#555';if(result===lastFlip){streak++}else{streak=1}lastFlip=result;if(r){headsC++}else{tailsC++}document.getElementById('heads-count').textContent=headsC;document.getElementById('tails-count').textContent=tailsC;document.getElementById('streak-count').textContent=streak;var msg='';if(streak>=4){msg='A streak of '+streak+'! Your gut says the next one is predictable. It is not. Each flip is 50/50.'}else if(headsC+tailsC>=10){msg='After '+(headsC+tailsC)+' flips: '+headsC+' heads, '+tailsC+' tails. The coin has no memory of previous flips.'}else{msg='Tap again. Watch what your gut starts to predict.'}document.getElementById('flip-result').textContent=msg}
+
+// ── Know Yourself sheet ──
+function openKnow(){document.getElementById('ky-overlay').classList.add('open');document.getElementById('ky-sheet').classList.add('open')}
+function closeKnow(){document.getElementById('ky-overlay').classList.remove('open');document.getElementById('ky-sheet').classList.remove('open')}
 
 // ── Control milestone ──
 function logControlMilestone(){var d=new Date();var el=document.getElementById('control-date');if(el)el.textContent=d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});go('scontrol')}
