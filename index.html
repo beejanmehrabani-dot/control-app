@@ -176,6 +176,33 @@
 
   .tcat { font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#999; }
   .tq { font-size:17px; font-weight:600; color:#111; line-height:1.5; }
+
+  /* Word chips */
+  .chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+  .chip { padding:7px 13px; background:#F2F0EB; border:0.5px solid rgba(0,0,0,0.14); border-radius:16px; font-size:13px; color:#555; cursor:pointer; font-family:inherit; }
+  .chip:active { background:#E0DDD8; }
+
+  /* Center FAB tab */
+  .tab-fab { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; border:none; background:transparent; font-family:inherit; padding:0; margin-top:-20px; }
+  .tab-fab-ring { width:58px; height:58px; border-radius:50%; background:#C0392B; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 22px rgba(192,57,43,0.45); border:3px solid #F2F0EB; }
+  .tab-fab-lbl { font-size:9px; font-weight:700; color:#C0392B; letter-spacing:0.03em; text-transform:uppercase; margin-top:2px; }
+  .tabs { display:flex; background:#fff; border-top:0.5px solid rgba(0,0,0,0.09); padding:8px 0 22px; flex-shrink:0; align-items:flex-end; }
+
+  /* Category sections */
+  .cat-wrap { background:#fff; border:0.5px solid rgba(0,0,0,0.09); border-radius:16px; overflow:hidden; }
+  .cat-hdr { padding:13px 16px 10px; background:#F2F0EB; border-bottom:0.5px solid rgba(0,0,0,0.09); }
+  .cat-hdr-title { font-size:11px; font-weight:700; color:#444; letter-spacing:0.09em; text-transform:uppercase; }
+  .cat-hdr-sub { font-size:12px; color:#888; margin-top:2px; line-height:1.4; }
+  .cat-body { padding:12px; display:flex; flex-direction:column; gap:8px; }
+
+  /* Timer */
+  .timer-big { font-size:72px; font-weight:700; color:#111; text-align:center; font-variant-numeric:tabular-nums; letter-spacing:-3px; line-height:1; }
+  .timer-msg { font-size:14px; color:#666; text-align:center; line-height:1.7; margin-top:10px; }
+
+  /* Big progress bar */
+  .prog-bar-wrap { margin-top:14px; background:#E0DDD8; border-radius:8px; height:16px; overflow:hidden; }
+  .prog-bar-fill { height:16px; border-radius:8px; background:#111; transition:width 0.6s ease; }
+  .prog-bar-labels { display:flex; justify-content:space-between; align-items:center; margin-top:6px; }
 </style>
 </head>
 <body>
@@ -380,16 +407,21 @@
       <div style="font-size:13px;color:#666;margin-bottom:4px" id="hlabel">Pay off my Visa</div>
       <div class="ga" id="home-saved">$0</div>
       <div class="gctx" id="home-gctx">saved so far.</div>
-      <div class="pt"><div class="pf" id="home-pf" style="width:0%"></div></div>
-      <div style="display:flex;justify-content:space-between;margin-top:5px"><div style="font-size:11px;color:#bbb">$0</div><div style="font-size:11px;color:#bbb" id="home-goal-max">$1,500</div></div>
+      <div class="prog-bar-wrap"><div class="prog-bar-fill" id="home-pf" style="width:0%"></div></div>
+      <div class="prog-bar-labels">
+        <div style="font-size:12px;color:#888">$0</div>
+        <div style="font-size:15px;font-weight:700;color:#111" id="home-pct">0%</div>
+        <div style="font-size:12px;color:#888" id="home-goal-max">$1,500</div>
+      </div>
     </div>
     <div class="sg">
       <div class="sc"><div class="sn">7</div><div class="sl">days in control</div></div>
       <div class="sc"><div class="sn">4</div><div class="sl">urges managed</div></div>
     </div>
     <div class="slab">Today</div>
-    <div class="card tap row" onclick="go('sci')"><div><div class="ct">Morning check-in</div><div class="cs">Set your intention. Takes 2 minutes.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
-    <div class="card tap row" onclick="go('seci')"><div><div class="ct">Evening check-in</div><div class="cs">Reflect on the day. Log what happened.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="card tap row" onclick="openCI('morning')"><div><div class="ct">Morning check-in</div><div class="cs">Set your intention. Takes 2 minutes.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="card tap row" onclick="openCI('afternoon')"><div><div class="ct">Afternoon check-in</div><div class="cs">Midday pulse check. How are you doing?</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="card tap row" onclick="openCI('evening')"><div><div class="ct">Evening check-in</div><div class="cs">Reflect on the day. Be honest.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
     <div class="slab">Tools</div>
     <div class="card tap row" onclick="go('srn')"><div><div class="ct">I am about to bet, help</div><div class="cs">Open this before you open a betting app</div></div><div style="font-size:20px;color:#ccc">›</div></div>
     <div class="card tap row" onclick="go('senv')"><div><div class="ct">Block the path</div><div class="cs">Remove access. Make betting harder to reach.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
@@ -397,18 +429,22 @@
   </div>
   <div class="tabs">
     <button class="tab on" onclick="sw('shome',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/></svg><span class="tl">Home</span></button>
-    <button class="tab" onclick="sw('sci',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span class="tl">Check in</span></button>
-    <button class="tab" onclick="sw('srn',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg><span class="tl">Bet Help</span></button>
+    <button class="tab" onclick="openCI('morning')"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span class="tl">Check in</span></button>
+    <button class="tab-fab" onclick="go('srn')">
+      <div class="tab-fab-ring"><svg width="26" height="26" fill="none" stroke="#fff" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
+      <span class="tab-fab-lbl">Need Help</span>
+    </button>
     <button class="tab" onclick="sw('sprog',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="tl">Progress</span></button>
+    <button class="tab" onclick="sw('ssk',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span class="tl">Skills</span></button>
   </div>
 </div>
 
-<!-- CHECK-IN -->
+<!-- CHECK-IN (unified: morning / afternoon / evening) -->
 <div id="sci" class="screen">
   <div class="hdr-plain">
     <button class="bk" onclick="go('shome')">← Back</button>
-    <div class="h2">Morning check-in</div>
-    <div class="sub">Honest answers only.</div>
+    <div class="h2" id="ci-title">Morning check-in</div>
+    <div class="sub" id="ci-sub">Set your intention. Honest answers only.</div>
   </div>
   <div class="bod">
     <div class="cidots"><div class="cid on"></div><div class="cid"></div><div class="cid"></div><div class="cid"></div><div class="cid"></div></div>
@@ -421,7 +457,16 @@
         <button class="mbtn" onclick="sm(this)">Pretty good</button>
       </div>
       <div class="qh" style="margin:0">What's behind that feeling?</div>
-      <textarea style="min-height:56px" placeholder="Bad sleep, work stress, feeling flat..."></textarea>
+      <div class="chips">
+        <button class="chip" onclick="chip('ci-feel',this)">Poor sleep</button>
+        <button class="chip" onclick="chip('ci-feel',this)">Work stress</button>
+        <button class="chip" onclick="chip('ci-feel',this)">Money worries</button>
+        <button class="chip" onclick="chip('ci-feel',this)">Family pressure</button>
+        <button class="chip" onclick="chip('ci-feel',this)">Anxious</button>
+        <button class="chip" onclick="chip('ci-feel',this)">Just tired</button>
+        <button class="chip" onclick="chip('ci-feel',this)">Feeling flat</button>
+      </div>
+      <textarea id="ci-feel" style="min-height:52px;margin-top:8px" placeholder="Or write it in your own words..."></textarea>
     </div>
     <div class="csec">
       <div class="ql">Urge intensity right now</div>
@@ -430,7 +475,7 @@
         <input type="range" min="0" max="10" value="0" step="1" oninput="document.getElementById('urge-val').textContent=this.value">
         <div style="display:flex;justify-content:space-between;margin-top:4px"><span style="font-size:11px;color:#bbb">None</span><span style="font-size:11px;color:#bbb">Overwhelming</span></div>
       </div>
-      <div class="qh" style="margin:0">What triggered it since last check-in?</div>
+      <div class="qh" style="margin:0">What triggered it?</div>
       <div class="tags">
         <div class="tag" onclick="tt(this)">Saw an ad</div>
         <div class="tag" onclick="tt(this)">Game on tonight</div>
@@ -444,9 +489,15 @@
       </div>
     </div>
     <div class="csec">
-      <div class="ql">Your intention today</div>
-      <div class="qh" style="margin:0">Write it like you mean it. This becomes your commitment for the day.</div>
-      <textarea placeholder="I am not opening any betting apps today. If the urge hits I open Control instead."></textarea>
+      <div class="ql">Your intention</div>
+      <div class="qh" style="margin:0">Write it like you mean it.</div>
+      <div class="chips">
+        <button class="chip" onclick="chip('ci-intent',this)">I will not open any betting apps</button>
+        <button class="chip" onclick="chip('ci-intent',this)">I'll use my game plan if the urge hits</button>
+        <button class="chip" onclick="chip('ci-intent',this)">I'll call someone before I act on it</button>
+        <button class="chip" onclick="chip('ci-intent',this)">I'll open this app instead</button>
+      </div>
+      <textarea id="ci-intent" style="margin-top:8px" placeholder="I am not opening any betting apps today..."></textarea>
     </div>
     <div class="csec">
       <div class="ql">High risk moments coming up?</div>
@@ -460,15 +511,21 @@
       </div>
     </div>
     <div class="csec">
-      <div class="ql">What would make today a win?</div>
-      <div class="qh" style="margin:0">Doesn't have to be about gambling.</div>
-      <textarea style="min-height:56px" placeholder="Get through the game without opening DraftKings."></textarea>
+      <div class="ql">What would make this a win?</div>
+      <textarea style="min-height:52px" placeholder="Get through the game without opening DraftKings."></textarea>
     </div>
     <div class="csec">
-      <div class="ql">Did you place a bet since your last check-in?</div>
+      <div class="ql">Did you place a bet since our last check-in?</div>
       <div class="mrow">
         <button class="mbtn" id="sci-bet-yes" onclick="setBet(true)">Yes</button>
         <button class="mbtn" id="sci-bet-no" onclick="setBet(false)">No</button>
+      </div>
+    </div>
+    <div id="sci-savings" style="display:none">
+      <div class="csec">
+        <div class="ql">How much do you estimate you've saved since our last check-in?</div>
+        <div class="qh" style="margin:0">This gets added to your goal progress.</div>
+        <input class="ti" id="sci-saved-amt" type="number" placeholder="$0" style="margin-top:8px"/>
       </div>
     </div>
   </div>
@@ -485,19 +542,57 @@
   <div class="bod">
     <div class="abc-section">
       <div class="abc-header"><div class="abc-letter">A</div><div><div style="font-size:14px;font-weight:600;color:#111">Antecedent</div><div style="font-size:12px;color:#666">What happened right before?</div></div></div>
-      <div class="abc-body"><textarea style="min-height:64px" placeholder="Got paid, had an argument, felt bored, saw a betting ad, drove past the casino..."></textarea></div>
+      <div class="abc-body">
+        <div class="chips">
+          <button class="chip" onclick="chip('abc-a',this)">Got paid</button>
+          <button class="chip" onclick="chip('abc-a',this)">Had an argument</button>
+          <button class="chip" onclick="chip('abc-a',this)">Felt bored</button>
+          <button class="chip" onclick="chip('abc-a',this)">Saw a betting ad</button>
+          <button class="chip" onclick="chip('abc-a',this)">Was alone</button>
+          <button class="chip" onclick="chip('abc-a',this)">Had a drink</button>
+          <button class="chip" onclick="chip('abc-a',this)">After a loss</button>
+          <button class="chip" onclick="chip('abc-a',this)">Stressed at work</button>
+          <button class="chip" onclick="chip('abc-a',this)">Big game on</button>
+        </div>
+        <textarea id="abc-a" style="min-height:56px;margin-top:8px" placeholder="Got paid, had an argument, felt bored, saw a betting ad..."></textarea>
+      </div>
     </div>
     <div class="abc-section">
       <div class="abc-header"><div class="abc-letter">B</div><div><div style="font-size:14px;font-weight:600;color:#111">Behavior</div><div style="font-size:12px;color:#666">What exactly did you do?</div></div></div>
-      <div class="abc-body"><textarea style="min-height:64px" placeholder="Where did you go, what did you bet on, how long, roughly how much?"></textarea></div>
+      <div class="abc-body">
+        <div class="chips">
+          <button class="chip" onclick="chip('abc-b',this)">Opened the app</button>
+          <button class="chip" onclick="chip('abc-b',this)">Went to the casino</button>
+          <button class="chip" onclick="chip('abc-b',this)">Online sports bet</button>
+          <button class="chip" onclick="chip('abc-b',this)">Scratch cards</button>
+          <button class="chip" onclick="chip('abc-b',this)">Poker game</button>
+        </div>
+        <textarea id="abc-b" style="min-height:56px;margin-top:8px" placeholder="Where did you go, what did you bet on, how long, roughly how much?"></textarea>
+      </div>
     </div>
     <div class="abc-section">
       <div class="abc-header"><div class="abc-letter">C</div><div><div style="font-size:14px;font-weight:600;color:#111">Consequences</div><div style="font-size:12px;color:#666">What happened after?</div></div></div>
       <div class="abc-body">
         <div class="qh">Right after (short-term)</div>
-        <textarea style="min-height:56px" placeholder="Excitement, relief, escape... what did it give you in the moment?"></textarea>
+        <div class="chips">
+          <button class="chip" onclick="chip('abc-c1',this)">Excitement</button>
+          <button class="chip" onclick="chip('abc-c1',this)">Relief</button>
+          <button class="chip" onclick="chip('abc-c1',this)">Escape</button>
+          <button class="chip" onclick="chip('abc-c1',this)">A rush</button>
+          <button class="chip" onclick="chip('abc-c1',this)">Something to focus on</button>
+        </div>
+        <textarea id="abc-c1" style="min-height:52px;margin-top:8px" placeholder="Excitement, relief, escape... what did it give you in the moment?"></textarea>
         <div class="qh" style="margin-top:10px">Later (long-term)</div>
-        <textarea style="min-height:56px" placeholder="Guilt, shame, financial stress, hiding it from someone..."></textarea>
+        <div class="chips">
+          <button class="chip" onclick="chip('abc-c2',this)">Guilt</button>
+          <button class="chip" onclick="chip('abc-c2',this)">Shame</button>
+          <button class="chip" onclick="chip('abc-c2',this)">Financial stress</button>
+          <button class="chip" onclick="chip('abc-c2',this)">Hiding it from others</button>
+          <button class="chip" onclick="chip('abc-c2',this)">Regret</button>
+          <button class="chip" onclick="chip('abc-c2',this)">Anxiety</button>
+          <button class="chip" onclick="chip('abc-c2',this)">Self-hatred</button>
+        </div>
+        <textarea id="abc-c2" style="min-height:52px;margin-top:8px" placeholder="Guilt, shame, financial stress, hiding it from someone..."></textarea>
       </div>
     </div>
     <div class="sfty">Seeing this pattern clearly is where change starts. You're not being judged. You're building awareness.</div>
@@ -505,36 +600,58 @@
   <div class="ftr"><button class="pbtn" onclick="go('shome')">Save and finish</button></div>
 </div>
 
-<!-- RIGHT NOW -->
+<!-- RIGHT NOW / BET HELP -->
 <div id="srn" class="screen">
   <div class="hdr-plain">
     <button class="bk" onclick="go('shome')">← Back</button>
-    <div class="h2">I am about to bet, help</div>
-    <div class="sub">Pick what works for you right now. No right answer.</div>
+    <div class="h2">I need help right now</div>
+    <div class="sub">Pick what fits. You've got this.</div>
   </div>
   <div class="bod">
-    <div class="slab">Redirect your brain</div>
-    <div class="lane" onclick="go('ssp')">
-      <div class="lic"><svg width="22" height="22" fill="none" stroke="#111" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3c3 3 3 6 0 9s-3 6 0 9M3 12h18"/></svg></div>
-      <div style="flex:1"><div class="lt">Sports trivia</div><div class="ls">Quick fire questions on your sport. Grabs your brain for 5 minutes.</div></div>
-      <div style="font-size:20px;color:#ccc">›</div>
+    <button onclick="go('shelp')" style="width:100%;padding:16px;background:#C0392B;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:0.01em">🆘  Call or text a crisis line</button>
+    <div class="cat-wrap">
+      <div class="cat-hdr">
+        <div class="cat-hdr-title">⏱  Timer</div>
+        <div class="cat-hdr-sub">Delay the bet. Urges always pass within 15–20 minutes.</div>
+      </div>
+      <div class="cat-body">
+        <div class="card tap row" onclick="openTimer()"><div><div class="ct">10-minute wait timer</div><div class="cs">Start the clock. Ride it out. You've done harder things.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+      </div>
     </div>
-    <div class="lane" onclick="go('sgrid')">
-      <div class="lic"><svg width="22" height="22" fill="none" stroke="#111" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
-      <div style="flex:1"><div class="lt">Player grid challenge</div><div class="ls">Name players who fit both categories. Genuinely hard.</div></div>
-      <div style="font-size:20px;color:#ccc">›</div>
+    <div class="cat-wrap">
+      <div class="cat-hdr">
+        <div class="cat-hdr-title">🎮  Mini Games</div>
+        <div class="cat-hdr-sub">Redirect your brain for 5 minutes. Checked on the other side.</div>
+      </div>
+      <div class="cat-body">
+        <div class="lane" onclick="go('ssp')">
+          <div class="lic"><svg width="22" height="22" fill="none" stroke="#111" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3c3 3 3 6 0 9s-3 6 0 9M3 12h18"/></svg></div>
+          <div style="flex:1"><div class="lt">Sports trivia</div><div class="ls">Quick-fire questions on your sport.</div></div>
+          <div style="font-size:20px;color:#ccc">›</div>
+        </div>
+        <div class="lane" onclick="go('sgrid')">
+          <div class="lic"><svg width="22" height="22" fill="none" stroke="#111" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+          <div style="flex:1"><div class="lt">Player grid challenge</div><div class="ls">Name players who fit both categories.</div></div>
+          <div style="font-size:20px;color:#ccc">›</div>
+        </div>
+      </div>
     </div>
-    <div class="slab">Work through it</div>
-    <div class="card tap row" onclick="go('scbt')"><div><div class="ct">Challenge the thought</div><div class="cs">CBT. Find the flaw in what you're telling yourself.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
-    <div class="card tap row" onclick="go('sus')"><div><div class="ct">Urge surfing</div><div class="cs">Ride the craving without acting on it. 3 minutes.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
-    <div class="card tap row" onclick="go('ssober')"><div><div class="ct">SOBER breathing space</div><div class="cs">A 90 second pause that breaks the automatic reaction.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
-    <div class="card tap row" onclick="go('smi')"><div><div class="ct">What's underneath this?</div><div class="cs">Motivational. Understand what's really going on.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
-    <div class="slab">Your game plan</div>
+    <div class="cat-wrap">
+      <div class="cat-hdr">
+        <div class="cat-hdr-title">🧠  Proven Therapy Tools</div>
+        <div class="cat-hdr-sub">Evidence-based techniques. Each takes under 5 minutes.</div>
+      </div>
+      <div class="cat-body">
+        <div class="card tap row" onclick="go('scbt')"><div><div class="ct">Challenge the thought</div><div class="cs">CBT. Find the flaw in what you're telling yourself.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+        <div class="card tap row" onclick="go('sus')"><div><div class="ct">Urge surfing</div><div class="cs">Ride the craving without acting on it. 3 minutes.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+        <div class="card tap row" onclick="go('ssober')"><div><div class="ct">SOBER breathing space</div><div class="cs">A 90-second pause that breaks the automatic reaction.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+        <div class="card tap row" onclick="go('smi')"><div><div class="ct">What's underneath this?</div><div class="cs">Understand what's really driving the urge.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+      </div>
+    </div>
     <div class="ifthen-card tap" onclick="go('splan')" style="cursor:pointer">
       <div class="if-label">Your if-then plans</div>
-      <div style="font-size:14px;color:#666;margin-top:4px">Tap to see the specific plans you set up. Use one now.</div>
+      <div style="font-size:14px;color:#666;margin-top:4px">The plans you wrote before the moment arrived. Use one now.</div>
     </div>
-    <div class="sfty">24/7 support. Call or text <strong style="color:#111">1-800-GAMBLER</strong>. Crisis line <strong style="color:#111">988</strong>.</div>
   </div>
 </div>
 
@@ -588,24 +705,55 @@
   <div class="bod" style="gap:14px">
     <div class="csec">
       <div class="ql">What are you telling yourself right now?</div>
-      <div class="qh" style="margin:0">Write the actual thought. Be specific.</div>
-      <textarea placeholder="I just need one win to get back what I lost..."></textarea>
+      <div class="qh" style="margin:0">Write the actual thought, or tap one below.</div>
+      <div class="chips">
+        <button class="chip" onclick="chip('cbt-t1',this)">I'll win it back</button>
+        <button class="chip" onclick="chip('cbt-t1',this)">Just one more bet</button>
+        <button class="chip" onclick="chip('cbt-t1',this)">I can control it today</button>
+        <button class="chip" onclick="chip('cbt-t1',this)">I'm feeling lucky</button>
+        <button class="chip" onclick="chip('cbt-t1',this)">I have a system</button>
+        <button class="chip" onclick="chip('cbt-t1',this)">I need this win</button>
+      </div>
+      <textarea id="cbt-t1" style="margin-top:8px" placeholder="I just need one win to get back what I lost..."></textarea>
       <div class="qh" style="margin:0">Urge intensity right now (0 to 10)</div>
       <div class="slider-wrap"><div class="slider-label"><span class="slider-name">Before challenging it</span><span class="slider-val" id="cbt-before">5</span></div><input type="range" min="0" max="10" value="5" step="1" oninput="document.getElementById('cbt-before').textContent=this.value"></div>
     </div>
     <div class="csec">
       <div class="ql">What's wrong with that thinking?</div>
-      <div class="qh" style="margin:0">Each bet is independent. Past losses don't change the odds. The house edge doesn't care about your feelings.</div>
-      <textarea placeholder="What would the rational version of you say back?"></textarea>
+      <div class="qh" style="margin:0">Each bet is independent. The house edge doesn't care about your feelings.</div>
+      <div class="chips">
+        <button class="chip" onclick="chip('cbt-t2',this)">Each bet is independent</button>
+        <button class="chip" onclick="chip('cbt-t2',this)">The math never changes</button>
+        <button class="chip" onclick="chip('cbt-t2',this)">Chasing always makes it worse</button>
+        <button class="chip" onclick="chip('cbt-t2',this)">I've promised this before</button>
+        <button class="chip" onclick="chip('cbt-t2',this)">No such thing as a hot streak</button>
+      </div>
+      <textarea id="cbt-t2" style="margin-top:8px" placeholder="What would the rational version of you say back?"></textarea>
     </div>
     <div class="csec">
       <div class="ql">What would you tell a friend saying this?</div>
-      <textarea placeholder="I'd tell them chasing never works. The math doesn't change..."></textarea>
+      <div class="chips">
+        <button class="chip" onclick="chip('cbt-t3',this)">Stop. Walk away.</button>
+        <button class="chip" onclick="chip('cbt-t3',this)">You'll regret it</button>
+        <button class="chip" onclick="chip('cbt-t3',this)">You know how this ends</button>
+        <button class="chip" onclick="chip('cbt-t3',this)">It won't work out</button>
+      </div>
+      <textarea id="cbt-t3" style="margin-top:8px" placeholder="I'd tell them chasing never works. The math doesn't change..."></textarea>
     </div>
     <div class="csec">
       <div class="ql">What are you actually feeling underneath this?</div>
-      <div class="qh" style="margin:0">Boredom? Stress? Loneliness? The urge is usually covering something else.</div>
-      <textarea placeholder="Be honest with yourself here..."></textarea>
+      <div class="qh" style="margin:0">The urge is usually covering something else.</div>
+      <div class="chips">
+        <button class="chip" onclick="chip('cbt-t4',this)">Bored</button>
+        <button class="chip" onclick="chip('cbt-t4',this)">Stressed</button>
+        <button class="chip" onclick="chip('cbt-t4',this)">Lonely</button>
+        <button class="chip" onclick="chip('cbt-t4',this)">Anxious</button>
+        <button class="chip" onclick="chip('cbt-t4',this)">Angry</button>
+        <button class="chip" onclick="chip('cbt-t4',this)">Sad</button>
+        <button class="chip" onclick="chip('cbt-t4',this)">Numb</button>
+        <button class="chip" onclick="chip('cbt-t4',this)">Overwhelmed</button>
+      </div>
+      <textarea id="cbt-t4" style="margin-top:8px" placeholder="Be honest with yourself here..."></textarea>
       <div class="qh" style="margin:0">Urge intensity now (0 to 10)</div>
       <div class="slider-wrap"><div class="slider-label"><span class="slider-name">After challenging it</span><span class="slider-val" id="cbt-after">5</span></div><input type="range" min="0" max="10" value="5" step="1" oninput="document.getElementById('cbt-after').textContent=this.value"></div>
     </div>
@@ -629,9 +777,47 @@
 <div id="smi" class="screen">
   <div class="hdr-plain"><button class="bk" onclick="go('srn')">← Back</button><div class="h2">What's underneath this?</div><div class="sub">Understanding the real reason helps more than willpower.</div></div>
   <div class="bod" style="gap:14px">
-    <div><div class="ql">What's actually going on right now?</div><textarea placeholder="Stressed? Argument? Bored? Just had a bad day?"></textarea></div>
-    <div><div class="ql">What does betting give you in this moment?</div><div class="qh">Excitement? Escape? Control? Something to focus on?</div><textarea placeholder="Be honest. This is just for you."></textarea></div>
-    <div><div class="ql">Is there anything else that could give you that right now?</div><textarea placeholder="Call someone, go somewhere, do something physical..."></textarea></div>
+    <div class="csec">
+      <div class="ql">What's actually going on right now?</div>
+      <div class="chips">
+        <button class="chip" onclick="chip('mi-t1',this)">Stressed</button>
+        <button class="chip" onclick="chip('mi-t1',this)">Bored</button>
+        <button class="chip" onclick="chip('mi-t1',this)">Had an argument</button>
+        <button class="chip" onclick="chip('mi-t1',this)">Bad day</button>
+        <button class="chip" onclick="chip('mi-t1',this)">Can't sleep</button>
+        <button class="chip" onclick="chip('mi-t1',this)">Anxious</button>
+        <button class="chip" onclick="chip('mi-t1',this)">Feeling flat</button>
+        <button class="chip" onclick="chip('mi-t1',this)">Just got paid</button>
+        <button class="chip" onclick="chip('mi-t1',this)">Alone</button>
+      </div>
+      <textarea id="mi-t1" style="margin-top:8px" placeholder="Stressed? Argument? Bored? Just had a bad day?"></textarea>
+    </div>
+    <div class="csec">
+      <div class="ql">What does betting give you in this moment?</div>
+      <div class="qh" style="margin:0">Excitement? Escape? Control? Something to focus on?</div>
+      <div class="chips">
+        <button class="chip" onclick="chip('mi-t2',this)">Escape</button>
+        <button class="chip" onclick="chip('mi-t2',this)">Excitement</button>
+        <button class="chip" onclick="chip('mi-t2',this)">Something to focus on</button>
+        <button class="chip" onclick="chip('mi-t2',this)">A sense of control</button>
+        <button class="chip" onclick="chip('mi-t2',this)">A rush</button>
+        <button class="chip" onclick="chip('mi-t2',this)">Relief from stress</button>
+      </div>
+      <textarea id="mi-t2" style="margin-top:8px" placeholder="Be honest. This is just for you."></textarea>
+    </div>
+    <div class="csec">
+      <div class="ql">Is there anything else that could give you that right now?</div>
+      <div class="chips">
+        <button class="chip" onclick="chip('mi-t3',this)">Call someone</button>
+        <button class="chip" onclick="chip('mi-t3',this)">Go for a walk</button>
+        <button class="chip" onclick="chip('mi-t3',this)">Watch something</button>
+        <button class="chip" onclick="chip('mi-t3',this)">Exercise</button>
+        <button class="chip" onclick="chip('mi-t3',this)">Music</button>
+        <button class="chip" onclick="chip('mi-t3',this)">Make food</button>
+        <button class="chip" onclick="chip('mi-t3',this)">Go somewhere busy</button>
+      </div>
+      <textarea id="mi-t3" style="margin-top:8px" placeholder="Call someone, go somewhere, do something physical..."></textarea>
+    </div>
   </div>
   <div class="ftr"><button class="pbtn" onclick="go('srn')">Saved. I feel clearer.</button></div>
 </div>
@@ -753,10 +939,19 @@
   <div class="hdr-plain"><div class="h2">Round complete</div></div>
   <div class="bod" style="align-items:center;justify-content:center;gap:16px">
     <div><div class="rn" id="rsc">4/5</div><div class="rl" id="rlbl">Solid sports knowledge</div></div>
-    <div style="width:100%;background:#F2F0EB;border-radius:12px;padding:14px"><div style="font-size:15px;font-weight:600;color:#111;margin-bottom:3px">7 day streak. Still going.</div><div style="font-size:13px;color:#666">You haven't bet in 7 days.</div></div>
-    <div class="card" style="width:100%"><div class="ct" style="margin-bottom:5px">Urge check</div><div class="cs" style="font-size:13px;line-height:1.6">How's that feeling now? Most urges pass in under 10 minutes. You just used 5 of them.</div></div>
+    <div style="width:100%;background:#F2F0EB;border-radius:12px;padding:14px"><div style="font-size:15px;font-weight:600;color:#111;margin-bottom:3px">Streak still going.</div><div style="font-size:13px;color:#666">You chose this instead of betting. That matters.</div></div>
+    <div class="csec" style="width:100%">
+      <div class="ql">Urge check: how strong is it right now?</div>
+      <div class="mrow">
+        <button class="mbtn" onclick="urgeCheck('gone',this)">Gone ✓</button>
+        <button class="mbtn" onclick="urgeCheck('weaker',this)">Weaker</button>
+        <button class="mbtn" onclick="urgeCheck('same',this)">Still there</button>
+        <button class="mbtn" onclick="urgeCheck('stronger',this)">Stronger</button>
+      </div>
+      <div id="urge-fb" style="display:none;font-size:13px;color:#666;margin-top:8px;line-height:1.6"></div>
+    </div>
   </div>
-  <div class="ftr"><button class="pbtn" onclick="startT()">Play another round</button><button class="sbtn" onclick="go('srn')">I'm good. Back to tools.</button></div>
+  <div class="ftr"><button class="pbtn" onclick="startT()">Play another round</button><button class="sbtn" id="sres-back" onclick="go('srn')">I'm good. Back to tools.</button></div>
 </div>
 
 <!-- PLAYER GRID -->
@@ -828,9 +1023,13 @@
   </div>
   <div class="tabs">
     <button class="tab" onclick="sw('shome',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/></svg><span class="tl">Home</span></button>
-    <button class="tab" onclick="sw('sci',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span class="tl">Check in</span></button>
-    <button class="tab" onclick="sw('srn',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg><span class="tl">Bet Help</span></button>
+    <button class="tab" onclick="openCI('morning')"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span class="tl">Check in</span></button>
+    <button class="tab-fab" onclick="go('srn')">
+      <div class="tab-fab-ring"><svg width="26" height="26" fill="none" stroke="#fff" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
+      <span class="tab-fab-lbl">Need Help</span>
+    </button>
     <button class="tab on" onclick="sw('sprog',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="tl">Progress</span></button>
+    <button class="tab" onclick="sw('ssk',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg><span class="tl">Skills</span></button>
   </div>
 </div>
 
@@ -922,22 +1121,72 @@
   </div>
 </div>
 
+
+<!-- TIMER SCREEN -->
+<div id="stimer" class="screen">
+  <div class="hdr-plain">
+    <button class="bk" onclick="go('srn')">← Back</button>
+    <div class="h2">Wait it out</div>
+    <div class="sub">Urges peak and fade. Give it 10 minutes first.</div>
+  </div>
+  <div class="bod" style="justify-content:center;gap:20px">
+    <div class="card" style="padding:28px 20px;text-align:center">
+      <div class="timer-big" id="timer-display">10:00</div>
+      <div class="timer-msg" id="timer-msg">Your urge will pass. The math isn't changing. You're stronger than this feeling.</div>
+    </div>
+    <div id="timer-done" style="display:none;background:#EAF3DE;border-radius:14px;padding:16px;color:#3B6D11;font-size:15px;font-weight:600;text-align:center;line-height:1.5">
+      You waited it out.<br>That took real strength.
+    </div>
+    <div class="sfty" style="text-align:center">In crisis right now? Call <strong style="color:#111">988</strong> or text <strong style="color:#111">1-800-GAMBLER</strong></div>
+  </div>
+  <div class="ftr">
+    <button class="pbtn" id="timer-btn" onclick="startTimer()">Start the 10-minute wait</button>
+    <button class="sbtn" onclick="stopTimer();go('srn')">Try something else instead</button>
+  </div>
+</div>
+
+<!-- HELP / CRISIS SCREEN -->
+<div id="shelp" class="screen">
+  <div class="hdr-plain">
+    <button class="bk" onclick="go('srn')">← Back</button>
+    <div class="h2">Get help now</div>
+    <div class="sub">These are real people. Available 24/7. No judgment.</div>
+  </div>
+  <div class="bod" style="gap:12px">
+    <a href="tel:988" style="text-decoration:none">
+      <div style="background:#C0392B;border-radius:14px;padding:20px;text-align:center">
+        <div style="font-size:36px;font-weight:700;color:#fff">988</div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.85);margin-top:4px">Suicide & Crisis Lifeline — call or text</div>
+      </div>
+    </a>
+    <a href="tel:18004262537" style="text-decoration:none">
+      <div style="background:#111;border-radius:14px;padding:20px;text-align:center">
+        <div style="font-size:22px;font-weight:700;color:#fff">1-800-GAMBLER</div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.7);margin-top:4px">National Problem Gambling Helpline — 24/7</div>
+      </div>
+    </a>
+    <div class="card">
+      <div class="ct" style="margin-bottom:6px">Text instead</div>
+      <div class="cs" style="font-size:13px;line-height:1.6">Text <strong style="color:#111">HOME</strong> to <strong style="color:#111">741741</strong> — Crisis Text Line. Free, confidential, 24/7.</div>
+    </div>
+    <div class="card">
+      <div class="ct" style="margin-bottom:6px">Gamblers Anonymous</div>
+      <div class="cs" style="font-size:13px;line-height:1.6">Real meetings with real people who've been through it. Find one at <strong style="color:#111">gamblersanonymous.org</strong></div>
+    </div>
+    <div class="sfty" style="text-align:center;line-height:1.7">Reaching out is not weakness.<br>It's the single most effective thing you can do.</div>
+  </div>
+</div>
+
 </div>
 <script>
 var qs={nfl:[{q:"Which QB holds the NFL all-time passing TD record?",cat:"NFL Records",a:["Tom Brady","Peyton Manning","Brett Favre","Drew Brees"],c:3},{q:"How many Super Bowls did the Patriots win with Brady?",cat:"NFL History",a:["4","5","6","7"],c:2},{q:"Who rushed for 2,105 yards in a single season in 1984?",cat:"NFL Records",a:["Barry Sanders","Adrian Peterson","Eric Dickerson","Earl Campbell"],c:2},{q:"Which team has won the most Super Bowls?",cat:"NFL History",a:["Dallas Cowboys","San Francisco 49ers","New England Patriots","Pittsburgh Steelers"],c:3},{q:"Who holds the record for most career rushing yards?",cat:"NFL Records",a:["Walter Payton","Barry Sanders","Emmitt Smith","LaDainian Tomlinson"],c:2}],nba:[{q:"Who holds the NBA record for most career points?",cat:"NBA Records",a:["Michael Jordan","Kareem Abdul-Jabbar","LeBron James","Kobe Bryant"],c:2},{q:"What is the most points scored by one player in one NBA game?",cat:"NBA Records",a:["81 — Kobe Bryant","100 — Wilt Chamberlain","73 — David Thompson","69 — MJ"],c:1},{q:"Which player was nicknamed The Mailman?",cat:"NBA Legends",a:["Charles Barkley","Karl Malone","Patrick Ewing","Scottie Pippen"],c:1}],mlb:[{q:"Who holds the all-time MLB home run record?",cat:"MLB Records",a:["Babe Ruth","Hank Aaron","Barry Bonds","Willie Mays"],c:2},{q:"What is the longest hitting streak in MLB history?",cat:"MLB Records",a:["56 games — Joe DiMaggio","44 games — Willie Keeler","61 games — Pete Rose","49 games — Ted Williams"],c:0}],nhl:[{q:"Who is known as The Great One?",cat:"NHL Legends",a:["Mario Lemieux","Bobby Orr","Wayne Gretzky","Gordie Howe"],c:2},{q:"Which team has won the most Stanley Cups?",cat:"NHL History",a:["Toronto Maple Leafs","Detroit Red Wings","Montreal Canadiens","Boston Bruins"],c:2}],soccer:[{q:"Who has won the most Ballon d'Or awards?",cat:"Soccer Records",a:["Cristiano Ronaldo","Zinedine Zidane","Ronaldinho","Lionel Messi"],c:3},{q:"Which country has won the most FIFA World Cups?",cat:"World Cup",a:["Germany","Argentina","Italy","Brazil"],c:3}],cfb:[{q:"Which school has the most college football national championships?",cat:"College Football",a:["Ohio State","Notre Dame","Alabama","Michigan"],c:2}],cbb:[{q:"Which school has won the most NCAA basketball championships?",cat:"College Basketball",a:["Duke","North Carolina","Kentucky","UCLA"],c:3}],golf:[{q:"Who holds the record for most major golf championships?",cat:"Golf Records",a:["Arnold Palmer","Tiger Woods","Jack Nicklaus","Sam Snead"],c:2}],mma:[{q:"Who became the first two-division UFC champion simultaneously?",cat:"MMA History",a:["Jon Jones","Khabib Nurmagomedov","Conor McGregor","Daniel Cormier"],c:2}],tennis:[{q:"Who holds the record for most Grand Slam singles titles among men?",cat:"Tennis Records",a:["Rafael Nadal","Roger Federer","Novak Djokovic","Pete Sampras"],c:2}]};
 var fb=[{q:"Which athlete has won the most Olympic gold medals?",cat:"Olympics",a:["Usain Bolt","Carl Lewis","Michael Phelps","Mark Spitz"],c:2},{q:"In what year were the first modern Olympic Games held?",cat:"Olympics",a:["1892","1896","1900","1904"],c:1}];
+
 // User state
-var userName = '';
-var goalName = 'My goal';
-var goalAmount = 1500;
-var totalSaved = 0;
-var ciTimes = [
-  {label:'Morning', timeVal:'08:00'},
-  {label:'Midday',  timeVal:'13:00'},
-  {label:'Evening', timeVal:'21:00'}
-];
-var eciGambled = null;
-var mornBet = null;
+var userName='',goalName='My goal',goalAmount=1500,totalSaved=0;
+var currentCI='morning';
+var ciTimes=[{label:'Morning',timeVal:'08:00'},{label:'Midday',timeVal:'13:00'},{label:'Evening',timeVal:'21:00'}];
+var eciGambled=null,mornBet=null;
 
 // Trivia / grid state
 var csp='nfl',cqi=0,cql=[],sc=0,tot=5,ans=[];
@@ -949,115 +1198,53 @@ var soberSteps=[{l:'S',w:'Stop',d:'Whatever you are doing right now. Just pause.
 var soberIdx=0;
 var headsC=0,tailsC=0,streak=0,lastFlip='';
 
+// Timer state
+var timerInterval=null,timerSeconds=600,timerRunning=false;
+var timerMsgs=['Your urge will pass. The math isn\'t changing. You\'re stronger than this feeling.','Urges typically peak at 5–7 minutes. You\'re in it. Keep going.','You\'ve made it past the hardest part. The wave is cresting.','The craving is just a feeling. It cannot make you do anything.','Almost there. You chose this. You are in control.','10 minutes done. You just proved the urge doesn\'t control you.'];
+
 // ── Navigation ──
-function go(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});var e=document.getElementById(id);if(e)e.classList.add('active');window.scrollTo(0,0);if(id==='shome')updateGreeting()}
+function go(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});var e=document.getElementById(id);if(e)e.classList.add('active');window.scrollTo(0,0);if(id==='shome')updateGreeting();if(id==='s6')renderCISlots();if(id==='stimer')resetTimer()}
 function sw(id,btn){go(id);document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on')});if(btn)btn.classList.add('on')}
 
-// ── Onboarding: name ──
+// ── Onboarding ──
 function saveName(){var n=document.getElementById('uname').value.trim();if(n)userName=n;go('s1')}
+function saveGoalSettings(){var n=document.getElementById('cg').value.trim();var a=parseInt(document.getElementById('goalamt').value)||1500;if(n){goalName=n;document.querySelectorAll('#hlabel').forEach(function(el){el.textContent=n})}goalAmount=a;updateGoalDisplay();go('s4')}
 
-// ── Onboarding: goal settings ──
-function saveGoalSettings(){
-  var n=document.getElementById('cg').value.trim();
-  var a=parseInt(document.getElementById('goalamt').value)||1500;
-  if(n){goalName=n;var h=document.getElementById('hlabel');if(h)h.textContent=n}
-  goalAmount=a;
-  updateGoalDisplay();
-  go('s4');
-}
-
-// ── Goal edit (from home) ──
-function openGoalEdit(){
-  document.getElementById('edit-goal-name').value=goalName;
-  document.getElementById('edit-goal-amt').value=goalAmount;
-  document.getElementById('edit-saved-amt').value=totalSaved;
-  go('sgoaledit');
-}
-function saveGoalEdit(){
-  var n=document.getElementById('edit-goal-name').value.trim();
-  var a=parseInt(document.getElementById('edit-goal-amt').value)||goalAmount;
-  var s=parseInt(document.getElementById('edit-saved-amt').value)||0;
-  if(n){goalName=n;document.querySelectorAll('#hlabel').forEach(function(el){el.textContent=n})}
-  goalAmount=a;totalSaved=s;
-  updateGoalDisplay();
-  go('shome');
-}
+// ── Goal edit ──
+function openGoalEdit(){document.getElementById('edit-goal-name').value=goalName;document.getElementById('edit-goal-amt').value=goalAmount;document.getElementById('edit-saved-amt').value=totalSaved;go('sgoaledit')}
+function saveGoalEdit(){var n=document.getElementById('edit-goal-name').value.trim();var a=parseInt(document.getElementById('edit-goal-amt').value)||goalAmount;var s=parseInt(document.getElementById('edit-saved-amt').value)||0;if(n){goalName=n;document.querySelectorAll('#hlabel').forEach(function(el){el.textContent=n})}goalAmount=a;totalSaved=s;updateGoalDisplay();go('shome')}
 
 // ── Goal display ──
-function updateGoalDisplay(){
-  var pct=Math.min(100,goalAmount>0?Math.round((totalSaved/goalAmount)*100):0);
-  var remaining=Math.max(0,goalAmount-totalSaved);
-  var el=document.getElementById('home-saved');if(el)el.textContent='$'+totalSaved;
-  var ctx=document.getElementById('home-gctx');if(ctx)ctx.textContent='saved. $'+remaining+' to go on a $'+goalAmount+' goal.';
-  var pf=document.getElementById('home-pf');if(pf)pf.style.width=pct+'%';
-  var mx=document.getElementById('home-goal-max');if(mx)mx.textContent='$'+goalAmount;
-}
+function updateGoalDisplay(){var pct=Math.min(100,goalAmount>0?Math.round((totalSaved/goalAmount)*100):0);var remaining=Math.max(0,goalAmount-totalSaved);var el=document.getElementById('home-saved');if(el)el.textContent='$'+totalSaved;var ctx=document.getElementById('home-gctx');if(ctx)ctx.textContent='saved. $'+remaining+' to go on a $'+goalAmount+' goal.';var pf=document.getElementById('home-pf');if(pf)pf.style.width=pct+'%';var mx=document.getElementById('home-goal-max');if(mx)mx.textContent='$'+goalAmount;var pc=document.getElementById('home-pct');if(pc)pc.textContent=pct+'%'}
 
 // ── Greeting ──
-function updateGreeting(){
-  var h=new Date().getHours();
-  var gr=h<12?'Good morning':h<17?'Good afternoon':'Good evening';
-  var el=document.getElementById('greeting');
-  if(el)el.textContent=userName?gr+', '+userName:gr;
-}
+function updateGreeting(){var h=new Date().getHours();var gr=h<12?'Good morning':h<17?'Good afternoon':'Good evening';var el=document.getElementById('greeting');if(el)el.textContent=userName?gr+', '+userName:gr}
 
-// ── Morning check-in: bet question ──
-function setBet(v){
-  mornBet=v;
-  var y=document.getElementById('sci-bet-yes');var n=document.getElementById('sci-bet-no');
-  if(y)y.classList.toggle('sel',v);
-  if(n)n.classList.toggle('sel',!v);
-}
-function saveMorningCI(){go(mornBet===true?'sabc':'shome');mornBet=null}
+// ── Unified check-in ──
+function openCI(type){currentCI=type||'morning';var titles={morning:'Morning check-in',afternoon:'Afternoon check-in',evening:'Evening check-in'};var subs={morning:'Set your intention. Honest answers only.',afternoon:'Midday pulse check. How are you doing?',evening:'End of day reflection. Be honest with yourself.'};var t=document.getElementById('ci-title');if(t)t.textContent=titles[currentCI]||'Check-in';var s=document.getElementById('ci-sub');if(s)s.textContent=subs[currentCI]||'Honest answers.';mornBet=null;var y=document.getElementById('sci-bet-yes');var n=document.getElementById('sci-bet-no');if(y)y.classList.remove('sel');if(n)n.classList.remove('sel');var sv=document.getElementById('sci-savings');if(sv)sv.style.display='none';var sa=document.getElementById('sci-saved-amt');if(sa)sa.value='';go('sci')}
+
+// ── Bet question & savings ──
+function setBet(v){mornBet=v;var y=document.getElementById('sci-bet-yes');var n=document.getElementById('sci-bet-no');if(y)y.classList.toggle('sel',v);if(n)n.classList.toggle('sel',!v);var sv=document.getElementById('sci-savings');if(sv)sv.style.display=v?'none':'block'}
+function saveMorningCI(){if(mornBet===false){var saved=parseInt(document.getElementById('sci-saved-amt').value)||0;if(saved>0){totalSaved+=saved;updateGoalDisplay();document.getElementById('cel-amount').textContent=saved;document.getElementById('cel-total').textContent=totalSaved;document.getElementById('cel-goal-label').textContent='toward '+goalName;var pct=Math.min(100,goalAmount>0?Math.round((totalSaved/goalAmount)*100):0);var cpf=document.getElementById('cel-pf');if(cpf)cpf.style.width=pct+'%';mornBet=null;go('scelebrate');return}}go(mornBet===true?'sabc':'shome');mornBet=null}
 
 // ── Evening check-in ──
-function eciAnswer(gambled){
-  eciGambled=gambled;
-  var y=document.getElementById('eci-yes-btn');var n=document.getElementById('eci-no-btn');
-  if(y)y.classList.toggle('sel',gambled);
-  if(n)n.classList.toggle('sel',!gambled);
-  var slip=document.getElementById('eci-slip');
-  var win=document.getElementById('eci-win');
-  var ftr=document.getElementById('eci-ftr');
-  if(slip)slip.style.display=gambled?'flex':'none';
-  if(win)win.style.display=gambled?'none':'flex';
-  if(ftr)ftr.style.display='block';
-}
-function saveECI(){
-  if(eciGambled===false){
-    var saved=parseInt(document.getElementById('eci-saved').value)||0;
-    if(saved>0){
-      totalSaved+=saved;
-      updateGoalDisplay();
-      var pct=Math.min(100,goalAmount>0?Math.round((totalSaved/goalAmount)*100):0);
-      document.getElementById('cel-amount').textContent=saved;
-      document.getElementById('cel-total').textContent=totalSaved;
-      document.getElementById('cel-goal-label').textContent='toward '+goalName;
-      var cpf=document.getElementById('cel-pf');if(cpf)cpf.style.width=pct+'%';
-      eciGambled=null;
-      go('scelebrate');
-      return;
-    }
-  }
-  eciGambled=null;
-  go('shome');
-}
+function eciAnswer(gambled){eciGambled=gambled;var y=document.getElementById('eci-yes-btn');var n=document.getElementById('eci-no-btn');if(y)y.classList.toggle('sel',gambled);if(n)n.classList.toggle('sel',!gambled);var slip=document.getElementById('eci-slip');var win=document.getElementById('eci-win');var ftr=document.getElementById('eci-ftr');if(slip)slip.style.display=gambled?'flex':'none';if(win)win.style.display=gambled?'none':'flex';if(ftr)ftr.style.display='block'}
+function saveECI(){if(eciGambled===false){var saved=parseInt(document.getElementById('eci-saved').value)||0;if(saved>0){totalSaved+=saved;updateGoalDisplay();var pct=Math.min(100,goalAmount>0?Math.round((totalSaved/goalAmount)*100):0);document.getElementById('cel-amount').textContent=saved;document.getElementById('cel-total').textContent=totalSaved;document.getElementById('cel-goal-label').textContent='toward '+goalName;var cpf=document.getElementById('cel-pf');if(cpf)cpf.style.width=pct+'%';eciGambled=null;go('scelebrate');return}}eciGambled=null;go('shome')}
+
+// ── Post-game urge check ──
+function urgeCheck(state,btn){btn.closest('.mrow').querySelectorAll('.mbtn').forEach(function(b){b.classList.remove('sel')});btn.classList.add('sel');var msgs={gone:'The urge passed. That is the skill — you just used it. Every time you do this, it gets easier.',weaker:'Weaker is a win. Keep going. Try another round or a therapy tool.',same:'Still there. That\'s okay. Try a therapy tool or start the timer.',stronger:'If it\'s overwhelming, use the crisis line. Otherwise try a therapy tool — they work.',};var fb=document.getElementById('urge-fb');if(fb){fb.style.display='block';fb.textContent=msgs[state]||''}var back=document.getElementById('sres-back');if(back){if(state==='gone'){back.textContent='I\'m good. Go home.';back.onclick=function(){go('shome')}}else{back.textContent='Try a therapy tool';back.onclick=function(){go('srn')}}}}
+
+// ── Timer ──
+function openTimer(){go('stimer')}
+function startTimer(){if(timerRunning)return;timerRunning=true;document.getElementById('timer-btn').textContent='Running…';document.getElementById('timer-btn').disabled=true;document.getElementById('timer-done').style.display='none';timerInterval=setInterval(function(){timerSeconds--;var m=Math.floor(timerSeconds/60);var s=timerSeconds%60;document.getElementById('timer-display').textContent=m+':'+(s<10?'0':'')+s;var idx=Math.min(Math.floor((600-timerSeconds)/100),timerMsgs.length-2);document.getElementById('timer-msg').textContent=timerMsgs[idx];if(timerSeconds<=0){clearInterval(timerInterval);timerRunning=false;document.getElementById('timer-display').textContent='0:00';document.getElementById('timer-done').style.display='block';document.getElementById('timer-msg').textContent=timerMsgs[timerMsgs.length-1];document.getElementById('timer-btn').textContent='Start again';document.getElementById('timer-btn').disabled=false}},1000)}
+function stopTimer(){if(timerInterval)clearInterval(timerInterval);timerRunning=false}
+function resetTimer(){stopTimer();timerSeconds=600;var d=document.getElementById('timer-display');if(d)d.textContent='10:00';var b=document.getElementById('timer-btn');if(b){b.textContent='Start the 10-minute wait';b.disabled=false}var dn=document.getElementById('timer-done');if(dn)dn.style.display='none';var m=document.getElementById('timer-msg');if(m)m.textContent=timerMsgs[0]}
+
+// ── Word chips ──
+function chip(targetId,btn){var ta=document.getElementById(targetId);if(!ta)return;var text=btn.textContent;ta.value=ta.value?ta.value+', '+text:text;ta.focus()}
 
 // ── Check-in time slots ──
-function renderCISlots(){
-  var c=document.getElementById('ci-slots');if(!c)return;
-  c.innerHTML='';
-  ciTimes.forEach(function(slot,i){
-    var d=document.createElement('div');
-    d.className='card';
-    d.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:12px';
-    var label='<div class="ct" contenteditable="true" onblur="ciTimes['+i+'].label=this.textContent" style="outline:none;min-width:60px">'+slot.label+'</div>';
-    var timeInput='<input type="time" value="'+slot.timeVal+'" style="border:0.5px solid rgba(0,0,0,0.14);border-radius:8px;padding:6px 10px;font-size:14px;color:#555;background:#F2F0EB;font-family:inherit" onchange="ciTimes['+i+'].timeVal=this.value"/>';
-    var removeBtn=ciTimes.length>1?'<button onclick="removeCISlot('+i+')" style="border:none;background:none;color:#C0392B;font-size:22px;cursor:pointer;padding:0;line-height:1;flex-shrink:0">&times;</button>':'';
-    d.innerHTML='<div style="flex:1">'+label+'</div>'+timeInput+removeBtn;
-    c.appendChild(d);
-  });
-}
+function renderCISlots(){var c=document.getElementById('ci-slots');if(!c)return;c.innerHTML='';ciTimes.forEach(function(slot,i){var d=document.createElement('div');d.className='card';d.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:12px';var label='<div class="ct" contenteditable="true" onblur="ciTimes['+i+'].label=this.textContent" style="outline:none;min-width:60px">'+slot.label+'</div>';var timeInput='<input type="time" value="'+slot.timeVal+'" style="border:0.5px solid rgba(0,0,0,0.14);border-radius:8px;padding:6px 10px;font-size:14px;color:#555;background:#F2F0EB;font-family:inherit" onchange="ciTimes['+i+'].timeVal=this.value"/>';var removeBtn=ciTimes.length>1?'<button onclick="removeCISlot('+i+')" style="border:none;background:none;color:#C0392B;font-size:22px;cursor:pointer;padding:0;line-height:1;flex-shrink:0">&times;</button>':'';d.innerHTML='<div style="flex:1">'+label+'</div>'+timeInput+removeBtn;c.appendChild(d)})}
 function addCISlot(){ciTimes.push({label:'Check-in '+(ciTimes.length+1),timeVal:'12:00'});renderCISlots()}
 function removeCISlot(i){ciTimes.splice(i,1);renderCISlots()}
 
@@ -1074,7 +1261,7 @@ function shuf(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(
 function startT(){var pool=(qs[csp]&&qs[csp].length)?qs[csp]:fb;cql=shuf(pool.concat(fb)).slice(0,tot);cqi=0;sc=0;ans=[];go('striv');rq()}
 function rq(){var q=cql[cqi];document.getElementById('tq').textContent=q.q;document.getElementById('tcat').textContent=q.cat;document.getElementById('sbadge').textContent=sc+' / '+tot;var pd=document.getElementById('pdots');pd.innerHTML='';for(var i=0;i<tot;i++){var d=document.createElement('div');d.className='pd'+(i<ans.length?(ans[i]?' ok':' no'):(i===cqi?' cur':''));pd.appendChild(d)}var ac=document.getElementById('ac');ac.innerHTML='';['A','B','C','D'].forEach(function(l,idx){var b=document.createElement('button');b.className='abtn';b.innerHTML='<div class="al">'+l+'</div><span>'+q.a[idx]+'</span>';(function(i,btn){b.onclick=function(){ca(i,q.c,btn,q.a)}})(idx,b);ac.appendChild(b)});document.getElementById('tfb').style.display='none';document.getElementById('tftr').style.display='none'}
 function ca(sel,cor,btn,as){document.getElementById('ac').querySelectorAll('.abtn').forEach(function(b){b.disabled=true});var fb2=document.getElementById('tfb');fb2.style.display='block';if(sel===cor){btn.classList.add('ok');sc++;ans.push(true);fb2.textContent='Correct!';fb2.style.color='#3B6D11'}else{btn.classList.add('no');document.getElementById('ac').querySelectorAll('.abtn')[cor].classList.add('ok');ans.push(false);fb2.textContent='Not quite. '+as[cor]+' is the answer.';fb2.style.color='#C0392B'}document.getElementById('sbadge').textContent=sc+' / '+tot;document.getElementById('tftr').style.display='block';document.getElementById('tnxt').textContent=(cqi>=tot-1)?'See results':'Next question'}
-function nextQ(){cqi++;if(cqi>=tot){var ls=['Keep practicing','Not bad. Room to grow.','Solid sports knowledge','You know your stuff','Absolute legend'];document.getElementById('rsc').textContent=sc+'/'+tot;document.getElementById('rlbl').textContent=ls[Math.min(Math.floor((sc/tot)*4),4)];go('sres')}else rq()}
+function nextQ(){cqi++;if(cqi>=tot){var ls=['Keep practicing','Not bad. Room to grow.','Solid sports knowledge','You know your stuff','Absolute legend'];document.getElementById('rsc').textContent=sc+'/'+tot;document.getElementById('rlbl').textContent=ls[Math.min(Math.floor((sc/tot)*4),4)];var fb2=document.getElementById('urge-fb');if(fb2)fb2.style.display='none';document.querySelectorAll('#sres .mbtn').forEach(function(b){b.classList.remove('sel')});go('sres')}else rq()}
 
 // ── Player grid ──
 function oc(cell,r,c){if(gf[r][c])return;ac2={cell:cell,r:r,c:c};document.getElementById('gprompt').textContent=gh[r][c];document.getElementById('gai').value='';var sg2=document.getElementById('gsugg');sg2.innerHTML='';ga[r][c].slice(0,3).forEach(function(n){var t=document.createElement('div');t.className='tag';t.textContent=n;t.onclick=function(){document.getElementById('gai').value=n};sg2.appendChild(t)});document.getElementById('ginput').style.display='block';setTimeout(function(){document.getElementById('gai').focus()},100)}
