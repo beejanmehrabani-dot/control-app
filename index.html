@@ -201,7 +201,7 @@
 
   /* Big progress bar */
   .prog-bar-wrap { margin-top:14px; background:#E0DDD8; border-radius:8px; height:16px; overflow:hidden; }
-  .prog-bar-fill { height:16px; border-radius:8px; background:#111; transition:width 0.6s ease; }
+  .prog-bar-fill { height:16px; border-radius:8px; background:#F0B429; transition:width 0.6s ease; box-shadow:0 2px 8px rgba(240,180,41,0.4); }
   .prog-bar-labels { display:flex; justify-content:space-between; align-items:center; margin-top:6px; }
 </style>
 </head>
@@ -237,18 +237,47 @@
   <div class="ftr"><button class="pbtn" onclick="saveName()">Continue</button></div>
 </div>
 
-<!-- STEP 1: GOALS -->
+<!-- STEP 0b: TRIED BEFORE -->
+<div id="s0b" class="screen">
+  <div class="hdr-plain">
+    <div class="sdots"><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+    <div class="h2">Have you tried to get your gambling under control before?</div>
+  </div>
+  <div class="bod" style="justify-content:flex-start;padding-top:24px;gap:10px">
+    <div class="cc" onclick="ts(this);document.getElementById('s0b-next').disabled=false" id="s0b-yes"><div class="cdot"></div><div><div class="cl">Yes — I've tried before</div></div></div>
+    <div class="cc" onclick="ts(this);document.getElementById('s0b-next').disabled=false" id="s0b-no"><div class="cdot"></div><div><div class="cl">No — this is my first time</div></div></div>
+  </div>
+  <div class="ftr">
+    <button class="pbtn" id="s0b-next" onclick="go('s1')" disabled>Continue</button>
+  </div>
+</div>
+
+<!-- STEP 1: END GOAL -->
 <div id="s1" class="screen">
   <div class="hdr-plain">
-    <div class="sdots"><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
-    <div class="h2">What do you want?</div>
-    <div class="sub">Pick everything that fits. No wrong answers here.</div>
+    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+    <div class="h2">What is your end goal?</div>
+    <div class="sub">Be honest with yourself. This shapes everything in the app.</div>
   </div>
-  <div class="bod">
-    <div class="cc" onclick="tm(this)"><div class="cbox"></div><div><div class="cl">Stop betting in the moment before I do something I'll regret</div></div></div>
-    <div class="cc" onclick="tm(this)"><div class="cbox"></div><div><div class="cl">Set limits and actually stick to them</div></div></div>
-    <div class="cc" onclick="tm(this)"><div class="cbox"></div><div><div class="cl">Understand why I keep doing this</div></div></div>
-    <div class="cc" onclick="tm(this)"><div class="cbox"></div><div><div class="cl">Stop completely. I'm done with it.</div></div></div>
+  <div class="bod" style="justify-content:flex-start;padding-top:24px;gap:10px">
+    <div class="cc" onclick="setEndGoal(this,'stop')" id="eg-stop"><div class="cdot"></div><div><div class="cl">Stop gambling completely.</div><div class="cs2">I want to walk away for good.</div></div></div>
+    <div class="cc" onclick="setEndGoal(this,'control')" id="eg-control"><div class="cdot"></div><div><div class="cl">Get control back — but still gamble what I can afford.</div><div class="cs2">Set limits, make smarter decisions.</div></div></div>
+    <div class="cc" onclick="setEndGoal(this,'unsure')" id="eg-unsure"><div class="cdot"></div><div><div class="cl">Not sure yet.</div><div class="cs2">I just know something needs to change.</div></div></div>
+  </div>
+  <div class="ftr"><button class="pbtn" id="s1-next" onclick="saveEndGoal()" disabled>Continue</button></div>
+</div>
+
+<!-- STEP 1b: MAIN GOALS (skip if stop completely) -->
+<div id="s1b" class="screen">
+  <div class="hdr-plain">
+    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+    <div class="h2">What are your main goals?</div>
+    <div class="sub">Pick everything that fits. No wrong answers.</div>
+  </div>
+  <div class="bod" style="justify-content:flex-start;padding-top:24px;gap:10px">
+    <div class="cc" onclick="tm(this)"><div class="cbox"></div><div><div class="cl">Improve impulsive betting. Pause in the moment and make better decisions.</div></div></div>
+    <div class="cc" onclick="tm(this)"><div class="cbox"></div><div><div class="cl">Set limits and actually stick to them.</div></div></div>
+    <div class="cc" onclick="tm(this)"><div class="cbox"></div><div><div class="cl">Understand why I keep doing this.</div></div></div>
     <div class="cc" onclick="tm(this)"><div class="cbox"></div><div><div class="cl">Not sure yet. I just know something needs to change.</div></div></div>
   </div>
   <div class="ftr"><button class="pbtn" onclick="go('s2')">Continue</button></div>
@@ -293,9 +322,10 @@
   </div>
   <div class="bod">
     <div class="cc" onclick="sg(this,'Pay off debt')" id="g0"><div class="cdot"></div><div><div class="cl">Pay off debt</div><div class="cs2">Credit card, loan, money owed to someone</div></div></div>
-    <div class="cc" onclick="sg(this,'Save for something big')" id="g1"><div class="cdot"></div><div><div class="cl">Save for something meaningful</div><div class="cs2">A trip, a car, a down payment</div></div></div>
-    <div class="cc" onclick="sg(this,'More for my family')" id="g2"><div class="cdot"></div><div><div class="cl">More for my family</div><div class="cs2">Kids, partner, people who depend on you</div></div></div>
-    <div class="cc" onclick="sg(this,'Just stop losing it')" id="g3"><div class="cdot"></div><div><div class="cl">Just stop losing it</div><div class="cs2">No specific goal. Keep what I earn.</div></div></div>
+    <div class="cc" onclick="sg(this,'Save for something meaningful')" id="g1"><div class="cdot"></div><div><div class="cl">Save for something meaningful</div><div class="cs2">A trip, a car, a down payment</div></div></div>
+    <div class="cc" onclick="sg(this,'Save more for myself and family')" id="g2"><div class="cdot"></div><div><div class="cl">Save more for myself, my family, others</div><div class="cs2">Build a cushion. Give more.</div></div></div>
+    <div class="cc" onclick="sg(this,'Invest and build wealth')" id="g3"><div class="cdot"></div><div><div class="cl">Invest it and build my wealth</div><div class="cs2">Put money to work instead of losing it.</div></div></div>
+    <div class="cc" onclick="sg(this,'Just stop losing money')" id="g4"><div class="cdot"></div><div><div class="cl">Just stop losing money. No specific goal in mind.</div></div></div>
     <div style="display:flex;flex-direction:column;gap:8px">
       <div><div class="qh">Name your specific goal</div><input class="ti" id="cg" placeholder="e.g. Pay off my Visa or Bali trip with Sarah" style="margin-top:4px"/></div>
       <div><div class="qh">Goal amount ($)</div><input class="ti" id="goalamt" type="number" placeholder="e.g. 1500" style="margin-top:4px"/></div>
@@ -387,7 +417,52 @@
     <div id="ci-slots"></div>
     <button class="sbtn" onclick="addCISlot()" style="margin-top:0">+ Add a check-in time</button>
   </div>
-  <div class="ftr"><button class="pbtn" onclick="go('shome')">Let's go</button></div>
+  <div class="ftr"><button class="pbtn" onclick="go('sknow')">Let's go</button></div>
+</div>
+
+<!-- KNOW YOURSELF (optional) -->
+<div id="sknow" class="screen">
+  <div class="hdr-plain">
+    <button class="bk" onclick="go('shome')">Skip for now</button>
+    <div class="h2">Know yourself</div>
+    <div class="sub">Optional. The more you share, the more tailored your experience.</div>
+  </div>
+  <div class="bod">
+    <div class="csec">
+      <div class="ql">When do you feel the urge to gamble the most?</div>
+      <div class="tags" style="margin-top:8px">
+        <div class="tag" onclick="tt(this)">Sunday nights</div>
+        <div class="tag" onclick="tt(this)">Payday</div>
+        <div class="tag" onclick="tt(this)">After work</div>
+        <div class="tag" onclick="tt(this)">Late at night</div>
+        <div class="tag" onclick="tt(this)">Weekends</div>
+        <div class="tag" onclick="tt(this)">During big games</div>
+        <div class="tag" onclick="tt(this)">When I'm bored</div>
+        <div class="tag" onclick="tt(this)">When I'm stressed</div>
+        <div class="tag" onclick="tt(this)">When I'm alone</div>
+        <div class="tag" onclick="tt(this)">After a loss</div>
+      </div>
+      <textarea style="margin-top:10px;min-height:52px" placeholder="Or describe in your own words..."></textarea>
+    </div>
+    <div class="csec">
+      <div class="ql">What usually helps you resist the urge?</div>
+      <div class="tags" style="margin-top:8px">
+        <div class="tag" onclick="tt(this)">Calling someone</div>
+        <div class="tag" onclick="tt(this)">Going for a walk</div>
+        <div class="tag" onclick="tt(this)">Watching something</div>
+        <div class="tag" onclick="tt(this)">Reminding myself of my goal</div>
+        <div class="tag" onclick="tt(this)">Deleting the apps</div>
+        <div class="tag" onclick="tt(this)">Waiting it out</div>
+        <div class="tag" onclick="tt(this)">Nothing has worked yet</div>
+      </div>
+      <textarea style="margin-top:10px;min-height:52px" placeholder="What's worked for you before?"></textarea>
+    </div>
+    <div class="sfty">This is just for you. Knowing your patterns is the first step to changing them.</div>
+  </div>
+  <div class="ftr">
+    <button class="pbtn" onclick="go('shome')">Save and go home</button>
+    <button class="sbtn" onclick="go('shome')">Skip for now</button>
+  </div>
 </div>
 
 <!-- HOME -->
@@ -399,24 +474,29 @@
     </div>
   </div>
   <div class="bod">
-    <div class="gpc">
+    <div class="gpc" style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border:none;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-        <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.08em">Toward your goal</div>
-        <button onclick="openGoalEdit()" style="background:none;border:none;font-size:12px;color:#888;cursor:pointer;padding:0;font-family:inherit">Edit</button>
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.08em">Toward your goal</div>
+        <button onclick="openGoalEdit()" style="background:none;border:none;font-size:12px;color:rgba(255,255,255,0.5);cursor:pointer;padding:0;font-family:inherit">Edit</button>
       </div>
-      <div style="font-size:13px;color:#666;margin-bottom:4px" id="hlabel">Pay off my Visa</div>
-      <div class="ga" id="home-saved">$0</div>
-      <div class="gctx" id="home-gctx">saved so far.</div>
-      <div class="prog-bar-wrap"><div class="prog-bar-fill" id="home-pf" style="width:0%"></div></div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:4px" id="hlabel">Pay off my Visa</div>
+      <div class="ga" id="home-saved" style="color:#fff">$0</div>
+      <div class="gctx" id="home-gctx" style="color:rgba(255,255,255,0.6)">saved so far.</div>
+      <div class="prog-bar-wrap" style="background:rgba(255,255,255,0.15)"><div class="prog-bar-fill" id="home-pf" style="width:0%;background:#F0B429"></div></div>
       <div class="prog-bar-labels">
-        <div style="font-size:12px;color:#888">$0</div>
-        <div style="font-size:15px;font-weight:700;color:#111" id="home-pct">0%</div>
-        <div style="font-size:12px;color:#888" id="home-goal-max">$1,500</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5)">$0</div>
+        <div style="font-size:15px;font-weight:700;color:#fff" id="home-pct">0%</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5)" id="home-goal-max">$1,500</div>
       </div>
     </div>
     <div class="sg">
-      <div class="sc"><div class="sn">7</div><div class="sl">days in control</div></div>
-      <div class="sc"><div class="sn">4</div><div class="sl">urges managed</div></div>
+      <div class="sc" style="background:linear-gradient(135deg,#1a6b3c,#2d9e5f);"><div class="sn" style="color:#fff">7</div><div class="sl" style="color:rgba(255,255,255,0.75)">days in control 🎉</div></div>
+      <div class="sc" style="background:linear-gradient(135deg,#6b3a9b,#9b5de5);"><div class="sn" style="color:#fff">4</div><div class="sl" style="color:rgba(255,255,255,0.75)">urges managed 💪</div></div>
+    </div>
+    <div style="background:linear-gradient(135deg,#0f3460,#533483);border-radius:16px;padding:16px 18px;flex-shrink:0">
+      <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px">Your Patterns</div>
+      <div style="font-size:14px;color:#fff;line-height:1.6;margin-bottom:12px">Based on your trends, your peak window of urges comes between <strong>6pm and 8pm on Sunday nights</strong>. Consider opening the app before then and reviewing some strategies.</div>
+      <button onclick="go('srn')" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:10px;color:#fff;font-size:13px;font-weight:600;padding:9px 16px;cursor:pointer;font-family:inherit;width:100%">Review strategies now  →</button>
     </div>
     <div class="slab">Today</div>
     <div class="card tap row" onclick="openCI('morning')"><div><div class="ct">Morning check-in</div><div class="cs">Set your intention. Takes 2 minutes.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
@@ -426,6 +506,9 @@
     <div class="card tap row" onclick="go('srn')"><div><div class="ct">I am about to bet, help</div><div class="cs">Open this before you open a betting app</div></div><div style="font-size:20px;color:#ccc">›</div></div>
     <div class="card tap row" onclick="go('senv')"><div><div class="ct">Block the path</div><div class="cs">Remove access. Make betting harder to reach.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
     <div class="card tap row" onclick="go('ssk')"><div><div class="ct">Build skills</div><div class="cs">CBT, mindfulness, and motivation tools</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div class="card tap row" onclick="go('sknow')"><div><div class="ct">Know yourself</div><div class="cs">Understand your patterns. Optional but powerful.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
+    <div style="height:1px;background:rgba(0,0,0,0.06);margin:4px 0"></div>
+    <button onclick="logControlMilestone()" style="width:100%;padding:14px;background:transparent;border:1.5px dashed rgba(0,0,0,0.18);border-radius:14px;font-size:14px;color:#888;cursor:pointer;font-family:inherit;text-align:center">I feel in control — I don't think I need this app anymore</button>
   </div>
   <div class="tabs">
     <button class="tab on" onclick="sw('shome',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/></svg><span class="tl">Home</span></button>
@@ -469,7 +552,7 @@
       <textarea id="ci-feel" style="min-height:52px;margin-top:8px" placeholder="Or write it in your own words..."></textarea>
     </div>
     <div class="csec">
-      <div class="ql">Urge intensity right now</div>
+      <div class="ql">Urge to gamble intensity right now</div>
       <div class="slider-wrap">
         <div class="slider-label"><span class="slider-name">How strong is it?</span><span class="slider-val" id="urge-val">0</span></div>
         <input type="range" min="0" max="10" value="0" step="1" oninput="document.getElementById('urge-val').textContent=this.value">
@@ -478,6 +561,7 @@
       <div class="qh" style="margin:0">What triggered it?</div>
       <div class="tags">
         <div class="tag" onclick="tt(this)">Saw an ad</div>
+        <div class="tag" onclick="tt(this)">Saw something on social media</div>
         <div class="tag" onclick="tt(this)">Game on tonight</div>
         <div class="tag" onclick="tt(this)">Bored</div>
         <div class="tag" onclick="tt(this)">Stressed</div>
@@ -1177,6 +1261,23 @@
   </div>
 </div>
 
+<!-- IN CONTROL MILESTONE -->
+<div id="scontrol" class="screen">
+  <div class="bod" style="justify-content:center;align-items:center;text-align:center;padding:48px 28px">
+    <div style="font-size:64px;margin-bottom:16px">🌱</div>
+    <div class="h2" style="margin-bottom:10px">This is what progress looks like.</div>
+    <div class="sub" style="margin-bottom:28px">You came here for help, and now you feel like you don't need it. That's the goal. That's a win worth marking.</div>
+    <div style="background:#EAF3DE;border:1.5px solid #3B6D11;border-radius:16px;padding:20px 18px;width:100%;margin-bottom:24px">
+      <div style="font-size:13px;font-weight:700;color:#3B6D11;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px">You logged this milestone</div>
+      <div style="font-size:22px;font-weight:700;color:#111" id="control-date"></div>
+      <div style="font-size:14px;color:#555;margin-top:4px">I feel in control. I don't think I need this app anymore.</div>
+    </div>
+    <div class="sub" style="margin-bottom:28px;font-size:13px">The app will be here if you ever want to check back in. No judgement if things get hard again.</div>
+    <button class="pbtn" onclick="go('shome')" style="margin-bottom:12px">Keep the app, just in case</button>
+    <button class="sbtn" onclick="go('shome')">Back to home</button>
+  </div>
+</div>
+
 </div>
 <script>
 var qs={nfl:[{q:"Which QB holds the NFL all-time passing TD record?",cat:"NFL Records",a:["Tom Brady","Peyton Manning","Brett Favre","Drew Brees"],c:3},{q:"How many Super Bowls did the Patriots win with Brady?",cat:"NFL History",a:["4","5","6","7"],c:2},{q:"Who rushed for 2,105 yards in a single season in 1984?",cat:"NFL Records",a:["Barry Sanders","Adrian Peterson","Eric Dickerson","Earl Campbell"],c:2},{q:"Which team has won the most Super Bowls?",cat:"NFL History",a:["Dallas Cowboys","San Francisco 49ers","New England Patriots","Pittsburgh Steelers"],c:3},{q:"Who holds the record for most career rushing yards?",cat:"NFL Records",a:["Walter Payton","Barry Sanders","Emmitt Smith","LaDainian Tomlinson"],c:2}],nba:[{q:"Who holds the NBA record for most career points?",cat:"NBA Records",a:["Michael Jordan","Kareem Abdul-Jabbar","LeBron James","Kobe Bryant"],c:2},{q:"What is the most points scored by one player in one NBA game?",cat:"NBA Records",a:["81 — Kobe Bryant","100 — Wilt Chamberlain","73 — David Thompson","69 — MJ"],c:1},{q:"Which player was nicknamed The Mailman?",cat:"NBA Legends",a:["Charles Barkley","Karl Malone","Patrick Ewing","Scottie Pippen"],c:1}],mlb:[{q:"Who holds the all-time MLB home run record?",cat:"MLB Records",a:["Babe Ruth","Hank Aaron","Barry Bonds","Willie Mays"],c:2},{q:"What is the longest hitting streak in MLB history?",cat:"MLB Records",a:["56 games — Joe DiMaggio","44 games — Willie Keeler","61 games — Pete Rose","49 games — Ted Williams"],c:0}],nhl:[{q:"Who is known as The Great One?",cat:"NHL Legends",a:["Mario Lemieux","Bobby Orr","Wayne Gretzky","Gordie Howe"],c:2},{q:"Which team has won the most Stanley Cups?",cat:"NHL History",a:["Toronto Maple Leafs","Detroit Red Wings","Montreal Canadiens","Boston Bruins"],c:2}],soccer:[{q:"Who has won the most Ballon d'Or awards?",cat:"Soccer Records",a:["Cristiano Ronaldo","Zinedine Zidane","Ronaldinho","Lionel Messi"],c:3},{q:"Which country has won the most FIFA World Cups?",cat:"World Cup",a:["Germany","Argentina","Italy","Brazil"],c:3}],cfb:[{q:"Which school has the most college football national championships?",cat:"College Football",a:["Ohio State","Notre Dame","Alabama","Michigan"],c:2}],cbb:[{q:"Which school has won the most NCAA basketball championships?",cat:"College Basketball",a:["Duke","North Carolina","Kentucky","UCLA"],c:3}],golf:[{q:"Who holds the record for most major golf championships?",cat:"Golf Records",a:["Arnold Palmer","Tiger Woods","Jack Nicklaus","Sam Snead"],c:2}],mma:[{q:"Who became the first two-division UFC champion simultaneously?",cat:"MMA History",a:["Jon Jones","Khabib Nurmagomedov","Conor McGregor","Daniel Cormier"],c:2}],tennis:[{q:"Who holds the record for most Grand Slam singles titles among men?",cat:"Tennis Records",a:["Rafael Nadal","Roger Federer","Novak Djokovic","Pete Sampras"],c:2}]};
@@ -1184,6 +1285,7 @@ var fb=[{q:"Which athlete has won the most Olympic gold medals?",cat:"Olympics",
 
 // User state
 var userName='',goalName='My goal',goalAmount=1500,totalSaved=0;
+var userEndGoal='';
 var currentCI='morning';
 var ciTimes=[{label:'Morning',timeVal:'08:00'},{label:'Midday',timeVal:'13:00'},{label:'Evening',timeVal:'21:00'}];
 var eciGambled=null,mornBet=null;
@@ -1207,7 +1309,9 @@ function go(id){document.querySelectorAll('.screen').forEach(function(s){s.class
 function sw(id,btn){go(id);document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on')});if(btn)btn.classList.add('on')}
 
 // ── Onboarding ──
-function saveName(){var n=document.getElementById('uname').value.trim();if(n)userName=n;go('s1')}
+function saveName(){var n=document.getElementById('uname').value.trim();if(n)userName=n;go('s0b')}
+function setEndGoal(el,goal){document.querySelectorAll('#s1 .cc').forEach(function(c){c.classList.remove('sel')});el.classList.add('sel');userEndGoal=goal;document.getElementById('s1-next').disabled=false}
+function saveEndGoal(){if(userEndGoal==='stop'){go('s2')}else{go('s1b')}}
 function saveGoalSettings(){var n=document.getElementById('cg').value.trim();var a=parseInt(document.getElementById('goalamt').value)||1500;if(n){goalName=n;document.querySelectorAll('#hlabel').forEach(function(el){el.textContent=n})}goalAmount=a;updateGoalDisplay();go('s4')}
 
 // ── Goal edit ──
@@ -1276,6 +1380,9 @@ function soberNext(){soberIdx++;if(soberIdx>=soberSteps.length){go('srn');soberI
 
 // ── Coin flip ──
 function flipCoin(){var r=Math.random()<0.5;var result=r?'H':'T';var coin=document.getElementById('coin');coin.textContent=r?'H':'T';coin.style.background=r?'#111':'#555';if(result===lastFlip){streak++}else{streak=1}lastFlip=result;if(r){headsC++}else{tailsC++}document.getElementById('heads-count').textContent=headsC;document.getElementById('tails-count').textContent=tailsC;document.getElementById('streak-count').textContent=streak;var msg='';if(streak>=4){msg='A streak of '+streak+'! Your gut says the next one is predictable. It is not. Each flip is 50/50.'}else if(headsC+tailsC>=10){msg='After '+(headsC+tailsC)+' flips: '+headsC+' heads, '+tailsC+' tails. The coin has no memory of previous flips.'}else{msg='Tap again. Watch what your gut starts to predict.'}document.getElementById('flip-result').textContent=msg}
+
+// ── Control milestone ──
+function logControlMilestone(){var d=new Date();var el=document.getElementById('control-date');if(el)el.textContent=d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});go('scontrol')}
 
 // ── Init ──
 renderCISlots();
