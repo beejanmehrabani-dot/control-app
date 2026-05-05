@@ -1072,23 +1072,30 @@
 <div id="sprog" class="screen">
   <div class="hdr"><div class="app-name">Control</div><div class="h2">Your progress</div></div>
   <div class="bod">
-    <div class="gpc">
-      <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Goal progress</div>
-      <div style="font-size:13px;color:#666;margin-bottom:5px">Pay off my Visa</div>
-      <div class="ga">$340</div>
-      <div class="gctx">saved in 7 days. 23% of your $1,500 goal.</div>
-      <div class="pt" style="margin-top:12px"><div class="pf" style="width:23%"></div></div>
-      <div style="font-size:12px;color:#bbb;margin-top:7px">At this rate goal reached in about 37 days</div>
+    <div class="gpc" style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.08em">Goal progress</div>
+      </div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:4px">Pay off my Visa</div>
+      <div class="ga" style="color:#fff">$340</div>
+      <div class="gctx" style="color:rgba(255,255,255,0.6)">saved in 7 days. 23% of your $1,500 goal.</div>
+      <div class="prog-bar-wrap" style="background:rgba(255,255,255,0.15)"><div class="prog-bar-fill" style="width:23%;background:#F0B429"></div></div>
+      <div class="prog-bar-labels">
+        <div style="font-size:12px;color:rgba(255,255,255,0.5)">$0</div>
+        <div style="font-size:15px;font-weight:700;color:#fff">23%</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5)">$1,500</div>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:8px">At this rate, goal reached in about 37 days 🎯</div>
     </div>
     <div class="sg">
-      <div class="sc"><div class="sn">7</div><div class="sl">day streak</div></div>
-      <div class="sc"><div class="sn">18</div><div class="sl">check-ins done</div></div>
+      <div class="sc" style="background:linear-gradient(135deg,#1a6b3c,#2d9e5f);"><div class="sn" style="color:#fff">7</div><div class="sl" style="color:rgba(255,255,255,0.75)">day streak 🔥</div></div>
+      <div class="sc" style="background:linear-gradient(135deg,#6b3a9b,#9b5de5);"><div class="sn" style="color:#fff">4</div><div class="sl" style="color:rgba(255,255,255,0.75)">urges managed 💪</div></div>
     </div>
     <div class="sg">
-      <div class="sc"><div class="sn">4</div><div class="sl">urges managed</div></div>
-      <div class="sc"><div class="sn">3</div><div class="sl">skills completed</div></div>
+      <div class="sc" style="background:linear-gradient(135deg,#1a4a6b,#2d7ab0);"><div class="sn" style="color:#fff">18</div><div class="sl" style="color:rgba(255,255,255,0.75)">check-ins done ✅</div></div>
+      <div class="sc" style="background:linear-gradient(135deg,#6b4a1a,#c4842a);"><div class="sn" style="color:#fff">3</div><div class="sl" style="color:rgba(255,255,255,0.75)">skills used 🧠</div></div>
     </div>
-    <div class="slab">Motivation check</div>
+    <div class="slab">Motivation</div>
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <div><div class="ct">Importance score</div><div class="cs">How much this matters to you</div></div>
@@ -1101,7 +1108,7 @@
     </div>
     <div class="slab">This week</div>
     <div class="card">
-      <div style="display:flex;justify-content:space-between;margin-bottom:9px"><div class="ct">Bet-free days</div><div style="font-size:14px;color:#888">7 of 7</div></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:9px"><div class="ct">Bet-free days</div><div style="font-size:14px;color:#3B6D11;font-weight:700">7 of 7 🎉</div></div>
       <div class="ddays"><div class="dd on"></div><div class="dd on"></div><div class="dd on"></div><div class="dd on"></div><div class="dd on"></div><div class="dd on"></div><div class="dd on"></div></div>
     </div>
     <div class="card">
@@ -1133,15 +1140,6 @@
   <div class="bod">
     <div class="cat-wrap">
       <div class="cat-hdr">
-        <div class="cat-hdr-title">🚨  Right now</div>
-        <div class="cat-hdr-sub">Open this before you open a betting app.</div>
-      </div>
-      <div class="cat-body">
-        <div class="card tap row" onclick="go('srn')"><div><div class="ct">I am about to bet, help</div><div class="cs">Timers, games, and therapy tools — right now.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
-      </div>
-    </div>
-    <div class="cat-wrap">
-      <div class="cat-hdr">
         <div class="cat-hdr-title">🛡  Preparation</div>
         <div class="cat-hdr-sub">Remove access and build your game plan before the urge hits.</div>
       </div>
@@ -1152,8 +1150,26 @@
     </div>
     <div class="cat-wrap">
       <div class="cat-hdr">
-        <div class="cat-hdr-title">🧠  Build skills</div>
-        <div class="cat-hdr-sub">Evidence-based therapy tools to understand and change the pattern.</div>
+        <div class="cat-hdr-title">🎮  Mini Games</div>
+        <div class="cat-hdr-sub">Redirect your brain for 5 minutes. Checked on the other side.</div>
+      </div>
+      <div class="cat-body">
+        <div class="lane" onclick="go('ssp')">
+          <div class="lic"><svg width="22" height="22" fill="none" stroke="#111" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3c3 3 3 6 0 9s-3 6 0 9M3 12h18"/></svg></div>
+          <div style="flex:1"><div class="lt">Sports trivia</div><div class="ls">Quick-fire questions on your sport.</div></div>
+          <div style="font-size:20px;color:#ccc">›</div>
+        </div>
+        <div class="lane" onclick="go('sgrid')">
+          <div class="lic"><svg width="22" height="22" fill="none" stroke="#111" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+          <div style="flex:1"><div class="lt">Player grid challenge</div><div class="ls">Name players who fit both categories.</div></div>
+          <div style="font-size:20px;color:#ccc">›</div>
+        </div>
+      </div>
+    </div>
+    <div class="cat-wrap">
+      <div class="cat-hdr">
+        <div class="cat-hdr-title">🧠  Proven Therapy Tools</div>
+        <div class="cat-hdr-sub">Evidence-based techniques. Each takes under 5 minutes.</div>
       </div>
       <div class="cat-body">
         <div class="card tap row" onclick="go('scbt')"><div><div class="ct">Challenge the thought</div><div class="cs">CBT. Find the flaw in what you're telling yourself.</div></div><div style="font-size:20px;color:#ccc">›</div></div>
