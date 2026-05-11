@@ -247,47 +247,66 @@
 <!-- STEP 0b: TRIED BEFORE -->
 <div id="s0b" class="screen">
   <div class="hdr-plain">
-    <div class="sdots"><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+    <div class="sdots"><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
     <div class="h2">Have you tried to get your gambling under control before?</div>
   </div>
-  <div class="bod" style="justify-content:flex-start;padding-top:24px;gap:10px">
-    <div class="cc" onclick="ts(this);document.getElementById('s0b-next').disabled=false" id="s0b-yes"><div class="cdot"></div><div><div class="cl">Yes — I've tried before</div></div></div>
-    <div class="cc" onclick="ts(this);document.getElementById('s0b-next').disabled=false" id="s0b-no"><div class="cdot"></div><div><div class="cl">No — this is my first time</div></div></div>
+  <div class="bod" style="justify-content:flex-start;padding-top:24px;gap:12px">
+    <div class="cc" onclick="s0bSelect(this,true)" id="s0b-yes"><div class="cdot"></div><div><div class="cl">Yes — I've tried before</div></div></div>
+    <div class="cc" onclick="s0bSelect(this,false)" id="s0b-no"><div class="cdot"></div><div><div class="cl">No — this is my first time</div></div></div>
+    <div id="s0b-followup" style="display:none;flex-direction:column;gap:8px">
+      <div class="qh" style="margin:0">What got in the way last time?</div>
+      <textarea id="s0b-obstacle" style="min-height:72px" placeholder="Write honestly — this helps personalise your experience..."></textarea>
+    </div>
   </div>
   <div class="ftr">
-    <button class="pbtn" id="s0b-next" onclick="go('s1')" disabled>Continue</button>
+    <button class="pbtn" id="s0b-next" onclick="go('s0c')" disabled>Continue</button>
   </div>
 </div>
 
-<!-- STEP 1: END GOAL -->
+<!-- STEP 0c: WHY DO YOU GAMBLE -->
+<div id="s0c" class="screen">
+  <div class="hdr-plain">
+    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+    <div class="h2">Why do you gamble?</div>
+    <div class="sub">Pick everything that applies. Honest answers only — this shapes your whole experience.</div>
+  </div>
+  <div class="bod" style="justify-content:flex-start;padding-top:24px;gap:10px">
+    <div class="cc" onclick="tm(this)" data-why="To escape stress or problems"><div class="cbox"></div><div><div class="cl">To escape stress or problems</div></div></div>
+    <div class="cc" onclick="tm(this)" data-why="Boredom or loneliness"><div class="cbox"></div><div><div class="cl">Boredom or loneliness</div></div></div>
+    <div class="cc" onclick="tm(this)" data-why="The rush and excitement"><div class="cbox"></div><div><div class="cl">The rush and excitement</div></div></div>
+    <div class="cc" onclick="tm(this)" data-why="Hope of winning money"><div class="cbox"></div><div><div class="cl">Hope of winning money</div></div></div>
+    <div class="cc" onclick="tm(this)" data-why="It's social — friends, sport, habit"><div class="cbox"></div><div><div class="cl">It's social — friends, sport, habit</div></div></div>
+    <div class="cc" onclick="tm(this)" data-why="To feel something when I'm numb"><div class="cbox"></div><div><div class="cl">To feel something when I'm numb</div></div></div>
+    <div class="cc" onclick="tm(this)" data-why="Financial pressure"><div class="cbox"></div><div><div class="cl">Financial pressure</div></div></div>
+  </div>
+  <div class="ftr"><button class="pbtn" onclick="saveWhyGamble()">Continue</button></div>
+</div>
+
+<!-- STEP 1: YOUR GOALS -->
 <div id="s1" class="screen">
   <div class="hdr-plain">
-    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
-    <div class="h2">What is your end goal?</div>
-    <div class="sub">Be honest with yourself. This shapes everything in the app.</div>
+    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+    <div class="h2">Your Goals</div>
+    <div class="sub">Three different types. All matter. All yours.</div>
   </div>
-  <div class="bod" style="justify-content:flex-start;padding-top:24px;gap:10px">
-    <div class="cc" onclick="setEndGoal(this,'stop')" id="eg-stop"><div class="cdot"></div><div><div class="cl">Stop gambling completely.</div><div class="cs2">I want to walk away for good.</div></div></div>
-    <div class="cc" onclick="setEndGoal(this,'control')" id="eg-control"><div class="cdot"></div><div><div class="cl">Get control back — but still gamble what I can afford.</div><div class="cs2">Set limits, make smarter decisions.</div></div></div>
-    <div class="cc" onclick="setEndGoal(this,'unsure')" id="eg-unsure"><div class="cdot"></div><div><div class="cl">Not sure yet.</div><div class="cs2">I just know something needs to change.</div></div></div>
+  <div class="bod" style="padding-top:20px">
+    <div class="csec">
+      <div class="ql">Emotional goal</div>
+      <div class="qh" style="margin:4px 0 8px">How do you want to feel in 90 days?</div>
+      <textarea id="goal-emotional" style="min-height:64px" placeholder="e.g. Less anxious about money. Proud of myself. Sleeping better."></textarea>
+    </div>
+    <div class="csec">
+      <div class="ql">Outcome goal</div>
+      <div class="qh" style="margin:4px 0 8px">What do you want to have or rebuild?</div>
+      <textarea id="goal-outcome" style="min-height:64px" placeholder="e.g. $2,000 saved. A better relationship with my partner. Out of debt."></textarea>
+    </div>
+    <div class="csec">
+      <div class="ql">Behavioral goal</div>
+      <div class="qh" style="margin:4px 0 8px">What will you do differently starting this week?</div>
+      <textarea id="goal-behavioral" style="min-height:64px" placeholder="e.g. Delete the betting apps. Tell one person. Open this app before I open another one."></textarea>
+    </div>
   </div>
-  <div class="ftr"><button class="pbtn" id="s1-next" onclick="saveEndGoal()" disabled>Continue</button></div>
-</div>
-
-<!-- STEP 1b: MAIN GOALS (skip if stop completely) -->
-<div id="s1b" class="screen">
-  <div class="hdr-plain">
-    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
-    <div class="h2">What are your main goals?</div>
-    <div class="sub">Pick everything that fits. No wrong answers.</div>
-  </div>
-  <div class="bod" style="justify-content:flex-start;padding-top:24px;gap:10px">
-    <div class="cc" onclick="tm(this)"><div class="cbox"></div><div><div class="cl">Improve impulsive betting. Pause in the moment and make better decisions.</div></div></div>
-    <div class="cc" onclick="tm(this)"><div class="cbox"></div><div><div class="cl">Set limits and actually stick to them.</div></div></div>
-    <div class="cc" onclick="tm(this)"><div class="cbox"></div><div><div class="cl">Understand why I keep doing this.</div></div></div>
-    <div class="cc" onclick="tm(this)"><div class="cbox"></div><div><div class="cl">Not sure yet. I just know something needs to change.</div></div></div>
-  </div>
-  <div class="ftr"><button class="pbtn" onclick="go('s2')">Continue</button></div>
+  <div class="ftr"><button class="pbtn" onclick="saveUserGoals()">Continue</button></div>
 </div>
 
 <!-- STEP 2: COSTS -->
@@ -315,8 +334,8 @@
     <div><div class="qh">Anything else you want to add?</div><textarea placeholder="In your own words..."></textarea></div>
   </div>
   <div class="ftr">
-    <button class="pbtn" onclick="go('s3')">Continue</button>
-    <button class="sbtn" onclick="go('s3')">Skip this step</button>
+    <button class="pbtn" onclick="saveCosts()">Continue</button>
+    <button class="sbtn" onclick="saveCosts()">Skip this step</button>
   </div>
 </div>
 
@@ -344,9 +363,9 @@
 <!-- STEP 4: MOTIVATION CHECK -->
 <div id="s4" class="screen">
   <div class="hdr-plain">
-    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div></div>
+    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
     <div class="h2">Two honest questions</div>
-    <div class="sub">No right answers. These set your starting point and we track how they change.</div>
+    <div class="sub">No right answers. These set your starting point.</div>
   </div>
   <div class="bod">
     <div class="csec">
@@ -359,11 +378,11 @@
         <input type="range" min="0" max="10" value="5" step="1" oninput="document.getElementById('imp-val').textContent=this.value">
         <div style="display:flex;justify-content:space-between;margin-top:4px"><span style="font-size:11px;color:#bbb">0</span><span style="font-size:11px;color:#bbb">10</span></div>
       </div>
-      <div class="qh" style="margin:0">Why that number and not lower? What does it mean to you?</div>
-      <textarea style="min-height:56px" placeholder="Write your honest reason..."></textarea>
+      <div class="qh" style="margin:8px 0 4px">Why did you give it that number and not lower?</div>
+      <textarea id="s4-imp-why" style="min-height:56px" placeholder="Write your honest reason..."></textarea>
     </div>
     <div class="csec">
-      <div class="ql">How confident are you that you could actually change this?</div>
+      <div class="ql">How confident are you that you can change?</div>
       <div class="slider-wrap">
         <div class="slider-label">
           <span class="slider-name">Not confident at all</span>
@@ -372,11 +391,11 @@
         <input type="range" min="0" max="10" value="5" step="1" oninput="document.getElementById('conf-val').textContent=this.value">
         <div style="display:flex;justify-content:space-between;margin-top:4px"><span style="font-size:11px;color:#bbb">0</span><span style="font-size:11px;color:#bbb">10</span></div>
       </div>
-      <div class="qh" style="margin:0">What would move that number one point higher?</div>
-      <textarea style="min-height:56px" placeholder="What would need to be different?"></textarea>
+      <div class="qh" style="margin:8px 0 4px">What does that confidence come from?</div>
+      <textarea id="s4-conf-from" style="min-height:56px" placeholder="Even if it's small — what makes you think you can do this?"></textarea>
     </div>
   </div>
-  <div class="ftr"><button class="pbtn" onclick="go('s5')">Continue</button></div>
+  <div class="ftr"><button class="pbtn" onclick="saveMotivation()">Continue</button></div>
 </div>
 
 <!-- STEP 5: IF-THEN PLANS -->
@@ -518,7 +537,7 @@
   <div class="tabs">
     <button class="tab on" onclick="sw('shome',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/></svg><span class="tl">Home</span></button>
     <button class="tab" onclick="openCI('morning')"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span class="tl">Check in</span></button>
-    <button class="tab-fab" onclick="go('srn')">
+    <button class="tab-fab" onclick="openCrisis()">
       <div class="tab-fab-ring"><svg width="26" height="26" fill="none" stroke="#fff" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
       <span class="tab-fab-lbl">Need Help</span>
     </button>
@@ -535,12 +554,20 @@
     <div class="sub" id="ci-sub">Set your intention. Honest answers only.</div>
   </div>
   <div class="bod">
-    <div class="cidots"><div class="cid on"></div><div class="cid"></div><div class="cid"></div><div class="cid"></div><div class="cid"></div></div>
+    <div class="cidots"><div class="cid on"></div><div class="cid"></div><div class="cid"></div><div class="cid"></div><div class="cid"></div><div class="cid"></div><div class="cid"></div></div>
+
+    <!-- Q1: Did you place a bet -->
     <div class="csec" style="border:2px solid #111;border-radius:14px;padding:15px">
       <div class="ql">Did you place a bet since our last check-in?</div>
       <div class="mrow" style="margin-top:10px">
         <button class="mbtn" id="sci-bet-yes" onclick="setBet(true)">Yes</button>
         <button class="mbtn" id="sci-bet-no" onclick="setBet(false)">No</button>
+      </div>
+    </div>
+    <div id="sci-bet-followup" style="display:none;flex-direction:column;gap:0">
+      <div class="csec" style="border:1.5px solid #C0392B;background:#FCEBEB;border-radius:14px;padding:15px">
+        <div class="ql" style="color:#C0392B">What situation were you in when it happened?</div>
+        <textarea id="sci-bet-situation" style="min-height:64px;margin-top:8px;border-color:rgba(192,57,43,0.3)" placeholder="Where were you, what were you feeling, what led up to it..."></textarea>
       </div>
     </div>
     <div id="sci-savings" style="display:none;flex-direction:column;gap:0">
@@ -550,58 +577,59 @@
         <input class="ti" id="sci-saved-amt" type="number" placeholder="$0" style="margin-top:10px;font-size:18px;font-weight:700;border-color:#3B6D11"/>
       </div>
     </div>
+
+    <!-- Q2: Hardest thing -->
+    <div class="csec">
+      <div class="ql">What's been the hardest thing in the last 24 hours?</div>
+      <textarea id="ci-hardest" style="min-height:64px;margin-top:8px" placeholder="Don't filter it. Just write what comes up."></textarea>
+    </div>
+
+    <!-- Q3: Emotion selector + intensity -->
     <div class="csec">
       <div class="ql">How are you feeling right now?</div>
-      <div class="mrow">
-        <button class="mbtn" onclick="sm(this)">Really rough</button>
-        <button class="mbtn" onclick="sm(this)">A bit low</button>
-        <button class="mbtn" onclick="sm(this)">OK, getting by</button>
-        <button class="mbtn" onclick="sm(this)">Pretty good</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px" id="ci-emotion-grid">
+        <button class="mbtn" onclick="selEmotion(this,'Stressed')">Stressed</button>
+        <button class="mbtn" onclick="selEmotion(this,'Bored')">Bored</button>
+        <button class="mbtn" onclick="selEmotion(this,'Anxious')">Anxious</button>
+        <button class="mbtn" onclick="selEmotion(this,'Low')">Low</button>
+        <button class="mbtn" onclick="selEmotion(this,'Angry')">Angry</button>
+        <button class="mbtn" onclick="selEmotion(this,'Hopeful')">Hopeful</button>
+        <button class="mbtn" onclick="selEmotion(this,'Calm')">Calm</button>
+        <button class="mbtn" onclick="selEmotion(this,'Excited')">Excited</button>
       </div>
-      <div class="qh" style="margin:0">What's behind that feeling?</div>
-      <div class="chips">
-        <button class="chip" onclick="chip('ci-feel',this)">Poor sleep</button>
-        <button class="chip" onclick="chip('ci-feel',this)">Work stress</button>
-        <button class="chip" onclick="chip('ci-feel',this)">Money worries</button>
-        <button class="chip" onclick="chip('ci-feel',this)">Family pressure</button>
-        <button class="chip" onclick="chip('ci-feel',this)">Anxious</button>
-        <button class="chip" onclick="chip('ci-feel',this)">Just tired</button>
-        <button class="chip" onclick="chip('ci-feel',this)">Feeling flat</button>
+      <div class="slider-wrap" style="margin-top:12px">
+        <div class="slider-label"><span class="slider-name">Intensity</span><span class="slider-val" id="emotion-intensity-val">5</span></div>
+        <input type="range" min="1" max="10" value="5" step="1" oninput="document.getElementById('emotion-intensity-val').textContent=this.value">
+        <div style="display:flex;justify-content:space-between;margin-top:4px"><span style="font-size:11px;color:#bbb">Mild</span><span style="font-size:11px;color:#bbb">Intense</span></div>
       </div>
-      <textarea id="ci-feel" style="min-height:52px;margin-top:8px" placeholder="Or write it in your own words..."></textarea>
     </div>
+
+    <!-- Q4: Urge slider 0-10, follow-up if ≥5 -->
     <div class="csec">
-      <div class="ql">Urge to gamble intensity right now</div>
-      <div class="slider-wrap">
+      <div class="ql">Urge to gamble right now</div>
+      <div class="slider-wrap" style="margin-top:8px">
         <div class="slider-label"><span class="slider-name">How strong is it?</span><span class="slider-val" id="urge-val">0</span></div>
-        <input type="range" min="0" max="10" value="0" step="1" oninput="document.getElementById('urge-val').textContent=this.value">
+        <input type="range" min="0" max="10" value="0" step="1" oninput="setUrgeVal(this.value)">
         <div style="display:flex;justify-content:space-between;margin-top:4px"><span style="font-size:11px;color:#bbb">None</span><span style="font-size:11px;color:#bbb">Overwhelming</span></div>
       </div>
-      <div class="qh" style="margin:0">What triggered it?</div>
-      <div class="tags">
-        <div class="tag" onclick="tt(this)">Saw an ad</div>
-        <div class="tag" onclick="tt(this)">Saw something on social media</div>
-        <div class="tag" onclick="tt(this)">Game on tonight</div>
-        <div class="tag" onclick="tt(this)">Bored</div>
-        <div class="tag" onclick="tt(this)">Stressed</div>
-        <div class="tag" onclick="tt(this)">Lonely</div>
-        <div class="tag" onclick="tt(this)">Had a drink</div>
-        <div class="tag" onclick="tt(this)">Got paid</div>
-        <div class="tag" onclick="tt(this)">Argument</div>
-        <div class="tag" onclick="tt(this)">Feeling hopeless</div>
+      <div id="ci-urge-followup" style="display:none;flex-direction:column;gap:6px;margin-top:10px">
+        <div class="qh" style="margin:0">What's driving it?</div>
+        <textarea id="ci-urge-why" style="min-height:56px" placeholder=""></textarea>
       </div>
     </div>
+
+    <!-- Q5: Today's Goals -->
     <div class="csec">
-      <div class="ql">Your intention</div>
-      <div class="qh" style="margin:0">Write it like you mean it.</div>
-      <div class="chips">
-        <button class="chip" onclick="chip('ci-intent',this)">I will not open any betting apps</button>
-        <button class="chip" onclick="chip('ci-intent',this)">I'll use my game plan if the urge hits</button>
-        <button class="chip" onclick="chip('ci-intent',this)">I'll call someone before I act on it</button>
-        <button class="chip" onclick="chip('ci-intent',this)">I'll open this app instead</button>
-      </div>
-      <textarea id="ci-intent" style="margin-top:8px" placeholder="I am not opening any betting apps today..."></textarea>
+      <div class="ql" style="margin-bottom:12px">Today's Goals</div>
+      <div class="qh" style="margin:0 0 4px">Behavioral — one thing I will do instead of gambling today</div>
+      <textarea id="ci-goal-behav" style="min-height:52px;margin-bottom:12px" placeholder="e.g. Go for a walk, call a friend, cook something..."></textarea>
+      <div class="qh" style="margin:0 0 4px">Emotional — one thing I want to feel by tonight</div>
+      <textarea id="ci-goal-emot" style="min-height:52px;margin-bottom:12px" placeholder="e.g. Calmer. Proud of myself. Less alone."></textarea>
+      <div class="qh" style="margin:0 0 4px" id="ci-goal-outcome-label">Outcome — one step toward my goal</div>
+      <textarea id="ci-goal-outcome" style="min-height:52px" placeholder="e.g. Transfer $50 to savings. Pay one bill."></textarea>
     </div>
+
+    <!-- Q6: High risk moments -->
     <div class="csec">
       <div class="ql">High risk moments coming up?</div>
       <div class="tags">
@@ -613,10 +641,13 @@
         <div class="tag" onclick="tt(this)">Regular day</div>
       </div>
     </div>
+
+    <!-- Q7: What would make this a win -->
     <div class="csec">
-      <div class="ql">What would make this a win?</div>
+      <div class="ql">What would make today a win?</div>
       <textarea style="min-height:52px" placeholder="Get through the game without opening DraftKings."></textarea>
     </div>
+
   </div>
   <div class="ftr"><button class="pbtn" onclick="saveMorningCI()">Save and continue</button></div>
 </div>
@@ -689,6 +720,71 @@
   <div class="ftr"><button class="pbtn" onclick="go('shome')">Save and finish</button></div>
 </div>
 
+<!-- CRISIS FLOW: STEP 1 — TWO QUICK QUESTIONS -->
+<div id="scrn-q" class="screen">
+  <div class="hdr-plain">
+    <button class="bk" onclick="go('shome')">← Back</button>
+    <div class="h2">Before we start —</div>
+    <div class="sub">Two quick questions. No wrong answers.</div>
+  </div>
+  <div class="bod">
+    <a href="tel:18004262537" style="display:block;width:100%;padding:13px;background:#C0392B;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;text-align:center;text-decoration:none">🆘 Call 1-800-GAMBLER now</a>
+    <div class="csec">
+      <div class="ql">What's happening right now?</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+        <button class="abtn" onclick="setCrisisWhat(this,'I\'m bored')"><div class="al">A</div><span>I'm bored</span></button>
+        <button class="abtn" onclick="setCrisisWhat(this,'I\'m stressed or overwhelmed')"><div class="al">B</div><span>I'm stressed or overwhelmed</span></button>
+        <button class="abtn" onclick="setCrisisWhat(this,'I just got paid')"><div class="al">C</div><span>I just got paid</span></button>
+        <button class="abtn" onclick="setCrisisWhat(this,'I\'m chasing a loss')"><div class="al">D</div><span>I'm chasing a loss</span></button>
+        <button class="abtn" onclick="setCrisisWhat(this,'I\'m lonely')"><div class="al">E</div><span>I'm lonely</span></button>
+        <button class="abtn" onclick="setCrisisWhat(this,'I had a fight or bad news')"><div class="al">F</div><span>I had a fight or bad news</span></button>
+        <button class="abtn" onclick="setCrisisWhat(this,'I don\'t know')"><div class="al">G</div><span>I don't know</span></button>
+      </div>
+    </div>
+    <div class="csec">
+      <div class="ql">What are you thinking?</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+        <button class="abtn" onclick="setCrisisThinking(this,'win_back')"><div class="al">A</div><span>I could win it back</span></button>
+        <button class="abtn" onclick="setCrisisThinking(this,'one_bet')"><div class="al">B</div><span>One bet won't matter</span></button>
+        <button class="abtn" onclick="setCrisisThinking(this,'deserve')"><div class="al">C</div><span>I deserve this</span></button>
+        <button class="abtn" onclick="setCrisisThinking(this,'rush')"><div class="al">D</div><span>I need the rush</span></button>
+        <button class="abtn" onclick="setCrisisThinking(this,'feel_better')"><div class="al">E</div><span>I'll feel better after</span></button>
+        <button class="abtn" onclick="setCrisisThinking(this,'nothing_working')"><div class="al">F</div><span>Nothing else is working</span></button>
+      </div>
+    </div>
+  </div>
+  <div class="ftr">
+    <button class="pbtn" id="crn-q-next" onclick="openMirror()" disabled>Continue</button>
+  </div>
+</div>
+
+<!-- CRISIS FLOW: STEP 2 — PERSONAL MIRROR -->
+<div id="scrn-mirror" class="screen">
+  <div class="hdr-plain">
+    <button class="bk" onclick="go('scrn-q')">← Back</button>
+    <div class="h2">Before you act —</div>
+    <div class="sub">You wrote this. Read it.</div>
+  </div>
+  <div class="bod" style="justify-content:center">
+    <a href="tel:18004262537" style="display:block;width:100%;padding:13px;background:#C0392B;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;text-align:center;text-decoration:none">🆘 Call 1-800-GAMBLER now</a>
+    <div style="background:#fff;border:0.5px solid rgba(0,0,0,0.09);border-radius:16px;padding:20px 18px;display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:13px;color:#888;text-transform:uppercase;letter-spacing:0.08em;font-weight:600">You said you gamble to</div>
+      <div style="font-size:16px;color:#111;line-height:1.6;font-style:italic" id="mirror-why"></div>
+      <div style="height:0.5px;background:rgba(0,0,0,0.08)"></div>
+      <div style="font-size:13px;color:#888;text-transform:uppercase;letter-spacing:0.08em;font-weight:600">It has cost you</div>
+      <div style="font-size:16px;color:#111;line-height:1.6;font-style:italic" id="mirror-cost"></div>
+      <div style="height:0.5px;background:rgba(0,0,0,0.08)"></div>
+      <div style="font-size:13px;color:#888;text-transform:uppercase;letter-spacing:0.08em;font-weight:600">You're working toward</div>
+      <div style="font-size:16px;color:#111;line-height:1.6;font-style:italic" id="mirror-goal"></div>
+    </div>
+    <div class="sfty" style="text-align:center">This moment will pass. The choices you make right now are the ones that change things.</div>
+  </div>
+  <div class="ftr">
+    <button class="pbtn" onclick="go('srn')">I need something to do right now</button>
+    <button class="sbtn" style="margin-top:10px" onclick="go('shome')">I'm okay. I don't need to bet.</button>
+  </div>
+</div>
+
 <!-- RIGHT NOW / BET HELP -->
 <div id="srn" class="screen">
   <div class="hdr-plain">
@@ -697,7 +793,7 @@
     <div class="sub">Pick what fits. You've got this.</div>
   </div>
   <div class="bod">
-    <button onclick="go('shelp')" style="width:100%;padding:16px;background:#C0392B;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:0.01em">🆘  Call or text a crisis line</button>
+    <a href="tel:18004262537" style="display:block;width:100%;padding:16px;background:#C0392B;color:#fff;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:0.01em;text-align:center;text-decoration:none">🆘 Call or text a crisis line</a>
     <div class="cat-wrap">
       <div class="cat-hdr">
         <div class="cat-hdr-title">⏱  Timer</div>
@@ -1040,7 +1136,28 @@
       <div id="urge-fb" style="display:none;font-size:13px;color:#666;margin-top:8px;line-height:1.6"></div>
     </div>
   </div>
-  <div class="ftr"><button class="pbtn" onclick="startT()">Play another round</button><button class="sbtn" id="sres-back" onclick="go('srn')">I'm good. Back to tools.</button></div>
+  <div class="ftr"><button class="pbtn" onclick="startT()">Play another round</button><button class="sbtn" id="sres-back" onclick="go('srn')">I'm good. Back to tools.</button>
+    <button class="sbtn" style="margin-top:10px;color:#C0392B;border-color:#C0392B" onclick="showReframe()">Still feeling the urge — help me work through it</button>
+  </div>
+</div>
+
+<!-- CRISIS REFRAME SCREEN -->
+<div id="scrn-reframe" class="screen">
+  <div class="hdr-plain">
+    <button class="bk" onclick="go('srn')">← Back</button>
+    <div class="h2">Still feeling it?</div>
+    <div class="sub">Read this slowly.</div>
+  </div>
+  <div class="bod" style="justify-content:center">
+    <a href="tel:18004262537" style="display:block;width:100%;padding:13px;background:#C0392B;color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;text-align:center;text-decoration:none">🆘 Call 1-800-GAMBLER now</a>
+    <div style="background:#fff;border:0.5px solid rgba(0,0,0,0.09);border-radius:16px;padding:24px 20px">
+      <div style="font-size:16px;color:#333;line-height:1.85" id="reframe-text">Take a breath. You're doing something by being here.</div>
+    </div>
+  </div>
+  <div class="ftr">
+    <button class="pbtn" onclick="go('shome')">I'm okay now</button>
+    <a href="tel:18004262537" class="sbtn" style="display:block;text-align:center;text-decoration:none;margin-top:10px;padding:14px;background:transparent;color:#C0392B;border:1.5px solid #C0392B;border-radius:14px;font-size:15px;font-weight:600;font-family:inherit">I need more help — call now</a>
+  </div>
 </div>
 
 <!-- PLAYER GRID -->
@@ -1120,7 +1237,7 @@
   <div class="tabs">
     <button class="tab" onclick="sw('shome',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/></svg><span class="tl">Home</span></button>
     <button class="tab" onclick="openCI('morning')"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span class="tl">Check in</span></button>
-    <button class="tab-fab" onclick="go('srn')">
+    <button class="tab-fab" onclick="openCrisis()">
       <div class="tab-fab-ring"><svg width="26" height="26" fill="none" stroke="#fff" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
       <span class="tab-fab-lbl">Need Help</span>
     </button>
@@ -1191,7 +1308,7 @@
   <div class="tabs">
     <button class="tab" onclick="sw('shome',this)"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/></svg><span class="tl">Home</span></button>
     <button class="tab" onclick="openCI('morning')"><svg width="22" height="22" fill="none" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span class="tl">Check in</span></button>
-    <button class="tab-fab" onclick="go('srn')">
+    <button class="tab-fab" onclick="openCrisis()">
       <div class="tab-fab-ring"><svg width="26" height="26" fill="none" stroke="#fff" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
       <span class="tab-fab-lbl">Need Help</span>
     </button>
@@ -1415,6 +1532,12 @@ var fb=[{q:"Which athlete has won the most Olympic gold medals?",cat:"Olympics",
 // User state
 var userName='',goalName='My goal',goalAmount=1500,totalSaved=0;
 var userEndGoal='';
+var userWhyGamble='';
+var userEmotionalGoal='',userOutcomeGoal='',userBehavioralGoal='';
+var userImportanceWhy='',userConfidenceFrom='';
+var userWhatGotInWay='';
+var userCostsSummary='';
+var userCrisisWhat='',userCrisisThinking='';
 var currentCI='morning';
 var ciTimes=[{label:'Morning',timeVal:'08:00'},{label:'Midday',timeVal:'13:00'},{label:'Evening',timeVal:'21:00'}];
 var eciGambled=null,mornBet=null;
@@ -1439,8 +1562,11 @@ function sw(id,btn){go(id);document.querySelectorAll('.tab').forEach(function(t)
 
 // ── Onboarding ──
 function saveName(){var n=document.getElementById('uname').value.trim();if(n)userName=n;go('s0b')}
-function setEndGoal(el,goal){document.querySelectorAll('#s1 .cc').forEach(function(c){c.classList.remove('sel')});el.classList.add('sel');userEndGoal=goal;document.getElementById('s1-next').disabled=false}
-function saveEndGoal(){if(userEndGoal==='stop'){go('s2')}else{go('s1b')}}
+function s0bSelect(el,tried){document.querySelectorAll('#s0b .cc').forEach(function(c){c.classList.remove('sel')});el.classList.add('sel');var f=document.getElementById('s0b-followup');if(f)f.style.display=tried?'flex':'none';document.getElementById('s0b-next').disabled=false}
+function saveWhyGamble(){var selected=[];document.querySelectorAll('#s0c .cc.sel').forEach(function(el){selected.push(el.getAttribute('data-why')||el.querySelector('.cl').textContent)});userWhyGamble=selected.join(', ')||'gambling';userWhatGotInWay=document.getElementById('s0b-obstacle')?document.getElementById('s0b-obstacle').value:'';go('s1')}
+function saveUserGoals(){userEmotionalGoal=document.getElementById('goal-emotional').value||'feel better';userOutcomeGoal=document.getElementById('goal-outcome').value||'rebuild what I\'ve lost';userBehavioralGoal=document.getElementById('goal-behavioral').value||'make different choices';go('s2')}
+function saveCosts(){var tags=[];document.querySelectorAll('#s2 .tag.sel').forEach(function(t){tags.push(t.textContent.trim())});var extra=document.querySelector('#s2 textarea');userCostsSummary=tags.length?tags.join(', '):(extra&&extra.value?extra.value:'something important to me');go('s3')}
+function saveMotivation(){userImportanceWhy=document.getElementById('s4-imp-why').value||'';userConfidenceFrom=document.getElementById('s4-conf-from').value||'';go('s5')}
 function saveGoalSettings(){var n=document.getElementById('cg').value.trim();var a=parseInt(document.getElementById('goalamt').value)||1500;if(n){goalName=n;document.querySelectorAll('#hlabel').forEach(function(el){el.textContent=n})}goalAmount=a;updateGoalDisplay();go('s4')}
 
 // ── Goal edit ──
@@ -1454,10 +1580,14 @@ function updateGoalDisplay(){var pct=Math.min(100,goalAmount>0?Math.round((total
 function updateGreeting(){var h=new Date().getHours();var gr=h<12?'Good morning':h<17?'Good afternoon':'Good evening';var el=document.getElementById('greeting');if(el)el.textContent=userName?gr+', '+userName:gr}
 
 // ── Unified check-in ──
-function openCI(type){currentCI=type||'morning';var titles={morning:'Morning check-in',afternoon:'Afternoon check-in',evening:'Evening check-in'};var subs={morning:'Set your intention. Honest answers only.',afternoon:'Midday pulse check. How are you doing?',evening:'End of day reflection. Be honest with yourself.'};var t=document.getElementById('ci-title');if(t)t.textContent=titles[currentCI]||'Check-in';var s=document.getElementById('ci-sub');if(s)s.textContent=subs[currentCI]||'Honest answers.';mornBet=null;var y=document.getElementById('sci-bet-yes');var n=document.getElementById('sci-bet-no');if(y)y.classList.remove('sel');if(n)n.classList.remove('sel');var sv=document.getElementById('sci-savings');if(sv)sv.style.display='none';var sa=document.getElementById('sci-saved-amt');if(sa)sa.value='';go('sci')}
+function openCI(type){currentCI=type||'morning';var titles={morning:'Morning check-in',afternoon:'Afternoon check-in',evening:'Evening check-in'};var subs={morning:'Set your intention. Honest answers only.',afternoon:'Midday pulse check. How are you doing?',evening:'End of day reflection. Be honest with yourself.'};var t=document.getElementById('ci-title');if(t)t.textContent=titles[currentCI]||'Check-in';var s=document.getElementById('ci-sub');if(s)s.textContent=subs[currentCI]||'Honest answers.';mornBet=null;var y=document.getElementById('sci-bet-yes');var n=document.getElementById('sci-bet-no');if(y)y.classList.remove('sel');if(n)n.classList.remove('sel');var sv=document.getElementById('sci-savings');if(sv)sv.style.display='none';var sa=document.getElementById('sci-saved-amt');if(sa)sa.value='';var bf=document.getElementById('sci-bet-followup');if(bf)bf.style.display='none';var uf=document.getElementById('ci-urge-followup');if(uf)uf.style.display='none';var uv=document.getElementById('urge-val');if(uv)uv.textContent='0';var ur=document.querySelector('#sci .slider-wrap input[type=range]');if(ur)ur.value=0;var ol=document.getElementById('ci-goal-outcome-label');if(ol&&userOutcomeGoal)ol.textContent='Outcome — one step toward '+userOutcomeGoal;go('sci')}
 
 // ── Bet question & savings ──
-function setBet(v){mornBet=v;var y=document.getElementById('sci-bet-yes');var n=document.getElementById('sci-bet-no');if(y)y.classList.toggle('sel',v);if(n)n.classList.toggle('sel',!v);var sv=document.getElementById('sci-savings');if(sv){sv.style.display=v?'none':'flex';if(!v)setTimeout(function(){sv.scrollIntoView({behavior:'smooth',block:'nearest'})},50)}}
+function setBet(v){mornBet=v;var y=document.getElementById('sci-bet-yes');var n=document.getElementById('sci-bet-no');if(y)y.classList.toggle('sel',v);if(n)n.classList.toggle('sel',!v);var sv=document.getElementById('sci-savings');if(sv){sv.style.display=v?'none':'flex';if(!v)setTimeout(function(){sv.scrollIntoView({behavior:'smooth',block:'nearest'})},50)}var bf=document.getElementById('sci-bet-followup');if(bf){bf.style.display=v?'flex':'none';if(v)setTimeout(function(){bf.scrollIntoView({behavior:'smooth',block:'nearest'})},50)}}
+
+// ── Check-in emotion & urge ──
+function selEmotion(btn,emotion){document.querySelectorAll('#ci-emotion-grid .mbtn').forEach(function(b){b.classList.remove('sel')});btn.classList.add('sel')}
+function setUrgeVal(v){document.getElementById('urge-val').textContent=v;var fu=document.getElementById('ci-urge-followup');if(fu){fu.style.display=parseInt(v)>=5?'flex':'none';if(parseInt(v)>=5){var ta=document.getElementById('ci-urge-why');if(ta&&userWhyGamble)ta.placeholder='Last time you said: '+userWhyGamble+'. Is that what\'s happening now?'}}}
 function saveMorningCI(){if(mornBet===false){var saved=parseInt(document.getElementById('sci-saved-amt').value)||0;if(saved>0){totalSaved+=saved;updateGoalDisplay();document.getElementById('cel-amount').textContent=saved;document.getElementById('cel-total').textContent=totalSaved;document.getElementById('cel-goal-label').textContent='toward '+goalName;var pct=Math.min(100,goalAmount>0?Math.round((totalSaved/goalAmount)*100):0);var cpf=document.getElementById('cel-pf');if(cpf)cpf.style.width=pct+'%';mornBet=null;go('scelebrate');return}}go(mornBet===true?'sabc':'shome');mornBet=null}
 
 // ── Evening check-in ──
@@ -1516,6 +1646,15 @@ function closeKnow(){document.getElementById('ky-overlay').classList.remove('ope
 
 // ── Control milestone ──
 function logControlMilestone(){var d=new Date();var el=document.getElementById('control-date');if(el)el.textContent=d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});go('scontrol')}
+
+// ── Crisis flow ──
+var crisisReframes={win_back:'The brain treats a loss like an unfinished story — it genuinely feels like the only way to end it is to win. That feeling is real. But the math doesn\'t care about your story. Every bet is independent. The money you lost is already gone, and the next bet has no memory of it. Chasing doesn\'t close the loop — it opens a bigger one. The only way to stop the loss from growing is to stop here.',one_bet:'One bet is never really one bet — and part of you already knows that. Think about the last time you placed just one. Where did it end? The thought one bet won\'t matter is the addiction talking, not you. It matters because of what comes after it, not the bet itself. You\'ve already shown up here, which means something in you knows this isn\'t really about one bet.',deserve:'You probably do deserve something right now. A break, a reward, relief from whatever\'s been hard. That feeling is valid. But gambling isn\'t actually a reward — it borrows good feelings from your future self and charges interest. What would actually feel good tomorrow morning? That\'s the reward you deserve. What\'s one thing you could do in the next 20 minutes that your future self would thank you for?',rush:'The rush is real — dopamine doesn\'t lie about how good it feels in the moment. But the crash after is just as real, and it\'s getting longer each time. Right now your brain is screaming for a hit. That feeling peaks in about 15 to 20 minutes and then drops on its own — whether you bet or not. You don\'t have to fight it. Just watch it. Notice where you feel it in your body. Give it 15 minutes and check back in with yourself.',feel_better:'Gambling does make you feel better — for a window. That\'s not a lie, it\'s why it\'s so hard. But you\'ve been through that window before. You know what\'s on the other side of it: the same problem you started with, plus guilt, plus the money. Relief that creates more pain isn\'t really relief. What are you actually trying to feel better about right now? That\'s worth naming — because that\'s the thing that actually needs attention.',nothing_working:'That feeling — that nothing is working, that this is the only option left — is one of the most painful places to be. And it\'s also one of the most common thoughts people have right before they make a decision they regret. It feels like a fact but it\'s a symptom of being overwhelmed. You reached for this app instead of opening another one. That was a choice. That\'s something working. What\'s one small thing — not a solution, just one small thing — that would make the next hour slightly more bearable.'};
+function setCrisisWhat(btn,val){document.querySelectorAll('#scrn-q .csec:first-of-type .abtn').forEach(function(b){b.classList.remove('sel')});btn.classList.add('sel');userCrisisWhat=val;checkCrisisReady()}
+function setCrisisThinking(btn,val){document.querySelectorAll('#scrn-q .csec:last-of-type .abtn').forEach(function(b){b.classList.remove('sel')});btn.classList.add('sel');userCrisisThinking=val;checkCrisisReady()}
+function checkCrisisReady(){var btn=document.getElementById('crn-q-next');if(btn)btn.disabled=!(userCrisisWhat&&userCrisisThinking)}
+function openCrisis(){userCrisisWhat='';userCrisisThinking='';document.querySelectorAll('#scrn-q .abtn').forEach(function(b){b.classList.remove('sel')});var btn=document.getElementById('crn-q-next');if(btn)btn.disabled=true;go('scrn-q')}
+function openMirror(){var w=document.getElementById('mirror-why');var c=document.getElementById('mirror-cost');var g=document.getElementById('mirror-goal');if(w)w.textContent=userWhyGamble||'escape, excitement, or habit';if(c)c.textContent=userCostsSummary||'things that matter to you';if(g)g.textContent=userOutcomeGoal||'something better';go('scrn-mirror')}
+function showReframe(){var el=document.getElementById('reframe-text');if(el)el.textContent=crisisReframes[userCrisisThinking]||crisisReframes['nothing_working'];go('scrn-reframe')}
 
 // ── Init ──
 renderCISlots();
