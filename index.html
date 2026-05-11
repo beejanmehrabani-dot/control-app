@@ -210,6 +210,28 @@
   .prog-bar-wrap { margin-top:14px; background:#E0DDD8; border-radius:8px; height:16px; overflow:hidden; }
   .prog-bar-fill { height:16px; border-radius:8px; background:#F0B429; transition:width 0.6s ease; box-shadow:0 2px 8px rgba(240,180,41,0.4); }
   .prog-bar-labels { display:flex; justify-content:space-between; align-items:center; margin-top:6px; }
+
+  /* Path badge */
+  .path-badge { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:20px; font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; }
+  .path-a { background:#1a1a2e; color:#fff; }
+  .path-b { background:#533483; color:#fff; }
+
+  /* PGSI */
+  .pgsi-q { background:#fff; border:0.5px solid rgba(0,0,0,0.09); border-radius:14px; padding:15px; }
+  .pgsi-q .ql { margin-bottom:10px; }
+  .pgsi-opts { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  .pgsi-opt { padding:10px 6px; background:#F2F0EB; border:0.5px solid rgba(0,0,0,0.09); border-radius:10px; font-size:12px; color:#555; cursor:pointer; font-family:inherit; text-align:center; }
+  .pgsi-opt.sel { border:1.5px solid #111; background:#fff; color:#111; font-weight:600; }
+
+  /* SVG chart */
+  .chart-wrap { background:#fff; border:0.5px solid rgba(0,0,0,0.09); border-radius:14px; padding:16px; }
+  .chart-title { font-size:11px; font-weight:700; color:#999; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:12px; }
+
+  /* Insight card */
+  .insight-card { background:#fff; border:0.5px solid rgba(0,0,0,0.09); border-radius:14px; padding:15px; }
+  .insight-label { font-size:11px; font-weight:700; color:#999; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px; }
+  .insight-val { font-size:18px; font-weight:700; color:#111; }
+  .insight-sub { font-size:12px; color:#666; margin-top:2px; }
 </style>
 </head>
 <body>
@@ -225,9 +247,29 @@
     </div>
     <div style="flex:1"></div>
     <div>
-      <button class="pbtn" onclick="go('s0')">Get started — it's free</button>
+      <button class="pbtn" onclick="go('sQ1')">Get started — it's free</button>
       <div class="sfty" style="text-align:center;margin-top:12px">In crisis? Call <strong style="color:#111">988</strong> or <strong style="color:#111">1-800-GAMBLER</strong></div>
     </div>
+  </div>
+</div>
+
+<!-- PATH SELECTION -->
+<div id="sQ1" class="screen">
+  <div class="bod" style="justify-content:center;padding:48px 24px 32px">
+    <div>
+      <div class="app-name">Control</div>
+      <div class="h1" style="margin-top:6px">What brought you here today?</div>
+      <div class="sub" style="margin-top:10px">Your answer shapes everything that follows. No wrong choice.</div>
+    </div>
+    <div style="flex:1;min-height:24px"></div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div class="cc" onclick="setPath(this,'A',false)" id="pA"><div class="cdot"></div><div><div class="cl" style="font-size:15px;font-weight:600">I want to stop completely.</div><div class="cs2">Walk away for good.</div></div></div>
+      <div class="cc" onclick="setPath(this,'B',false)" id="pB"><div class="cdot"></div><div><div class="cl" style="font-size:15px;font-weight:600">I want to get it under control and stick to my limits.</div><div class="cs2">Gamble smarter. Set rules and keep them.</div></div></div>
+      <div class="cc" onclick="setPath(this,'B',true)" id="pC"><div class="cdot"></div><div><div class="cl" style="font-size:15px;font-weight:600">I'm not sure yet.</div><div class="cs2">I just know something needs to change.</div></div></div>
+    </div>
+    <div style="flex:1;min-height:16px"></div>
+    <button class="pbtn" id="pQ1-next" onclick="go('s0')" disabled style="margin-top:12px">Let's go</button>
+    <div class="sfty" style="text-align:center;margin-top:12px">In crisis? Call <strong style="color:#111">988</strong> or <strong style="color:#111">1-800-GAMBLER</strong></div>
   </div>
 </div>
 
@@ -247,12 +289,13 @@
 <!-- STEP 0b: TRIED BEFORE -->
 <div id="s0b" class="screen">
   <div class="hdr-plain">
-    <div class="sdots"><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
-    <div class="h2">Have you tried to get your gambling under control before?</div>
+    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+    <div class="h2">Have you tried to change this before?</div>
   </div>
   <div class="bod" style="justify-content:flex-start;padding-top:24px;gap:12px">
-    <div class="cc" onclick="s0bSelect(this,true)" id="s0b-yes"><div class="cdot"></div><div><div class="cl">Yes — I've tried before</div></div></div>
-    <div class="cc" onclick="s0bSelect(this,false)" id="s0b-no"><div class="cdot"></div><div><div class="cl">No — this is my first time</div></div></div>
+    <div class="cc" onclick="s0bSelect(this,'progress')" id="s0b-yes1"><div class="cdot"></div><div><div class="cl">Yes — and I made some progress</div></div></div>
+    <div class="cc" onclick="s0bSelect(this,'nodstick')" id="s0b-yes2"><div class="cdot"></div><div><div class="cl">Yes — but it didn't stick</div></div></div>
+    <div class="cc" onclick="s0bSelect(this,'first')" id="s0b-no"><div class="cdot"></div><div><div class="cl">No — this is my first time</div></div></div>
     <div id="s0b-followup" style="display:none;flex-direction:column;gap:8px">
       <div class="qh" style="margin:0">What got in the way last time?</div>
       <textarea id="s0b-obstacle" style="min-height:72px" placeholder="Write honestly — this helps personalise your experience..."></textarea>
@@ -282,60 +325,117 @@
   <div class="ftr"><button class="pbtn" onclick="saveWhyGamble()">Continue</button></div>
 </div>
 
-<!-- STEP 1: YOUR GOALS -->
-<div id="s1" class="screen">
+<!-- STEP 1A: GOALS — PATH A -->
+<div id="s1a" class="screen">
   <div class="hdr-plain">
-    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
     <div class="h2">Your Goals</div>
     <div class="sub">Three different types. All matter. All yours.</div>
   </div>
-  <div class="bod" style="padding-top:20px">
+  <div class="bod" style="padding-top:16px">
     <div class="csec">
       <div class="ql">Emotional goal</div>
       <div class="qh" style="margin:4px 0 8px">How do you want to feel in 90 days?</div>
-      <textarea id="goal-emotional" style="min-height:64px" placeholder="e.g. Less anxious about money. Proud of myself. Sleeping better."></textarea>
+      <textarea id="goal-emotional-a" style="min-height:60px" placeholder="e.g. Less anxious about money. Proud of myself. Sleeping better."></textarea>
     </div>
     <div class="csec">
       <div class="ql">Outcome goal</div>
       <div class="qh" style="margin:4px 0 8px">What do you want to have or rebuild?</div>
-      <textarea id="goal-outcome" style="min-height:64px" placeholder="e.g. $2,000 saved. A better relationship with my partner. Out of debt."></textarea>
+      <textarea id="goal-outcome-a" style="min-height:60px" placeholder="e.g. $2,000 saved. A better relationship with my partner. Out of debt."></textarea>
     </div>
     <div class="csec">
       <div class="ql">Behavioral goal</div>
       <div class="qh" style="margin:4px 0 8px">What will you do differently starting this week?</div>
-      <textarea id="goal-behavioral" style="min-height:64px" placeholder="e.g. Delete the betting apps. Tell one person. Open this app before I open another one."></textarea>
+      <textarea id="goal-behavioral-a" style="min-height:60px" placeholder="e.g. Delete the betting apps. Tell one person. Open this app instead."></textarea>
     </div>
   </div>
-  <div class="ftr"><button class="pbtn" onclick="saveUserGoals()">Continue</button></div>
+  <div class="ftr"><button class="pbtn" onclick="saveGoalsA()">Continue</button></div>
+</div>
+
+<!-- STEP 1B: LIMITS CONTRACT — PATH B -->
+<div id="s1b-limits" class="screen">
+  <div class="hdr-plain">
+    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+    <div class="h2">Your limits contract</div>
+    <div class="sub">You set the rules. We hold you to them.</div>
+  </div>
+  <div class="bod" style="padding-top:16px">
+    <div class="csec">
+      <div class="ql">Weekly betting budget</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:20px;font-weight:700;color:#111">$</span><input class="ti" id="lb-budget" type="number" placeholder="0" style="font-size:20px;font-weight:700"/></div>
+    </div>
+    <div class="csec">
+      <div class="ql">Max bets per week</div>
+      <input class="ti" id="lb-count" type="number" placeholder="e.g. 3" style="margin-top:8px"/>
+    </div>
+    <div class="csec">
+      <div class="ql">Days gambling is allowed</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px" id="lb-days">
+        <button class="chip" onclick="toggleDay(this,'Mon')">Mon</button>
+        <button class="chip" onclick="toggleDay(this,'Tue')">Tue</button>
+        <button class="chip" onclick="toggleDay(this,'Wed')">Wed</button>
+        <button class="chip" onclick="toggleDay(this,'Thu')">Thu</button>
+        <button class="chip" onclick="toggleDay(this,'Fri')">Fri</button>
+        <button class="chip" onclick="toggleDay(this,'Sat')">Sat</button>
+        <button class="chip" onclick="toggleDay(this,'Sun')">Sun</button>
+      </div>
+    </div>
+    <div class="csec">
+      <div class="ql">Gambling is off limits after</div>
+      <input class="ti" id="lb-cutoff" type="time" value="22:00" style="margin-top:8px"/>
+    </div>
+  </div>
+  <div class="ftr"><button class="pbtn" onclick="saveLimits()">Set my limits</button></div>
+</div>
+
+<!-- STEP 1B: GOALS — PATH B -->
+<div id="s1b-goals" class="screen">
+  <div class="hdr-plain">
+    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+    <div class="h2">Your Goals</div>
+    <div class="sub">What you're protecting. Be specific.</div>
+  </div>
+  <div class="bod" style="padding-top:16px">
+    <div class="csec">
+      <div class="ql">Emotional goal</div>
+      <div class="qh" style="margin:4px 0 8px">How do you want to feel about your gambling in 90 days?</div>
+      <textarea id="goal-emotional-b" style="min-height:60px" placeholder="e.g. In control. Not ashamed. Able to enjoy it without it taking over."></textarea>
+    </div>
+    <div class="csec">
+      <div class="ql">Outcome goal</div>
+      <div class="qh" style="margin:4px 0 8px">What do you want to protect or rebuild?</div>
+      <textarea id="goal-outcome-b" style="min-height:60px" placeholder="e.g. My savings. My relationship. My self-respect."></textarea>
+    </div>
+    <div class="csec">
+      <div class="ql">Behavioral goal</div>
+      <div class="qh" style="margin:4px 0 8px">What rule will you follow starting this week?</div>
+      <textarea id="goal-behavioral-b" style="min-height:60px" placeholder="e.g. Only bet on Saturdays. Never chase a loss."></textarea>
+    </div>
+  </div>
+  <div class="ftr"><button class="pbtn" onclick="saveGoalsB()">Continue</button></div>
 </div>
 
 <!-- STEP 2: COSTS -->
 <div id="s2" class="screen">
   <div class="hdr-plain">
-    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
     <div class="h2">What has it cost you?</div>
-    <div class="sub">Select anything that's happened. This stays private.</div>
+    <div class="sub">This is just for you — honest answers help the app help you.</div>
   </div>
   <div class="bod">
-    <div class="tags">
-      <div class="tag" onclick="tt(this)">Lost money I couldn't afford</div>
-      <div class="tag" onclick="tt(this)">Hid it from someone close</div>
-      <div class="tag" onclick="tt(this)">Missed something important</div>
-      <div class="tag" onclick="tt(this)">Felt ashamed after</div>
-      <div class="tag" onclick="tt(this)">Chased losses and made it worse</div>
-      <div class="tag" onclick="tt(this)">Borrowed money to keep going</div>
-      <div class="tag" onclick="tt(this)">Argued with someone I care about</div>
-      <div class="tag" onclick="tt(this)">Lost sleep worrying about it</div>
-      <div class="tag" onclick="tt(this)">Felt completely out of control</div>
-      <div class="tag" onclick="tt(this)">Missed work or responsibilities</div>
-      <div class="tag" onclick="tt(this)">Lied about how much I lost</div>
-      <div class="tag" onclick="tt(this)">Felt depressed or anxious after</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="cc" onclick="tm(this)" data-cost="Money"><div class="cbox"></div><div><div class="cl">Money</div></div></div>
+      <div class="cc" onclick="tm(this)" data-cost="Relationships"><div class="cbox"></div><div><div class="cl">Relationships</div></div></div>
+      <div class="cc" onclick="tm(this)" data-cost="My mental health"><div class="cbox"></div><div><div class="cl">My mental health</div></div></div>
+      <div class="cc" onclick="tm(this)" data-cost="Time I can't get back"><div class="cbox"></div><div><div class="cl">Time I can't get back</div></div></div>
+      <div class="cc" onclick="tm(this)" data-cost="Trust — my own or others'"><div class="cbox"></div><div><div class="cl">Trust — my own or others'</div></div></div>
+      <div class="cc" onclick="tm(this)" data-cost="My job or career"><div class="cbox"></div><div><div class="cl">My job or career</div></div></div>
+      <div class="cc" onclick="tm(this)" data-cost="All of the above"><div class="cbox"></div><div><div class="cl">All of the above</div></div></div>
     </div>
-    <div><div class="qh">Anything else you want to add?</div><textarea placeholder="In your own words..."></textarea></div>
   </div>
   <div class="ftr">
     <button class="pbtn" onclick="saveCosts()">Continue</button>
-    <button class="sbtn" onclick="saveCosts()">Skip this step</button>
+    <button class="sbtn" onclick="saveCosts()">Skip for now</button>
   </div>
 </div>
 
@@ -347,6 +447,11 @@
     <div class="sub">Your savings tracker will measure against this. Make it real.</div>
   </div>
   <div class="bod">
+    <div class="csec">
+      <div class="ql">What would you do with the money?</div>
+      <div class="qh" style="margin:4px 0 8px">In your own words — what matters most?</div>
+      <textarea id="money-goal-text" style="min-height:60px" placeholder="e.g. Take my family on a holiday. Pay off my credit card. Build an emergency fund."></textarea>
+    </div>
     <div class="cc" onclick="sg(this,'Pay off debt')" id="g0"><div class="cdot"></div><div><div class="cl">Pay off debt</div><div class="cs2">Credit card, loan, money owed to someone</div></div></div>
     <div class="cc" onclick="sg(this,'Save for something meaningful')" id="g1"><div class="cdot"></div><div><div class="cl">Save for something meaningful</div><div class="cs2">A trip, a car, a down payment</div></div></div>
     <div class="cc" onclick="sg(this,'Save more for myself and family')" id="g2"><div class="cdot"></div><div><div class="cl">Save more for myself, my family, others</div><div class="cs2">Build a cushion. Give more.</div></div></div>
@@ -427,8 +532,34 @@
     </div>
   </div>
   <div class="ftr">
-    <button class="pbtn" onclick="go('s6')">Save my plans</button>
-    <button class="sbtn" onclick="go('s6')">Skip for now — I'll set these up later</button>
+    <button class="pbtn" onclick="go('s-crisis-plan')">Save my plans</button>
+    <button class="sbtn" onclick="go('s-crisis-plan')">Skip for now — I'll set these up later</button>
+  </div>
+</div>
+
+<!-- CRISIS PLAN -->
+<div id="s-crisis-plan" class="screen">
+  <div class="hdr-plain">
+    <div class="sdots"><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot on"></div><div class="sdot"></div><div class="sdot"></div><div class="sdot"></div></div>
+    <div class="h2">Your crisis plan</div>
+    <div class="sub">When things get hard, having a plan already written means you don't have to think.</div>
+  </div>
+  <div class="bod" style="padding-top:16px">
+    <div class="csec">
+      <div class="ql">Who can you call when things get hard?</div>
+      <div class="qh" style="margin:4px 0 8px">A real person — friend, family, sponsor, anyone.</div>
+      <textarea id="crisis-who" style="min-height:60px" placeholder="e.g. My brother James. My sponsor Mike. My friend Priya."></textarea>
+    </div>
+    <div class="csec">
+      <div class="ql">What will you do in the first 5 minutes of a strong urge?</div>
+      <div class="qh" style="margin:4px 0 8px">Be specific. 'Walk around the block' beats 'distract myself.'</div>
+      <textarea id="crisis-5min" style="min-height:60px" placeholder="e.g. Go outside. Text James. Open this app and start the timer."></textarea>
+    </div>
+    <div class="sfty">These answers appear in your crisis flow when you need them most.</div>
+  </div>
+  <div class="ftr">
+    <button class="pbtn" onclick="saveCrisisPlan()">Continue</button>
+    <button class="sbtn" onclick="go('s6')">Skip for now</button>
   </div>
 </div>
 
@@ -558,7 +689,7 @@
 
     <!-- Q1: Did you place a bet -->
     <div class="csec" style="border:2px solid #111;border-radius:14px;padding:15px">
-      <div class="ql">Did you place a bet since our last check-in?</div>
+      <div class="ql" id="ci-bet-label">Did you place a bet since our last check-in?</div>
       <div class="mrow" style="margin-top:10px">
         <button class="mbtn" id="sci-bet-yes" onclick="setBet(true)">Yes</button>
         <button class="mbtn" id="sci-bet-no" onclick="setBet(false)">No</button>
@@ -575,6 +706,7 @@
         <div class="ql" style="color:#2a5209">How much do you estimate you saved by not gambling since our last check-in?</div>
         <div class="qh" style="margin:4px 0 0;color:#3B6D11">This gets added to your goal progress 🎉</div>
         <input class="ti" id="sci-saved-amt" type="number" placeholder="$0" style="margin-top:10px;font-size:18px;font-weight:700;border-color:#3B6D11"/>
+        <div id="ci-budget-status" style="display:none;margin-top:12px;padding:10px 12px;background:rgba(59,109,17,0.1);border-radius:8px;font-size:13px;color:#3B6D11">Budget this week: <strong id="ci-budget-used">$0</strong> of <strong id="ci-budget-total">$0</strong></div>
       </div>
     </div>
 
@@ -743,13 +875,8 @@
     </div>
     <div class="csec">
       <div class="ql">What are you thinking?</div>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
-        <button class="abtn" onclick="setCrisisThinking(this,'win_back')"><div class="al">A</div><span>I could win it back</span></button>
-        <button class="abtn" onclick="setCrisisThinking(this,'one_bet')"><div class="al">B</div><span>One bet won't matter</span></button>
-        <button class="abtn" onclick="setCrisisThinking(this,'deserve')"><div class="al">C</div><span>I deserve this</span></button>
-        <button class="abtn" onclick="setCrisisThinking(this,'rush')"><div class="al">D</div><span>I need the rush</span></button>
-        <button class="abtn" onclick="setCrisisThinking(this,'feel_better')"><div class="al">E</div><span>I'll feel better after</span></button>
-        <button class="abtn" onclick="setCrisisThinking(this,'nothing_working')"><div class="al">F</div><span>Nothing else is working</span></button>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px" id="crisis-thinking-opts">
+        <!-- populated by openCrisis() -->
       </div>
     </div>
   </div>
@@ -1155,7 +1282,7 @@
     </div>
   </div>
   <div class="ftr">
-    <button class="pbtn" onclick="go('shome')">I'm okay now</button>
+    <button class="pbtn" onclick="crisisExit('ok')">I'm okay now</button>
     <a href="tel:18004262537" class="sbtn" style="display:block;text-align:center;text-decoration:none;margin-top:10px;padding:14px;background:transparent;color:#C0392B;border:1.5px solid #C0392B;border-radius:14px;font-size:15px;font-weight:600;font-family:inherit">I need more help — call now</a>
   </div>
 </div>
@@ -1187,50 +1314,75 @@
 
 <!-- PROGRESS -->
 <div id="sprog" class="screen">
-  <div class="hdr"><div class="app-name">Control</div><div class="h2">Your progress</div></div>
+  <div class="hdr"><div class="app-name">Control</div><div class="h2">Progress</div></div>
   <div class="bod">
+    <!-- Goal card (same as home) -->
     <div class="gpc" style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border:none;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
         <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.08em">Goal progress</div>
+        <span id="prog-path-badge" class="path-badge path-a">Path A</span>
       </div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:4px">Pay off my Visa</div>
-      <div class="ga" style="color:#fff">$340</div>
-      <div class="gctx" style="color:rgba(255,255,255,0.6)">saved in 7 days. 23% of your $1,500 goal.</div>
-      <div class="prog-bar-wrap" style="background:rgba(255,255,255,0.15)"><div class="prog-bar-fill" style="width:23%;background:#F0B429"></div></div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.7);margin-bottom:4px" id="prog-hlabel">My goal</div>
+      <div class="ga" style="color:#fff" id="prog-saved">$0</div>
+      <div class="gctx" style="color:rgba(255,255,255,0.6)" id="prog-gctx">saved so far.</div>
+      <div class="prog-bar-wrap" style="background:rgba(255,255,255,0.15)"><div class="prog-bar-fill" id="prog-pf" style="width:0%;background:#F0B429"></div></div>
       <div class="prog-bar-labels">
         <div style="font-size:12px;color:rgba(255,255,255,0.5)">$0</div>
-        <div style="font-size:15px;font-weight:700;color:#fff">23%</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.5)">$1,500</div>
+        <div style="font-size:15px;font-weight:700;color:#fff" id="prog-pct">0%</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5)" id="prog-goal-max">$1,500</div>
       </div>
-      <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:8px">At this rate, goal reached in about 37 days 🎯</div>
     </div>
+    <!-- Stats -->
     <div class="sg">
-      <div class="sc" style="background:linear-gradient(135deg,#1a6b3c,#2d9e5f);"><div class="sn" style="color:#fff">7</div><div class="sl" style="color:rgba(255,255,255,0.75)">day streak 🔥</div></div>
-      <div class="sc" style="background:linear-gradient(135deg,#6b3a9b,#9b5de5);"><div class="sn" style="color:#fff">4</div><div class="sl" style="color:rgba(255,255,255,0.75)">urges managed 💪</div></div>
+      <div class="sc" style="background:linear-gradient(135deg,#1a6b3c,#2d9e5f);"><div class="sn" style="color:#fff" id="prog-streak">7</div><div class="sl" style="color:rgba(255,255,255,0.75)" id="prog-streak-label">day streak 🔥</div></div>
+      <div class="sc" style="background:linear-gradient(135deg,#6b3a9b,#9b5de5);"><div class="sn" style="color:#fff" id="prog-crises">0</div><div class="sl" style="color:rgba(255,255,255,0.75)">urges managed 💪</div></div>
     </div>
-    <div class="sg">
-      <div class="sc" style="background:linear-gradient(135deg,#1a4a6b,#2d7ab0);"><div class="sn" style="color:#fff">18</div><div class="sl" style="color:rgba(255,255,255,0.75)">check-ins done ✅</div></div>
-      <div class="sc" style="background:linear-gradient(135deg,#6b4a1a,#c4842a);"><div class="sn" style="color:#fff">3</div><div class="sl" style="color:rgba(255,255,255,0.75)">skills used 🧠</div></div>
+    <!-- Urge trend chart -->
+    <div class="chart-wrap">
+      <div class="chart-title">Urge intensity — last 7 days</div>
+      <svg id="urge-chart" width="100%" height="80" viewBox="0 0 280 80" preserveAspectRatio="none">
+        <polyline id="urge-line" points="0,80 40,60 80,50 120,30 160,40 200,20 240,10 280,15" fill="none" stroke="#9b5de5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="0" y1="40" x2="280" y2="40" stroke="rgba(0,0,0,0.06)" stroke-width="1" stroke-dasharray="4,4"/>
+        <text x="2" y="36" font-size="9" fill="#bbb">5</text>
+        <text x="2" y="76" font-size="9" fill="#bbb">0</text>
+        <text x="2" y="12" font-size="9" fill="#bbb">10</text>
+      </svg>
+      <div style="display:flex;justify-content:space-between;margin-top:4px">
+        <span style="font-size:10px;color:#bbb">7 days ago</span>
+        <span style="font-size:10px;color:#bbb">today</span>
+      </div>
     </div>
-    <div class="slab">Motivation</div>
+    <!-- Motivation -->
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <div><div class="ct">Importance score</div><div class="cs">How much this matters to you</div></div>
-        <div style="font-size:28px;font-weight:700;color:#111">8</div>
+        <div><div class="ct">Importance score</div><div class="cs">How much this matters</div></div>
+        <div style="font-size:28px;font-weight:700;color:#111" id="prog-imp">—</div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div><div class="ct">Confidence score</div><div class="cs">How capable you feel</div></div>
-        <div style="font-size:28px;font-weight:700;color:#111">6</div>
+        <div style="font-size:28px;font-weight:700;color:#111" id="prog-conf">—</div>
       </div>
     </div>
-    <div class="slab">This week</div>
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;margin-bottom:9px"><div class="ct">Bet-free days</div><div style="font-size:14px;color:#3B6D11;font-weight:700">7 of 7 🎉</div></div>
-      <div class="ddays"><div class="dd on"></div><div class="dd on"></div><div class="dd on"></div><div class="dd on"></div><div class="dd on"></div><div class="dd on"></div><div class="dd on"></div></div>
+    <!-- Your Pattern insights -->
+    <div class="slab">Your Pattern</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="insight-card"><div class="insight-label">Peak urge time</div><div class="insight-val" id="ins-time">—</div><div class="insight-sub">most common</div></div>
+      <div class="insight-card"><div class="insight-label">Top trigger</div><div class="insight-val" id="ins-trigger">—</div><div class="insight-sub">most logged</div></div>
     </div>
-    <div class="card">
-      <div class="ct" style="margin-bottom:6px">How you've been feeling</div>
-      <div class="cs" style="font-size:14px;line-height:1.6">Mood trending up. Pretty good or better in 5 of 7 morning check-ins. Most common trigger this week: game nights.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="insight-card"><div class="insight-label">Common thought</div><div class="insight-val" id="ins-distortion" style="font-size:13px">—</div><div class="insight-sub">in crisis moments</div></div>
+      <div class="insight-card"><div class="insight-label">Crisis outcomes</div><div class="insight-val" id="ins-outcome">—</div><div class="insight-sub">resolved ok</div></div>
+    </div>
+    <div id="ins-14day-note" class="sfty" style="text-align:center;display:none">Insights appear after 14 days of data.</div>
+    <!-- Weekly check-in -->
+    <div class="slab">Weekly milestone</div>
+    <div id="pgsi-banner" style="display:none;background:linear-gradient(135deg,#0f3460,#533483);border-radius:16px;padding:16px 18px;align-items:center;gap:12px">
+      <div style="flex:1"><div style="font-size:14px;font-weight:700;color:#fff">Time for your weekly check-in</div><div style="font-size:12px;color:rgba(255,255,255,0.7);margin-top:3px">9 questions. 2 minutes. Tracks how things are changing.</div></div>
+      <button onclick="go('s-pgsi')" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);border-radius:10px;color:#fff;font-size:13px;font-weight:600;padding:9px 14px;cursor:pointer;font-family:inherit;flex-shrink:0">Start →</button>
+    </div>
+    <div class="card tap row" onclick="go('s-pgsi')">
+      <div><div class="ct">Weekly check-in</div><div class="cs">PGSI — tracks severity and motivation over time</div></div>
+      <div style="font-size:20px;color:#ccc">›</div>
     </div>
     <div class="sfty" style="text-align:center">If you ever need immediate support: <strong style="color:#111">1-800-GAMBLER</strong> and <strong style="color:#111">988</strong></div>
   </div>
@@ -1478,6 +1630,114 @@
 </div>
 
 
+<!-- PGSI WEEKLY CHECK-IN -->
+<div id="s-pgsi" class="screen">
+  <div class="hdr-plain">
+    <button class="bk" onclick="go('shome')">← Back</button>
+    <div class="h2">Weekly check-in</div>
+    <div class="sub">Nine questions. Takes 2 minutes. Tracks how things are changing.</div>
+  </div>
+  <div class="bod">
+    <div class="sfty" style="margin-bottom:4px">These are standard questions used in research. Answer for the past four weeks.</div>
+    <div class="pgsi-q">
+      <div class="ql">1. Have you bet more than you could really afford to lose?</div>
+      <div class="pgsi-opts" data-q="1">
+        <button class="pgsi-opt" onclick="pgsiSel(this,0)">Never</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,1)">Sometimes</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,2)">Most of the time</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,3)">Almost always</button>
+      </div>
+    </div>
+    <div class="pgsi-q">
+      <div class="ql">2. Have you needed to gamble with larger amounts of money to get the same feeling of excitement?</div>
+      <div class="pgsi-opts" data-q="2">
+        <button class="pgsi-opt" onclick="pgsiSel(this,0)">Never</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,1)">Sometimes</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,2)">Most of the time</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,3)">Almost always</button>
+      </div>
+    </div>
+    <div class="pgsi-q">
+      <div class="ql">3. When you gambled, did you go back another day to try to win back the money you lost?</div>
+      <div class="pgsi-opts" data-q="3">
+        <button class="pgsi-opt" onclick="pgsiSel(this,0)">Never</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,1)">Sometimes</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,2)">Most of the time</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,3)">Almost always</button>
+      </div>
+    </div>
+    <div class="pgsi-q">
+      <div class="ql">4. Have you borrowed money or sold anything to get money to gamble?</div>
+      <div class="pgsi-opts" data-q="4">
+        <button class="pgsi-opt" onclick="pgsiSel(this,0)">Never</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,1)">Sometimes</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,2)">Most of the time</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,3)">Almost always</button>
+      </div>
+    </div>
+    <div class="pgsi-q">
+      <div class="ql">5. Has gambling caused you any health problems, including stress or anxiety?</div>
+      <div class="pgsi-opts" data-q="5">
+        <button class="pgsi-opt" onclick="pgsiSel(this,0)">Never</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,1)">Sometimes</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,2)">Most of the time</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,3)">Almost always</button>
+      </div>
+    </div>
+    <div class="pgsi-q">
+      <div class="ql">6. Has your gambling caused any financial problems for you or your household?</div>
+      <div class="pgsi-opts" data-q="6">
+        <button class="pgsi-opt" onclick="pgsiSel(this,0)">Never</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,1)">Sometimes</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,2)">Most of the time</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,3)">Almost always</button>
+      </div>
+    </div>
+    <div class="pgsi-q">
+      <div class="ql">7. Have people criticized your betting, or told you that you have a gambling problem?</div>
+      <div class="pgsi-opts" data-q="7">
+        <button class="pgsi-opt" onclick="pgsiSel(this,0)">Never</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,1)">Sometimes</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,2)">Most of the time</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,3)">Almost always</button>
+      </div>
+    </div>
+    <div class="pgsi-q">
+      <div class="ql">8. Has your gambling caused any problems with your relationships, work, or finances?</div>
+      <div class="pgsi-opts" data-q="8">
+        <button class="pgsi-opt" onclick="pgsiSel(this,0)">Never</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,1)">Sometimes</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,2)">Most of the time</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,3)">Almost always</button>
+      </div>
+    </div>
+    <div class="pgsi-q">
+      <div class="ql">9. Have you felt that you might have a problem with gambling?</div>
+      <div class="pgsi-opts" data-q="9">
+        <button class="pgsi-opt" onclick="pgsiSel(this,0)">Never</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,1)">Sometimes</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,2)">Most of the time</button>
+        <button class="pgsi-opt" onclick="pgsiSel(this,3)">Almost always</button>
+      </div>
+    </div>
+    <div class="csec">
+      <div class="ql">How important is change to you right now? (0–10)</div>
+      <div class="slider-wrap" style="margin-top:8px">
+        <div class="slider-label"><span class="slider-name">Not at all</span><span class="slider-val" id="pgsi-imp-val">5</span></div>
+        <input type="range" min="0" max="10" value="5" step="1" oninput="document.getElementById('pgsi-imp-val').textContent=this.value">
+      </div>
+    </div>
+    <div class="csec">
+      <div class="ql">How confident are you that you can change? (0–10)</div>
+      <div class="slider-wrap" style="margin-top:8px">
+        <div class="slider-label"><span class="slider-name">Not at all</span><span class="slider-val" id="pgsi-conf-val">5</span></div>
+        <input type="range" min="0" max="10" value="5" step="1" oninput="document.getElementById('pgsi-conf-val').textContent=this.value">
+      </div>
+    </div>
+  </div>
+  <div class="ftr"><button class="pbtn" onclick="savePGSI()">Save check-in</button></div>
+</div>
+
 <!-- KNOW YOURSELF BOTTOM SHEET -->
 <div id="ky-overlay" class="ky-overlay" onclick="closeKnow()"></div>
 <div id="ky-sheet" class="ky-sheet">
@@ -1531,16 +1791,50 @@ var fb=[{q:"Which athlete has won the most Olympic gold medals?",cat:"Olympics",
 
 // User state
 var userName='',goalName='My goal',goalAmount=1500,totalSaved=0;
-var userEndGoal='';
+var userPath='A'; // 'A' = stop completely, 'B' = controlled
+var userUndecided=false;
 var userWhyGamble='';
-var userEmotionalGoal='',userOutcomeGoal='',userBehavioralGoal='';
-var userImportanceWhy='',userConfidenceFrom='';
-var userWhatGotInWay='';
 var userCostsSummary='';
-var userCrisisWhat='',userCrisisThinking='';
+var userEmotionalGoal='',userOutcomeGoal='',userBehavioralGoal='';
+var userImportanceScore=5,userImportanceWhy='';
+var userConfidenceScore=5,userConfidenceFrom='';
+var userWhatGotInWay='',userTriedBefore='';
+var userCrisisWho='',userCrisisPlan5min='';
+var userMoneyGoal='';
+// Path B limits
+var userWeeklyBudget=0,userBetsPerWeek=0,userAllowedDays=[],userCutoffTime='';
+var weeklyBetTotal=0,weeklyBetCount=0;
+// Check-in state
 var currentCI='morning';
 var ciTimes=[{label:'Morning',timeVal:'08:00'},{label:'Midday',timeVal:'13:00'},{label:'Evening',timeVal:'21:00'}];
 var eciGambled=null,mornBet=null;
+var ciOpeningAnswer=''; // stores the opening check-in answer
+// Crisis state
+var userCrisisWhat='',userCrisisThinking='';
+var preCrisisUrge=0,postInterventionUrge=0,postReframeUrge=0;
+// PGSI
+var lastPGSIDate=0;
+var pgsiAnswers=[];
+
+// ── Data layer (localStorage) ──
+function logEvent(type,data){
+  try{
+    var events=JSON.parse(localStorage.getItem('ctrl_events')||'[]');
+    var entry=Object.assign({id:Date.now(),user_id:userName||'user1',timestamp:new Date().toISOString(),path_type:userPath,type:type},data);
+    events.push(entry);
+    if(events.length>2000)events=events.slice(-2000); // keep last 2000
+    localStorage.setItem('ctrl_events',JSON.stringify(events));
+  }catch(e){}
+}
+function getEvents(type){
+  try{var ev=JSON.parse(localStorage.getItem('ctrl_events')||'[]');return type?ev.filter(function(e){return e.type===type}):ev;}catch(e){return[];}
+}
+function saveUserProfile(){
+  try{localStorage.setItem('ctrl_profile',JSON.stringify({userName:userName,userPath:userPath,userUndecided:userUndecided,userWhyGamble:userWhyGamble,userCostsSummary:userCostsSummary,userEmotionalGoal:userEmotionalGoal,userOutcomeGoal:userOutcomeGoal,userBehavioralGoal:userBehavioralGoal,userImportanceScore:userImportanceScore,userImportanceWhy:userImportanceWhy,userConfidenceScore:userConfidenceScore,userConfidenceFrom:userConfidenceFrom,userWhatGotInWay:userWhatGotInWay,userTriedBefore:userTriedBefore,userCrisisWho:userCrisisWho,userCrisisPlan5min:userCrisisPlan5min,userMoneyGoal:userMoneyGoal,goalName:goalName,goalAmount:goalAmount,totalSaved:totalSaved,userWeeklyBudget:userWeeklyBudget,userBetsPerWeek:userBetsPerWeek,userAllowedDays:userAllowedDays,userCutoffTime:userCutoffTime,lastPGSIDate:lastPGSIDate}));}catch(e){}
+}
+function loadUserProfile(){
+  try{var p=JSON.parse(localStorage.getItem('ctrl_profile')||'{}');if(!p.userName)return;userName=p.userName||'';userPath=p.userPath||'A';userUndecided=!!p.userUndecided;userWhyGamble=p.userWhyGamble||'';userCostsSummary=p.userCostsSummary||'';userEmotionalGoal=p.userEmotionalGoal||'';userOutcomeGoal=p.userOutcomeGoal||'';userBehavioralGoal=p.userBehavioralGoal||'';userImportanceScore=p.userImportanceScore||5;userImportanceWhy=p.userImportanceWhy||'';userConfidenceScore=p.userConfidenceScore||5;userConfidenceFrom=p.userConfidenceFrom||'';userCrisisWho=p.userCrisisWho||'';userCrisisPlan5min=p.userCrisisPlan5min||'';userMoneyGoal=p.userMoneyGoal||'';goalName=p.goalName||'My goal';goalAmount=p.goalAmount||1500;totalSaved=p.totalSaved||0;userWeeklyBudget=p.userWeeklyBudget||0;userBetsPerWeek=p.userBetsPerWeek||0;userAllowedDays=p.userAllowedDays||[];userCutoffTime=p.userCutoffTime||'';lastPGSIDate=p.lastPGSIDate||0;updateGoalDisplay();}catch(e){}
+}
 
 // Trivia / grid state
 var csp='nfl',cqi=0,cql=[],sc=0,tot=5,ans=[];
@@ -1557,17 +1851,23 @@ var timerInterval=null,timerSeconds=600,timerRunning=false;
 var timerMsgs=['Your urge will pass. The math isn\'t changing. You\'re stronger than this feeling.','Urges typically peak at 5–7 minutes. You\'re in it. Keep going.','You\'ve made it past the hardest part. The wave is cresting.','The craving is just a feeling. It cannot make you do anything.','Almost there. You chose this. You are in control.','10 minutes done. You just proved the urge doesn\'t control you.'];
 
 // ── Navigation ──
-function go(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});var e=document.getElementById(id);if(e)e.classList.add('active');window.scrollTo(0,0);if(id==='shome')updateGreeting();if(id==='s6')renderCISlots();if(id==='stimer')resetTimer()}
+function go(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});var e=document.getElementById(id);if(e)e.classList.add('active');window.scrollTo(0,0);if(id==='shome'){updateGreeting();checkPGSI();}if(id==='s6')renderCISlots();if(id==='stimer')resetTimer();if(id==='sprog')updateProgressScreen();}
 function sw(id,btn){go(id);document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on')});if(btn)btn.classList.add('on')}
 
 // ── Onboarding ──
 function saveName(){var n=document.getElementById('uname').value.trim();if(n)userName=n;go('s0b')}
-function s0bSelect(el,tried){document.querySelectorAll('#s0b .cc').forEach(function(c){c.classList.remove('sel')});el.classList.add('sel');var f=document.getElementById('s0b-followup');if(f)f.style.display=tried?'flex':'none';document.getElementById('s0b-next').disabled=false}
-function saveWhyGamble(){var selected=[];document.querySelectorAll('#s0c .cc.sel').forEach(function(el){selected.push(el.getAttribute('data-why')||el.querySelector('.cl').textContent)});userWhyGamble=selected.join(', ')||'gambling';userWhatGotInWay=document.getElementById('s0b-obstacle')?document.getElementById('s0b-obstacle').value:'';go('s1')}
-function saveUserGoals(){userEmotionalGoal=document.getElementById('goal-emotional').value||'feel better';userOutcomeGoal=document.getElementById('goal-outcome').value||'rebuild what I\'ve lost';userBehavioralGoal=document.getElementById('goal-behavioral').value||'make different choices';go('s2')}
-function saveCosts(){var tags=[];document.querySelectorAll('#s2 .tag.sel').forEach(function(t){tags.push(t.textContent.trim())});var extra=document.querySelector('#s2 textarea');userCostsSummary=tags.length?tags.join(', '):(extra&&extra.value?extra.value:'something important to me');go('s3')}
-function saveMotivation(){userImportanceWhy=document.getElementById('s4-imp-why').value||'';userConfidenceFrom=document.getElementById('s4-conf-from').value||'';go('s5')}
-function saveGoalSettings(){var n=document.getElementById('cg').value.trim();var a=parseInt(document.getElementById('goalamt').value)||1500;if(n){goalName=n;document.querySelectorAll('#hlabel').forEach(function(el){el.textContent=n})}goalAmount=a;updateGoalDisplay();go('s4')}
+function s0bSelect(el,val){document.querySelectorAll('#s0b .cc').forEach(function(c){c.classList.remove('sel')});el.classList.add('sel');userTriedBefore=val;var f=document.getElementById('s0b-followup');if(f)f.style.display=(val==='first')?'none':'flex';document.getElementById('s0b-next').disabled=false}
+function setPath(el,path,undecided){document.querySelectorAll('#sQ1 .cc').forEach(function(c){c.classList.remove('sel')});el.classList.add('sel');userPath=path;userUndecided=undecided;document.getElementById('pQ1-next').disabled=false;updateCrisisButtonText()}
+function updateCrisisButtonText(){var btns=document.querySelectorAll('.tab-fab-lbl');btns.forEach(function(b){b.textContent=userPath==='A'?'Need Help':'Limit Help'});var rings=document.querySelectorAll('.tab-fab-ring');rings.forEach(function(r){r.style.background=userPath==='B'?'#533483':'#C0392B'})}
+function saveWhyGamble(){var selected=[];document.querySelectorAll('#s0c .cc.sel').forEach(function(el){selected.push(el.getAttribute('data-why')||el.querySelector('.cl').textContent)});userWhyGamble=selected.join(', ')||'gambling';userWhatGotInWay=document.getElementById('s0b-obstacle')?document.getElementById('s0b-obstacle').value:'';go(userPath==='A'?'s1a':'s1b-limits')}
+function saveGoalsA(){userEmotionalGoal=document.getElementById('goal-emotional-a').value||'feel better';userOutcomeGoal=document.getElementById('goal-outcome-a').value||'rebuild what I\'ve lost';userBehavioralGoal=document.getElementById('goal-behavioral-a').value||'make different choices';logEvent('onboarding_goals',{emotional:userEmotionalGoal,outcome:userOutcomeGoal,behavioral:userBehavioralGoal});go('s2')}
+function saveGoalsB(){userEmotionalGoal=document.getElementById('goal-emotional-b').value||'feel in control';userOutcomeGoal=document.getElementById('goal-outcome-b').value||'protect what matters';userBehavioralGoal=document.getElementById('goal-behavioral-b').value||'follow my rules';logEvent('onboarding_goals',{emotional:userEmotionalGoal,outcome:userOutcomeGoal,behavioral:userBehavioralGoal,path:'B'});go('s2')}
+function saveLimits(){userWeeklyBudget=parseInt(document.getElementById('lb-budget').value)||0;userBetsPerWeek=parseInt(document.getElementById('lb-count').value)||0;userCutoffTime=document.getElementById('lb-cutoff').value||'22:00';logEvent('onboarding_limits',{weekly_budget:userWeeklyBudget,bets_per_week:userBetsPerWeek,allowed_days:userAllowedDays,cutoff:userCutoffTime});go('s1b-goals')}
+function toggleDay(btn,day){btn.classList.toggle('sel');if(btn.classList.contains('sel')){if(!userAllowedDays.includes(day))userAllowedDays.push(day)}else{userAllowedDays=userAllowedDays.filter(function(d){return d!==day})}}
+function saveCosts(){var tags=[];document.querySelectorAll('#s2 .cc.sel').forEach(function(el){tags.push(el.getAttribute('data-cost')||el.querySelector('.cl').textContent.trim())});userCostsSummary=tags.length?tags.join(', '):'some important things';logEvent('onboarding_costs',{costs:userCostsSummary});go('s3')}
+function saveGoalSettings(){var n=document.getElementById('cg').value.trim();var a=parseInt(document.getElementById('goalamt').value)||1500;var mt=document.getElementById('money-goal-text');if(mt)userMoneyGoal=mt.value||'';if(n){goalName=n;document.querySelectorAll('#hlabel').forEach(function(el){el.textContent=n})}goalAmount=a;updateGoalDisplay();logEvent('onboarding_money_goal',{goal_name:goalName,goal_amount:goalAmount,money_goal_text:userMoneyGoal});go('s4')}
+function saveMotivation(){userImportanceScore=parseInt(document.getElementById('imp-val').textContent)||5;userImportanceWhy=document.getElementById('s4-imp-why').value||'';userConfidenceScore=parseInt(document.getElementById('conf-val').textContent)||5;userConfidenceFrom=document.getElementById('s4-conf-from').value||'';logEvent('onboarding_motivation',{importance_score:userImportanceScore,importance_why:userImportanceWhy,confidence_score:userConfidenceScore,confidence_from:userConfidenceFrom});go('s5')}
+function saveCrisisPlan(){userCrisisWho=document.getElementById('crisis-who').value||'';userCrisisPlan5min=document.getElementById('crisis-5min').value||'';logEvent('onboarding_crisis_plan',{crisis_who:userCrisisWho,crisis_5min:userCrisisPlan5min});saveUserProfile();go('s6')}
 
 // ── Goal edit ──
 function openGoalEdit(){document.getElementById('edit-goal-name').value=goalName;document.getElementById('edit-goal-amt').value=goalAmount;document.getElementById('edit-saved-amt').value=totalSaved;go('sgoaledit')}
@@ -1577,10 +1877,77 @@ function saveGoalEdit(){var n=document.getElementById('edit-goal-name').value.tr
 function updateGoalDisplay(){var pct=Math.min(100,goalAmount>0?Math.round((totalSaved/goalAmount)*100):0);var remaining=Math.max(0,goalAmount-totalSaved);var el=document.getElementById('home-saved');if(el)el.textContent='$'+totalSaved;var ctx=document.getElementById('home-gctx');if(ctx)ctx.textContent='saved. $'+remaining+' to go on a $'+goalAmount+' goal.';var pf=document.getElementById('home-pf');if(pf)pf.style.width=pct+'%';var mx=document.getElementById('home-goal-max');if(mx)mx.textContent='$'+goalAmount;var pc=document.getElementById('home-pct');if(pc)pc.textContent=pct+'%'}
 
 // ── Greeting ──
-function updateGreeting(){var h=new Date().getHours();var gr=h<12?'Good morning':h<17?'Good afternoon':'Good evening';var el=document.getElementById('greeting');if(el)el.textContent=userName?gr+', '+userName:gr}
+function updateGreeting(){var h=new Date().getHours();var gr=h<12?'Good morning':h<17?'Good afternoon':'Good evening';var el=document.getElementById('greeting');if(el)el.textContent=userName?gr+', '+userName:gr;checkPGSI();}
+
+// ── PGSI ──
+pgsiAnswers=new Array(9).fill(-1);
+function pgsiSel(btn,val){var opts=btn.closest('.pgsi-opts');var q=parseInt(opts.getAttribute('data-q'))-1;opts.querySelectorAll('.pgsi-opt').forEach(function(b){b.classList.remove('sel')});btn.classList.add('sel');pgsiAnswers[q]=val}
+function savePGSI(){var score=pgsiAnswers.reduce(function(a,b){return a+(b>=0?b:0)},0);var imp=parseInt(document.getElementById('pgsi-imp-val').textContent)||5;var conf=parseInt(document.getElementById('pgsi-conf-val').textContent)||5;logEvent('pgsi',{total_pgsi_score:score,answers:pgsiAnswers.slice(),importance_score:imp,confidence_score:conf});lastPGSIDate=Date.now();saveUserProfile();var msg=score<=1?'No significant concerns.':score<=2?'Some risk. Keep using the app.':score<=7?'Moderate concern. Consider talking to someone.':'High concern. Please reach out to a professional.';alert('Your score: '+score+'/27. '+msg);pgsiAnswers=new Array(9).fill(-1);go('shome')}
+function checkPGSI(){var sevenDays=7*24*60*60*1000;if(lastPGSIDate&&Date.now()-lastPGSIDate>sevenDays){var banner=document.getElementById('pgsi-banner');if(banner)banner.style.display='flex'}}
+
+// ── Progress screen ──
+function updateProgressScreen(){
+  // Goal
+  var pct=Math.min(100,goalAmount>0?Math.round((totalSaved/goalAmount)*100):0);
+  var el=document.getElementById('prog-saved');if(el)el.textContent='$'+totalSaved;
+  var hl=document.getElementById('prog-hlabel');if(hl)hl.textContent=goalName;
+  var ctx=document.getElementById('prog-gctx');if(ctx)ctx.textContent='saved. $'+Math.max(0,goalAmount-totalSaved)+' to go.';
+  var pf=document.getElementById('prog-pf');if(pf)pf.style.width=pct+'%';
+  var mx=document.getElementById('prog-goal-max');if(mx)mx.textContent='$'+goalAmount;
+  var pc=document.getElementById('prog-pct');if(pc)pc.textContent=pct+'%';
+  var pb=document.getElementById('prog-path-badge');if(pb){pb.textContent=userPath==='A'?'Path A — Stop':'Path B — Control';pb.className='path-badge '+(userPath==='A'?'path-a':'path-b')}
+  // Scores
+  var pi=document.getElementById('prog-imp');if(pi)pi.textContent=userImportanceScore||'—';
+  var pc2=document.getElementById('prog-conf');if(pc2)pc2.textContent=userConfidenceScore||'—';
+  // Compute insights from events
+  var events=getEvents();
+  var crisisEvents=events.filter(function(e){return e.type==='crisis_complete'});
+  var urgeEvents=events.filter(function(e){return e.urge_score!==undefined});
+  var crisisCount=document.getElementById('prog-crises');if(crisisCount)crisisCount.textContent=crisisEvents.length;
+  // Urge chart
+  var now=Date.now();var dayMs=86400000;
+  var days=[];for(var d=6;d>=0;d--){var dayEvents=urgeEvents.filter(function(e){var t=new Date(e.timestamp).getTime();return t>now-(d+1)*dayMs&&t<=now-d*dayMs});days.push(dayEvents.length?Math.round(dayEvents.reduce(function(a,b){return a+b.urge_score},0)/dayEvents.length):null)}
+  var hasData=days.some(function(x){return x!==null});
+  if(hasData){var pts=days.map(function(v,i){return (i*40)+','+(v!==null?80-v*8:80)}).join(' ');var line=document.getElementById('urge-line');if(line)line.setAttribute('points',pts)}
+  // Insights
+  var hasEnough=events.length>=20;
+  var note=document.getElementById('ins-14day-note');if(note)note.style.display=hasEnough?'none':'block';
+  if(hasEnough){
+    // Peak time
+    var hourCounts={};urgeEvents.forEach(function(e){var h=new Date(e.timestamp).getHours();var slot=h<12?'Morning':h<17?'Afternoon':'Evening';hourCounts[slot]=(hourCounts[slot]||0)+1});var peakTime=Object.keys(hourCounts).sort(function(a,b){return hourCounts[b]-hourCounts[a]})[0]||'—';var it=document.getElementById('ins-time');if(it)it.textContent=peakTime;
+    // Distortions
+    var distCounts={};crisisEvents.forEach(function(e){if(e.thinking)distCounts[e.thinking]=(distCounts[e.thinking]||0)+1});var topDist=Object.keys(distCounts).sort(function(a,b){return distCounts[b]-distCounts[a]})[0];var distMap={'win_back':'Chase losses','one_bet':'One won\'t matter','deserve':'I deserve it','rush':'Need the rush','feel_better':'Feel better','nothing_working':'Nothing works'};var id=document.getElementById('ins-distortion');if(id)id.textContent=topDist?distMap[topDist]||topDist:'—';
+    // Outcomes
+    var okCount=crisisEvents.filter(function(e){return e.exit_type==='i_am_okay'}).length;var io=document.getElementById('ins-outcome');if(io)io.textContent=crisisEvents.length?okCount+'/'+crisisEvents.length:'—';
+  }
+  // PGSI banner
+  checkPGSI();
+}
 
 // ── Unified check-in ──
-function openCI(type){currentCI=type||'morning';var titles={morning:'Morning check-in',afternoon:'Afternoon check-in',evening:'Evening check-in'};var subs={morning:'Set your intention. Honest answers only.',afternoon:'Midday pulse check. How are you doing?',evening:'End of day reflection. Be honest with yourself.'};var t=document.getElementById('ci-title');if(t)t.textContent=titles[currentCI]||'Check-in';var s=document.getElementById('ci-sub');if(s)s.textContent=subs[currentCI]||'Honest answers.';mornBet=null;var y=document.getElementById('sci-bet-yes');var n=document.getElementById('sci-bet-no');if(y)y.classList.remove('sel');if(n)n.classList.remove('sel');var sv=document.getElementById('sci-savings');if(sv)sv.style.display='none';var sa=document.getElementById('sci-saved-amt');if(sa)sa.value='';var bf=document.getElementById('sci-bet-followup');if(bf)bf.style.display='none';var uf=document.getElementById('ci-urge-followup');if(uf)uf.style.display='none';var uv=document.getElementById('urge-val');if(uv)uv.textContent='0';var ur=document.querySelector('#sci .slider-wrap input[type=range]');if(ur)ur.value=0;var ol=document.getElementById('ci-goal-outcome-label');if(ol&&userOutcomeGoal)ol.textContent='Outcome — one step toward '+userOutcomeGoal;go('sci')}
+function openCI(type){
+  currentCI=type||'morning';
+  var titles={morning:'Morning check-in',afternoon:'Afternoon check-in',evening:'Evening check-in'};
+  var subs={morning:'Anything to report since last night?',afternoon:'How\'s the morning been?',evening:'How did the rest of the day go?'};
+  var t=document.getElementById('ci-title');if(t)t.textContent=titles[currentCI]||'Check-in';
+  var s=document.getElementById('ci-sub');if(s)s.textContent=subs[currentCI]||'Honest answers.';
+  var lbl=document.getElementById('ci-bet-label');
+  if(lbl)lbl.textContent=currentCI==='morning'?'Anything to report since last night?':(currentCI==='afternoon'?'How\'s the morning been?':'How did the rest of the day go?');
+  var ol=document.getElementById('ci-goal-outcome-label');if(ol&&userOutcomeGoal)ol.textContent='Outcome — one step toward '+userOutcomeGoal;
+  // Reset state
+  mornBet=null;ciOpeningAnswer='';
+  var y=document.getElementById('sci-bet-yes');var n=document.getElementById('sci-bet-no');if(y)y.classList.remove('sel');if(n)n.classList.remove('sel');
+  var sv=document.getElementById('sci-savings');if(sv)sv.style.display='none';
+  var sa=document.getElementById('sci-saved-amt');if(sa)sa.value='';
+  var bf=document.getElementById('sci-bet-followup');if(bf)bf.style.display='none';
+  var uf=document.getElementById('ci-urge-followup');if(uf)uf.style.display='none';
+  var uv=document.getElementById('urge-val');if(uv)uv.textContent='0';
+  var ur=document.querySelector('#sci .slider-wrap input[type=range]');if(ur)ur.value=0;
+  var bs=document.getElementById('ci-budget-status');if(bs)bs.style.display=userPath==='B'?'block':'none';
+  var bu=document.getElementById('ci-budget-used');if(bu)bu.textContent='$'+weeklyBetTotal;
+  var bt=document.getElementById('ci-budget-total');if(bt)bt.textContent='$'+userWeeklyBudget;
+  go('sci');
+}
 
 // ── Bet question & savings ──
 function setBet(v){mornBet=v;var y=document.getElementById('sci-bet-yes');var n=document.getElementById('sci-bet-no');if(y)y.classList.toggle('sel',v);if(n)n.classList.toggle('sel',!v);var sv=document.getElementById('sci-savings');if(sv){sv.style.display=v?'none':'flex';if(!v)setTimeout(function(){sv.scrollIntoView({behavior:'smooth',block:'nearest'})},50)}var bf=document.getElementById('sci-bet-followup');if(bf){bf.style.display=v?'flex':'none';if(v)setTimeout(function(){bf.scrollIntoView({behavior:'smooth',block:'nearest'})},50)}}
@@ -1588,7 +1955,25 @@ function setBet(v){mornBet=v;var y=document.getElementById('sci-bet-yes');var n=
 // ── Check-in emotion & urge ──
 function selEmotion(btn,emotion){document.querySelectorAll('#ci-emotion-grid .mbtn').forEach(function(b){b.classList.remove('sel')});btn.classList.add('sel')}
 function setUrgeVal(v){document.getElementById('urge-val').textContent=v;var fu=document.getElementById('ci-urge-followup');if(fu){fu.style.display=parseInt(v)>=5?'flex':'none';if(parseInt(v)>=5){var ta=document.getElementById('ci-urge-why');if(ta&&userWhyGamble)ta.placeholder='Last time you said: '+userWhyGamble+'. Is that what\'s happening now?'}}}
-function saveMorningCI(){if(mornBet===false){var saved=parseInt(document.getElementById('sci-saved-amt').value)||0;if(saved>0){totalSaved+=saved;updateGoalDisplay();document.getElementById('cel-amount').textContent=saved;document.getElementById('cel-total').textContent=totalSaved;document.getElementById('cel-goal-label').textContent='toward '+goalName;var pct=Math.min(100,goalAmount>0?Math.round((totalSaved/goalAmount)*100):0);var cpf=document.getElementById('cel-pf');if(cpf)cpf.style.width=pct+'%';mornBet=null;go('scelebrate');return}}go(mornBet===true?'sabc':'shome');mornBet=null}
+function saveMorningCI(){
+  var saved=0;
+  if(mornBet===false){
+    saved=parseInt(document.getElementById('sci-saved-amt').value)||0;
+    if(saved>0){totalSaved+=saved;updateGoalDisplay();}
+  }
+  logEvent('checkin',{check_in_type:currentCI,bet_occurred:mornBet===true,savings_logged:saved,urge_score:parseInt(document.getElementById('urge-val').textContent)||0,context_tag:currentCI+'_checkin',completion_flag:true});
+  saveUserProfile();
+  if(mornBet===true){go('sabc');return;}
+  if(saved>0&&mornBet===false){
+    document.getElementById('cel-amount').textContent=saved;
+    document.getElementById('cel-total').textContent=totalSaved;
+    document.getElementById('cel-goal-label').textContent='toward '+goalName;
+    var pct=Math.min(100,goalAmount>0?Math.round((totalSaved/goalAmount)*100):0);
+    var cpf=document.getElementById('cel-pf');if(cpf)cpf.style.width=pct+'%';
+    mornBet=null;go('scelebrate');return;
+  }
+  mornBet=null;go('shome');
+}
 
 // ── Evening check-in ──
 function eciAnswer(gambled){eciGambled=gambled;var y=document.getElementById('eci-yes-btn');var n=document.getElementById('eci-no-btn');if(y)y.classList.toggle('sel',gambled);if(n)n.classList.toggle('sel',!gambled);var slip=document.getElementById('eci-slip');var win=document.getElementById('eci-win');var ftr=document.getElementById('eci-ftr');if(slip)slip.style.display=gambled?'flex':'none';if(win)win.style.display=gambled?'none':'flex';if(ftr)ftr.style.display='block'}
@@ -1648,15 +2033,65 @@ function closeKnow(){document.getElementById('ky-overlay').classList.remove('ope
 function logControlMilestone(){var d=new Date();var el=document.getElementById('control-date');if(el)el.textContent=d.toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});go('scontrol')}
 
 // ── Crisis flow ──
-var crisisReframes={win_back:'The brain treats a loss like an unfinished story — it genuinely feels like the only way to end it is to win. That feeling is real. But the math doesn\'t care about your story. Every bet is independent. The money you lost is already gone, and the next bet has no memory of it. Chasing doesn\'t close the loop — it opens a bigger one. The only way to stop the loss from growing is to stop here.',one_bet:'One bet is never really one bet — and part of you already knows that. Think about the last time you placed just one. Where did it end? The thought one bet won\'t matter is the addiction talking, not you. It matters because of what comes after it, not the bet itself. You\'ve already shown up here, which means something in you knows this isn\'t really about one bet.',deserve:'You probably do deserve something right now. A break, a reward, relief from whatever\'s been hard. That feeling is valid. But gambling isn\'t actually a reward — it borrows good feelings from your future self and charges interest. What would actually feel good tomorrow morning? That\'s the reward you deserve. What\'s one thing you could do in the next 20 minutes that your future self would thank you for?',rush:'The rush is real — dopamine doesn\'t lie about how good it feels in the moment. But the crash after is just as real, and it\'s getting longer each time. Right now your brain is screaming for a hit. That feeling peaks in about 15 to 20 minutes and then drops on its own — whether you bet or not. You don\'t have to fight it. Just watch it. Notice where you feel it in your body. Give it 15 minutes and check back in with yourself.',feel_better:'Gambling does make you feel better — for a window. That\'s not a lie, it\'s why it\'s so hard. But you\'ve been through that window before. You know what\'s on the other side of it: the same problem you started with, plus guilt, plus the money. Relief that creates more pain isn\'t really relief. What are you actually trying to feel better about right now? That\'s worth naming — because that\'s the thing that actually needs attention.',nothing_working:'That feeling — that nothing is working, that this is the only option left — is one of the most painful places to be. And it\'s also one of the most common thoughts people have right before they make a decision they regret. It feels like a fact but it\'s a symptom of being overwhelmed. You reached for this app instead of opening another one. That was a choice. That\'s something working. What\'s one small thing — not a solution, just one small thing — that would make the next hour slightly more bearable.'};
+var crisisReframes={win_back:'The brain treats a loss like an unfinished story — it genuinely feels like the only way to end it is to win. That feeling is real. But the math doesn\'t care about your story. Every bet is independent. The money you lost is already gone, and the next bet has no memory of it. Chasing doesn\'t close the loop — it opens a bigger one. The only way to stop the loss from growing is to stop here.',one_bet:'One bet is never really one bet — and part of you already knows that. Think about the last time you placed just one. Where did it end? The thought one bet won\'t matter is the addiction talking, not you. It matters because of what comes after it, not the bet itself. You\'ve already shown up here, which means something in you knows this isn\'t really about one bet.',deserve:'You probably do deserve something right now. A break, a reward, relief from whatever\'s been hard. That feeling is valid. But gambling isn\'t actually a reward — it borrows good feelings from your future self and charges interest. What would actually feel good tomorrow morning? That\'s the reward you deserve. What\'s one thing you could do in the next 20 minutes that your future self would thank you for?',rush:'The rush is real — dopamine doesn\'t lie about how good it feels in the moment. But the crash after is just as real, and it\'s getting longer each time. Right now your brain is screaming for a hit. That feeling peaks in about 15 to 20 minutes and then drops on its own — whether you bet or not. You don\'t have to fight it. Just watch it. Notice where you feel it in your body. Give it 15 minutes and check back in with yourself.',feel_better:'Gambling does make you feel better — for a window. That\'s not a lie, it\'s why it\'s so hard. But you\'ve been through that window before. You know what\'s on the other side of it: the same problem you started with, plus guilt, plus the money. Relief that creates more pain isn\'t really relief. What are you actually trying to feel better about right now? That\'s worth naming — because that\'s the thing that actually needs attention.',nothing_working:'That feeling — that nothing is working, that this is the only option left — is one of the most painful places to be. And it\'s also one of the most common thoughts people have right before they make a decision they regret. It feels like a fact but it\'s a symptom of being overwhelmed. You reached for this app instead of opening another one. That was a choice. That\'s something working. What\'s one small thing — not a solution, just one small thing — that would make the next hour slightly more bearable.'
+,win_back_b:'The money you\'ve lost this week is already gone — and your budget doesn\'t grow back by chasing it. Every pound or dollar you chase with is real money coming out of what you said mattered to you. The math here isn\'t in your favour, and part of you knows that. Your limit exists precisely for this moment. Stopping here is the limit working exactly as you set it up to work.'
+,one_bet_b:'Your budget isn\'t a suggestion — it\'s a contract you made with your future self when you were thinking clearly. One more bet won\'t feel like one more bet when you\'re over the line. You\'ve already defined what control looks like for you. This moment is the test of whether the contract means anything.'
+,deserve_b:'You deserve a reward — but your limit is what makes the gambling actually enjoyable and sustainable. Going over it doesn\'t feel like a reward the next morning. It feels like starting again from zero. What would actually make you feel good right now that doesn\'t cost you the progress you\'ve made?'
+,rush_b:'The rush is real and it\'s not wrong to want it. But the crash when you go over your budget is also real. You built a limit so you could have the rush without the regret. That limit is what lets you keep gambling on your own terms. Going over it is trading tomorrow\'s freedom for tonight\'s feeling.'
+,feel_better_b:'Gambling within your limits probably does make you feel better — that\'s why you chose controlled play, not abstinence. But going over the limit removes what makes it sustainable. You\'ve already had your allowed window. What else would make the next hour feel okay?'
+,limits_unrealistic_b:'It\'s worth asking whether your limits need adjusting — but not right now, in this moment. Decisions made mid-urge almost always make the limit looser, not better. Give it 24 hours. If the limit still feels wrong tomorrow when you\'re calm, you can change it thoughtfully. Right now, hold the line you set when you were thinking clearly.'};
 function setCrisisWhat(btn,val){document.querySelectorAll('#scrn-q .csec:first-of-type .abtn').forEach(function(b){b.classList.remove('sel')});btn.classList.add('sel');userCrisisWhat=val;checkCrisisReady()}
-function setCrisisThinking(btn,val){document.querySelectorAll('#scrn-q .csec:last-of-type .abtn').forEach(function(b){b.classList.remove('sel')});btn.classList.add('sel');userCrisisThinking=val;checkCrisisReady()}
+function setCrisisThinking(btn,val){document.querySelectorAll('#crisis-thinking-opts .abtn').forEach(function(b){b.classList.remove('sel')});btn.classList.add('sel');userCrisisThinking=val;checkCrisisReady()}
 function checkCrisisReady(){var btn=document.getElementById('crn-q-next');if(btn)btn.disabled=!(userCrisisWhat&&userCrisisThinking)}
-function openCrisis(){userCrisisWhat='';userCrisisThinking='';document.querySelectorAll('#scrn-q .abtn').forEach(function(b){b.classList.remove('sel')});var btn=document.getElementById('crn-q-next');if(btn)btn.disabled=true;go('scrn-q')}
-function openMirror(){var w=document.getElementById('mirror-why');var c=document.getElementById('mirror-cost');var g=document.getElementById('mirror-goal');if(w)w.textContent=userWhyGamble||'escape, excitement, or habit';if(c)c.textContent=userCostsSummary||'things that matter to you';if(g)g.textContent=userOutcomeGoal||'something better';go('scrn-mirror')}
-function showReframe(){var el=document.getElementById('reframe-text');if(el)el.textContent=crisisReframes[userCrisisThinking]||crisisReframes['nothing_working'];go('scrn-reframe')}
+function openCrisis(){
+  userCrisisWhat='';userCrisisThinking='';
+  preCrisisUrge=parseInt(document.getElementById('urge-val')?document.getElementById('urge-val').textContent:'0')||0;
+  document.querySelectorAll('#scrn-q .abtn').forEach(function(b){b.classList.remove('sel')});
+  var btn=document.getElementById('crn-q-next');if(btn)btn.disabled=true;
+  // Populate thinking options
+  var opts=document.getElementById('crisis-thinking-opts');
+  if(opts){
+    var pathAOpts=[['win_back','I could win it back'],['one_bet','One bet won\'t matter'],['deserve','I deserve this'],['rush','I need the rush'],['feel_better','I\'ll feel better after'],['nothing_working','Nothing else is working']];
+    var pathBOpts=[['win_back_b','I can win back what I\'ve lost this week'],['one_bet_b','One more bet won\'t break my budget'],['deserve_b','I deserve a break from my rules'],['rush_b','I need the rush right now'],['feel_better_b','I\'ll feel better and then stop'],['limits_unrealistic_b','My limits don\'t feel realistic anymore']];
+    var selected=userPath==='B'?pathBOpts:pathAOpts;
+    var letters=['A','B','C','D','E','F'];
+    opts.innerHTML=selected.map(function(o,i){return '<button class="abtn" onclick="setCrisisThinking(this,\''+o[0]+'\')"><div class="al">'+letters[i]+'</div><span>'+o[1]+'</span></button>'}).join('');
+  }
+  // Update FAB text
+  var fabs=document.querySelectorAll('.tab-fab');
+  fabs.forEach(function(f){var lbl=f.querySelector('.tab-fab-lbl');if(lbl)lbl.textContent=userPath==='A'?'Need Help':'Limit Help'});
+  go('scrn-q');
+}
+function openMirror(){
+  var w=document.getElementById('mirror-why');
+  var c=document.getElementById('mirror-cost');
+  var g=document.getElementById('mirror-goal');
+  if(userPath==='B'){
+    if(w)w.textContent=userWhyGamble||'escape, excitement, or habit';
+    if(c)c.textContent='You set your weekly budget at $'+userWeeklyBudget+'. You\'ve used $'+weeklyBetTotal+' so far.';
+    if(g)g.textContent=userOutcomeGoal||'something worth protecting';
+  }else{
+    if(w)w.textContent=userWhyGamble||'escape, excitement, or habit';
+    if(c)c.textContent=userCostsSummary||'things that matter to you';
+    if(g)g.textContent=userOutcomeGoal||'something better';
+  }
+  logEvent('crisis_started',{situation:userCrisisWhat,thinking:userCrisisThinking,pre_crisis_urge:preCrisisUrge,timestamp:new Date().toISOString()});
+  go('scrn-mirror');
+}
+function showReframe(){
+  var el=document.getElementById('reframe-text');
+  if(el)el.textContent=crisisReframes[userCrisisThinking]||crisisReframes['nothing_working'];
+  go('scrn-reframe');
+}
+function crisisExit(type){
+  postReframeUrge=parseInt(document.getElementById('urge-val')?document.getElementById('urge-val').textContent:'0')||0;
+  logEvent('crisis_complete',{situation:userCrisisWhat,thinking:userCrisisThinking,pre_crisis_urge:preCrisisUrge,post_intervention_urge:postInterventionUrge,post_reframe_urge:postReframeUrge,exit_type:type==='ok'?'i_am_okay':'i_need_more_help'});
+  saveUserProfile();
+  go('shome');
+}
 
 // ── Init ──
+loadUserProfile();
 renderCISlots();
 updateGreeting();
 </script>
